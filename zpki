@@ -646,7 +646,6 @@ function x509-to-json() {
 
 function ca-show-crt() {
   local CRTFILE=${1:-$CRTFILE}
-  local CSRFILE=${CSRFILE:-${CRTFILE%.crt}.csr}
 
   [[ -e $CRTFILE ]] ||
     fatal "can't get $CRTFILE"
@@ -656,6 +655,31 @@ function ca-show-crt() {
     openssl x509 -noout -text -in $CRTFILE
   fi
 }
+
+function ca-dump-crt() {
+  local CRTFILE=${1:-$CRTFILE}
+
+  [[ -e $CRTFILE ]] ||
+    fatal "can't get $CRTFILE"
+  awk '{if (substr($0, 1, 1) == "-") dump=1; if (dump) print $0;}' < $CRTFILE
+}
+
+function ca-dump-csr() {
+  local CSRFILE=${1:-$CSRFILE}
+
+  [[ -e $CSRFILE ]] ||
+    fatal "can't get $CSRFILE"
+  awk '{if (substr($0, 1, 1) == "-") dump=1; if (dump) print $0;}' < $CSRFILE
+}
+
+function ca-dump-key() {
+  local KEYFILE=${1:-$KEYFILE}
+
+  [[ -e $KEYFILE ]] ||
+    fatal "can't get $KEYFILE"
+  awk '{if (substr($0, 1, 1) == "-") dump=1; if (dump) print $0;}' < $KEYFILE
+}
+
 
 function usage() {
   local IFS=$'\t'
