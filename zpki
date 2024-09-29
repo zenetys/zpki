@@ -603,6 +603,60 @@ function ca-dump-key() {
   gawk '{if (substr($0, 1, 1) == "-") dump=1; if (dump) print $0;}' < $KEYFILE
 }
 
+function x509-to-json() {
+  awk '
+  function parseLine(line) {
+    if (match(line, "^(\\s*)([^:]+):\\s*$", a)) {
+      start = a[1] "    "; # add four spaces
+      attr = a[2];
+      value = ""
+    }
+    else if (match(line, "^(\\s*)([^:]+): (.+)", a)) {
+      printf("%s", SEP); SEP=",\n";
+      printf("  \"%s\": \"%s\"", a[2], a[3]);
+    }
+    else if (substr(line, 1, length(start)) == start &&
+             match(substr(line, length(start)+1),
+                   "^([0-9a-fA-F][0-9a-fA-F])(:[0-9a-fA-F][0-9a-fA-F])*(:)?$")) {
+      value = value substr(line, length(start)+1);
+      if (substr(line, length(line)) != ":") {
+        printf("%s", SEP); SEP=",\n";
+        printf("  \"%s\": \"%s\"", attr, value);
+        attr = "";
+      }
+    }
+    else if (attr && substr(line, 1, length(start)) == start) {
+        value = value substr(line, length(start)+1);
+        printf("%s", SEP); SEP=",\n";
+        printf("  \"%s\": \"%s\"", attr, value);
+        attr = "";
+    }
+  }
+  BEGIN {
+    printf("{\n");
+  }
+  {
+    parseLine($0);
+  }
+  END {
+    printf("\n}\n");
+  }
+  '
+}
+
+function ca-show-crt() {
+  local CRTFILE=${1:-$CRTFILE}
+  local CSRFILE=${CSRFILE:-${CRTFILE%.crt}.csr}
+
+  [[ -e $CRTFILE ]] ||
+    fatal "can't get $CRTFILE"
+  if [[ $FORMAT == JSON ]]; then
+    openssl x509 -noout -text -in $CRTFILE | x509-to-json
+  else
+    openssl x509 -noout -text -in $CRTFILE
+  fi
+}
+
 function usage() {
   local IFS=$'\t'
   exec >&2
