@@ -270,6 +270,7 @@ function create-csr() {
   PARAMS=(
     -batch
     -new
+    ${UTF8:+-utf8}
     -out "$CSRFILE"
     -key "$KEYFILE"
     ${SUBJECT:+-subj "$SUBJECT"}
@@ -293,6 +294,7 @@ function create-self() {
     -batch
     -new -x509
     -days "$NUMDAYS"
+    ${UTF8:+-utf8}
     -out "$CRTFILE"
     -key "$KEYFILE"
     ${SUBJECT:+-subj "$SUBJECT"}
@@ -323,7 +325,6 @@ function create-ca() {
   [[ -e ca.idx ]]     || touch ca.idx
   [[ -s ca.srl ]]     || printf "%016X\n" $SERIAL > ca.srl
   [[ -s ca.crlnum ]]  || echo 01 > ca.crlnum
-  [[ -e .zpki ]]      || touch .zpki
   return 0
 }
 
@@ -381,27 +382,92 @@ function ca-update-db() {
 #X-ACTION ca-list: List certificates stored in the CA
 function ca-list() {
   local CA_IDXFILE=ca.idx
-  awk < $CA_IDXFILE '
+  local CA_IDZFILE=ca.idz
+
+  gawk -v "FORMAT_$FORMAT=1" -v IDZFILE=ca.idz < $CA_IDXFILE '
   BEGIN {
     FS="\t";
-    printf("[");
+
+    while (getline < IDZFILE) {
+      serial[$1]=$1;
+      hash[$1]=$2;
+      notBefore[$1]=$3;
+      notAfter[$1]=$4;
+      subject[$1]=$5;
+      issuer[$1]=$6;
+      email[$1]=$7;
+    }
+    if (FORMAT_JSON) {
+      printf("[");
+    }
+    else {
+      printf("%s\t", "status");
+      printf("%s\t", "notBefore");
+      printf("%s\t", "notAfter");
+      printf("%s\t", "revocationDate");
+      printf("%s\t", "serial");
+      printf("%s\t", "cn");
+      printf("%s\t", "subject");
+      printf("%s\t", "issuer");
+      printf("%s\t", "email");
+      printf("%s\n", "hash");
+      # printf("%s\t", "filename");
+    }
   }
   function rfc3339(date) {
-    ds = gensub("(..)", "\\1 ", "g", date)
+    if (!date) return ;
+    ds = gensub(/(..)/, "\\1 ", "g", date);
     return (strftime("%Y-%m-%dT%H:%M:%S%z", mktime("20" ds)));
   }
-  {
+  function cn(dn, a) {
+    if (match(dn, /CN=([^/]*)(,.*)?$/, a)) {
+      return a[1];
+    }
+  }
+  function isExpired(value) {
+    currentTime = strftime("%Y%m%d%H%M%S");
+    return (value < currentTime);
+  }
+
+  function entry_json() {
+    status = (isExpired(rfc3339($4)) ? "E" : $1);
     printf("%s\n {",((NR==1)?"":","));
-    printf("\"status\":\"%s\"",$1);
+    printf("\"status\":\"%s\"", status);
     printf(",\"expiration\":\"%s\"", rfc3339($2));
     if ($3) printf(",\"revocation\":\"%s\"", rfc3339($3));
     printf(",\"serial\":\"%s\"", $4);
-    # printf(",\"filename\":\"%s\"", $5);
+    printf(",\"id\":\"%s\"", cn($6));
+    if (hash[$4]) printf(",\"hash\":\"%s\"", hash[$4]);
+    if (issuer[$4]) printf(",\"issuer\":\"%s\"", issuer[$4]);
+    if (email[$4]) printf(",\"email\":\"%s\"", email[$4]);
+    printf(",\"cn\":\"%s\"", cn($6));
     printf(",\"subject\":\"%s\"", $6);
+    if (notBefore[$4]) printf(",\"startDate\":\"%s\"", notBefore[$4]);
+    printf(",\"endDate\":\"%s\"", rfc3339($2));
+    # printf(",\"filename\":\"%s\"", $5);
     printf("}");
   }
+  function entry_tsv() {
+    printf("%s\t", $1);
+    printf("%s\t", notBefore[$4]);
+    printf("%s\t", rfc3339($2));
+    printf("%s\t", rfc3339($3));
+    printf("%s\t", $4);
+    printf("%s\t", cn($6));
+    printf("%s\t", $6);
+    printf("%s\t", issuer[$4]);
+    printf("%s\t", email[$4]);
+    printf("%s\n", hash[$4]);
+    # printf("%s\t", "filename");
+  }
+  {
+    if (FORMAT_JSON)
+      entry_json();
+    else
+      entry_tsv();
+  }
   END {
-    printf("\n]\n");
+    if (FORMAT_JSON) printf("\n]\n");
   }
   '
 }
@@ -456,6 +522,87 @@ function ca-revoke-crt() {
   is-error "Cannot revoke certificate '$SUBJECT'" || return
 }
 
+function x509-to-json() {
+  gawk '
+  function parseLine(line) {
+    if (match(line, "^(\\s*)([^:]+):\\s*$", a)) {
+      start = a[1] "    "; # add four spaces
+      attr = a[2];
+      value = ""
+    }
+    else if (match(line, "^(\\s*)([^:]+): (.+)", a)) {
+      printf("%s", SEP); SEP=",\n";
+      printf("  \"%s\": \"%s\"", a[2], a[3]);
+    }
+    else if (substr(line, 1, length(start)) == start &&
+             match(substr(line, length(start)+1),
+                   "^([0-9a-fA-F][0-9a-fA-F])(:[0-9a-fA-F][0-9a-fA-F])*(:)?$")) {
+      value = value substr(line, length(start)+1);
+      if (substr(line, length(line)) != ":") {
+        printf("%s", SEP); SEP=",\n";
+        printf("  \"%s\": \"%s\"", attr, value);
+        attr = "";
+      }
+    }
+    else if (attr && substr(line, 1, length(start)) == start) {
+        value = value substr(line, length(start)+1);
+        printf("%s", SEP); SEP=",\n";
+        printf("  \"%s\": \"%s\"", attr, value);
+        attr = "";
+    }
+  }
+  BEGIN {
+    printf("{\n");
+  }
+  {
+    parseLine($0);
+  }
+  END {
+    printf("\n}\n");
+  }
+  '
+}
+
+#X-ACTION ca-display-crt [CRTFILE]: Display an entire certificate file (.crt)
+function ca-display-crt() {
+  local CRTFILE=${1:-$CRTFILE}
+
+  [[ -e $CRTFILE ]] ||
+    fatal "Cannot get $CRTFILE"
+  if [[ $FORMAT == JSON ]]; then
+    openssl x509 -noout -text -in $CRTFILE | x509-to-json
+  else
+    openssl x509 -noout -text -in $CRTFILE
+  fi
+}
+
+#X-ACTION ca-dump-crt [CRTFILE]: Dump the content of a certificate (.crt) file
+function ca-dump-crt() {
+  local CRTFILE=${1:-$CRTFILE}
+
+  [[ -e $CRTFILE ]] ||
+    fatal "Cannot get $CRTFILE"
+  gawk '{if (substr($0, 1, 1) == "-") dump=1; if (dump) print $0;}' < $CRTFILE
+}
+
+#X-ACTION ca-dump-csr [CSRFILE]: Dump the content of a certificate signing request (.csr) file
+function ca-dump-csr() {
+  local CSRFILE=${1:-$CSRFILE}
+
+  [[ -e $CSRFILE ]] ||
+    fatal "Cannot get $CSRFILE"
+  gawk '{if (substr($0, 1, 1) == "-") dump=1; if (dump) print $0;}' < $CSRFILE
+}
+
+#X-ACTION ca-dump-key [KEYFILE]: Dump the content of a private key (.key) file
+function ca-dump-key() {
+  local KEYFILE=${1:-$KEYFILE}
+
+  [[ -e $KEYFILE ]] ||
+    fatal "Cannot get $KEYFILE"
+  gawk '{if (substr($0, 1, 1) == "-") dump=1; if (dump) print $0;}' < $KEYFILE
+}
+
 function usage() {
   local IFS=$'\t'
   exec >&2
@@ -492,6 +639,8 @@ declare OPENSSL=${ZPKI_OPENSSL:-openssl_debug}
 declare BASEDIR=""
 declare VERBOSE=1
 declare XDEBUG=0
+declare FORMAT=TSV
+declare UTF8=1
 
 while (( $# > 0 )); do
   case "$1" in
@@ -511,6 +660,10 @@ while (( $# > 0 )); do
     -c|--cipher) CIPHER=$2 ; [[ $CIPHER == none ]] && unset CIPHER ; shift ;;
     ## --force: Regenerate CSR even if it exists (e.g. change in SANs)
     --force) FORCE_CREATE_CSR=1 ;;
+    ## --json: Format using JSON
+    --json) FORMAT=JSON ;;
+    ## --no-utf8: Disable default UTF8 encoding
+    --no-utf8) unset UTF8 ;;
     ## --x-debug: Enable bash debug mode
     --x-debug) XDEBUG=1 ;;
     # generic args
@@ -552,8 +705,8 @@ CA_CRTFILE=ca.crt
 CA_CNFFILE=ca.cnf
 
 if [[ -r ${ARGS[0]} ]]; then
-  # ARGV[0] is a filename
-  FILENAME=${ARGV[0]}
+  # ARGS[0] is a filename
+  FILENAME=${ARGS[0]}
 elif [[ ${ARGS[0]} == "/" ]]; then
   # if ARGS[0] begin with /, it is a subject
   shopt -s nocasematch
