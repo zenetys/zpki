@@ -2,18 +2,18 @@
 #
 # License: MIT License
 # Author: Benoit DOLEZ <bdolez@zenetys.com>
-# Copyright: 2020
+# Copyright: 2020-2024
 # Version: 1.0
 #
 
-# filename usage to determine action
+# Filename usage to determine action
 # zpki create-ca "CA-SUBJ"
 # zpki create-key "SUBJ"
 # zpki create-csr "SUBJ"
 # zpki create-crt "SUBJ"
 
-# directory tree :
-# .zpki             : ZPKI managed directory
+# Directory tree :
+# zpki              : ZPKI managed directory
 # ca.crt            : CA Certificate
 # ca.cnf            : Config for CAb
 # ca.key            : CA Private Key
@@ -27,7 +27,7 @@ CIPHER=${ZPKI_CIPHER:-aes256}
 DIGEST=${ZPKI_DIGEST:-sha256}
 
 DEFAULT_CONFIG="
-# look at :
+# Look at :
 # https://www.openssl.org/docs/manmaster/man5/x509v3_config.html
 
 [ ca ]
@@ -76,9 +76,9 @@ authorityKeyIdentifier = keyid:always
 
 [ distinguished_name ]
 countryName            = Country Name
-localityName           = Locality Name (eg, city)
-0.organizationName     = Organization Name (eg, company)
-organizationalUnitName = Organizational Unit Name (eg, section)
+localityName           = Locality Name (e.g. city)
+0.organizationName     = Organization Name (e.g. company)
+organizationalUnitName = Organizational Unit Name (e.g. section)
 commonName             = Common Name
 emailAddress           = Email Address
 
@@ -138,7 +138,7 @@ basicConstraints       = CA:false
 if tty -s >/dev/null 2>&1; then
     declare -A C=(
         [info]=$'\x1b[1m'
-        [warning]=$'\x1b[7;33m'
+        [warn]=$'\x1b[7;33m'
         [error]=$'\x1b[7;91m'
         [fatal]=$'\x1b[7;1;91m'
         [blue]=$'\x1b[7;34m'
@@ -171,7 +171,7 @@ function error() {
     info --${FUNCNAME[0]} "$@"
 }
 
-function warning() {
+function warn() {
     info --${FUNCNAME[0]} "$@"
 }
 
@@ -184,7 +184,7 @@ function yesno() {
   local QUESTION="$1" ; shift
   [[ $YES == 1 ]] && return 0
   while : ; do
-    echo -n "$QUESTION (yes/[N]o): " && read
+    echo -n "$QUESTION (y/n): " && read
     case $REPLY in
       [Yy]|[Yy][Ee]|[Yy][Ee][Ss]) return 0 ;;
       [Nn]|[Nn][Oo]) return 1 ;;
@@ -232,24 +232,24 @@ function is-error() {
   return $ERR
 }
 
-#X-ACTION create-cnf: create default openssl config file
+#X-ACTION create-cnf: Generate a default OpenSSL configuration file
 function create-cnf() {
   local CNFFILE=${1:-$CNFFILE}
   [[ $FORCE ]] && FORCE_CREATE_CNF=1 && unset FORCE
   is-exists -$FORCE_CREATE_CNF "$CNFFILE" && return 0
-  yesno "create config '$CNFFILE' ?" || return
+  yesno "Create config '$CNFFILE' ?" || return
   touch "$CNFFILE"
-  is-error "can't create config '$CNFFILE'" || return
+  is-error "Cannot create config '$CNFFILE'" || return
   echo "$DEFAULT_CONFIG" >> $CNFFILE
   return 0
 }
 
-#X-ACTION create-key [CN|SUBJ]: create key file
+#X-ACTION create-key [CN|SUBJ]: Create a key file
 function create-key() {
   local KEYFILE=${1:-$KEYFILE}
   [[ $FORCE ]] && FORCE_CREATE_KEY=1 && unset FORCE
   is-exists -$FORCE_CREATE_KEY "$KEYFILE" && return 0
-  yesno "create key '$KEYFILE' ?" || return
+  yesno "Create key '$KEYFILE' ?" || return
   PARAMS=(
     -out "$KEYFILE"
     ${CIPHER:+-$CIPHER}
@@ -257,15 +257,15 @@ function create-key() {
     $NUMBITS
   )
   $OPENSSL genrsa "${PARAMS[@]}"
-  is-error "can't create key '$KEYFILE'" || return
+  is-error "Cannot create key '$KEYFILE'" || return
 }
 
-#X-ACTION create-csr CN|SUBJ [ALTNAMES...]: create request
+#X-ACTION create-csr [CN|SUBJ] <ALTNAMES>: Generate a certificate signing request (CSR) file
 function create-csr() {
   local CSRFILE=${1:-$CSRFILE}
   [[ $FORCE ]] && FORCE_CREATE_CSR=1 && unset FORCE
   is-exists -$FORCE_CREATE_CSR "$CSRFILE" && return 0
-  yesno "create certificate request '$CSRFILE' ?" || return
+  yesno "Create certificate request '$CSRFILE' ?" || return
   create-key "$KEYFILE" || return
   PARAMS=(
     -batch
@@ -277,16 +277,16 @@ function create-csr() {
     ${PASSWORD:+-passin env:PASSWORD}
   )
   $OPENSSL req "${PARAMS[@]}"
-  is-error "can't create certificate request '$CSRFILE'" || return
+  is-error "Cannot create certificate request '$CSRFILE'" || return
 }
 
-#X-ACTION create-self CN|SUBJ [ALTNAMES...]: create self signed certificate
+#X-ACTION create-self [CN|SUBJ] <ALTNAMES>: Create a self-signed certificate
 function create-self() {
   local CRTFILE=${1:-$CRTFILE}
-  [[ $SUBJECT ]] || fatal "can't get create CA with empty subject"
+  [[ $SUBJECT ]] || fatal "Cannot get create CA with empty subject"
   [[ $FORCE ]] && FORCE_CREATE_CRT=1 && unset FORCE
   is-exists -$FORCE_CREATE_CRT $CRTFILE && return 0
-  yesno "create self-signed certificate '$SUBJECT' ($CRTFILE)?" || return
+  yesno "Create self-signed certificate '$SUBJECT' ($CRTFILE) ?" || return
   create-cnf "$CNFFILE" || return
   create-key "$KEYFILE" || return
   PARAMS=(
@@ -301,10 +301,10 @@ function create-self() {
     ${PASSWORD:+-passin env:PASSWORD}
   )
   $OPENSSL req "${PARAMS[@]}"
-  is-error "can't create auto-signed '$CRTFILE'" || return
+  is-error "Cannot create auto-signed '$CRTFILE'" || return
 }
 
-#X-ACTION create-ca CN|SUBJ: create certificat authority & storage
+#X-ACTION create-ca [CN|SUBJ]: Create a Certificate Authority (CA) and its storage
 function create-ca() {
   local CNFFILE=$CA_CNFFILE
   local KEYFILE=$CA_KEYFILE
@@ -331,13 +331,13 @@ function create-cert() {
   create-crt "$@"
 }
 
-#X-ACTION create-crt {CN|SUBJ} [ALTNAMES...]: create certificate
+#X-ACTION create-crt [CN|SUBJ] <ALTNAMES>: Create a certificate
 function create-crt() {
   local CRTFILE=${1:-$CRTFILE}
-  [[ $SUBJECT ]] || fatal "can't get create cert with empty subject"
+  [[ $SUBJECT ]] || fatal "Cannot get create cert with empty subject"
   [[ $FORCE ]] && FORCE_CREATE_CRT=1 && unset FORCE
   is-exists -$FORCE_CREATE_CRT "$CRTFILE" && return 0
-  yesno "create certificate '$SUBJECT' ($CRTFILE) ?" || return
+  yesno "Create certificate '$SUBJECT' ($CRTFILE) ?" || return
   create-csr "$CSRFILE" || return
   PARAMS=(
     -config "$CA_CNFFILE"
@@ -349,7 +349,7 @@ function create-crt() {
     ${CA_PASSWORD:+-passin env:CA_PASSWORD}
   )
   $OPENSSL ca "${PARAMS[@]}"
-  is-error "can't sign request '$CSRFILE' to '$CRTFILE'" || return
+  is-error "Cannot sign request '$CSRFILE' to '$CRTFILE'" || return
   ca-update-db "$CRTFILE" >> ca.idz
 }
 
@@ -378,7 +378,7 @@ function ca-update-db() {
   mv -f ca.idz.new ca.idz
 }
 
-#X-ACTION ca-list: list certificates store in CA
+#X-ACTION ca-list: List certificates stored in the CA
 function ca-list() {
   local CA_IDXFILE=ca.idx
   awk < $CA_IDXFILE '
@@ -406,13 +406,13 @@ function ca-list() {
   '
 }
 
-#X-ACTION ca-sign-csr CN|SUBJ|CSRFILE: sign request given in file using CA
+#X-ACTION ca-sign-csr [CN|SUBJ|CSRFILE]: Sign a CSR file using the CA
 function ca-sign-csr() {
   local CSRFILE=${1:-$CSRFILE}
   local CRTFILE=${CRTFILE:-${CSRFILE%.csr}.crt}
   SUBJECT=$(openssl req -in $CSRFILE -subject -noout)
   [[ ${SUBJECT:0:8} == "subject=" ]] && SUBJECT=${SUBJECT:8} ||
-    fatal "can't get subject in CSR '$CSRFILE'"
+    fatal "Cannot get subject in CSR '$CSRFILE'"
   SUBJECT=/${SUBJECT//, /\/}
   SUBJECT=${SUBJECT// = /=}
   COMMON_NAME=${SUBJECT##*/CN=}
@@ -420,25 +420,25 @@ function ca-sign-csr() {
   create-crt "$CRTFILE"
 }
 
-#X-ACTION ca-update-crt CN|SUBJ|CRTFILE: upate certificate
+#X-ACTION ca-update-crt [CN|SUBJ|CRTFILE]: Update a certificate
 function ca-update-crt() {
   local CRTFILE=${1:-$CRTFILE}
   local CSRFILE=${CSRFILE:-${CRTFILE%.crt}.csr}
   SUBJECT=$(openssl req -in "$CSRFILE" -subject -noout)
   [[ ${SUBJECT:0:8} == "subject=" ]] && SUBJECT=${SUBJECT:8} ||
-    fatal "can't get subject in CSR '$CSRFILE'"
+    fatal "Cannot get subject in CSR '$CSRFILE'"
   yesno "Are you sure to update (revoke/sign) '$SUBJECT'" || return
   YES=1 ca-revoke-crt "$CRTFILE"
   YES=1 FORCE_CREATE_CRT=1 ca-sign-csr "$CSRFILE"
   return 0
 }
 
-#X-ACTION ca-revoke-crt CN|SUBJ|CRTFILE: revoke certificate
+#X-ACTION ca-revoke-crt [CN|SUBJ|CRTFILE]: Revoke a certificate
 function ca-revoke-crt() {
   local CRTFILE=${1:-$CRTFILE}
   SUBJECT=$(openssl x509 -in $CRTFILE -subject -noout)
   [[ ${SUBJECT:0:8} == "subject=" ]] && SUBJECT=${SUBJECT:8} ||
-    fatal "can't get subject in CRT '$CRTFILE'"
+    fatal "Cannot get subject in CRT '$CRTFILE'"
   SUBJECT=/${SUBJECT//, /\/}
   SUBJECT=${SUBJECT// = /=}
   COMMON_NAME=${SUBJECT##*/CN=}
@@ -453,7 +453,7 @@ function ca-revoke-crt() {
     ${CA_PASSWORD:+-passin env:CA_PASSWORD}
   )
   $OPENSSL ca "${PARAMS[@]}"
-  is-error "can't revoke certificate '$SUBJECT'" || return
+  is-error "Cannot revoke certificate '$SUBJECT'" || return
 }
 
 function usage() {
@@ -466,16 +466,16 @@ function usage() {
   echo "Options:"
   sed -nr "s/^[[:space:]]*## ([^:]*): /\1\t/p" -- "$0" |
     while read OPT DESC ; do
-      printf " %-20s %s\n" "$OPT" "$DESC"
+      printf " %-23s %s\n" "$OPT" "$DESC"
     done
   echo
-  echo "<ACTION> is one of :"
+  echo "<ACTION> is one of:"
   sed -nr "s/^#X-ACTION ([^:]*): /\1\t/p" -- "$0" |
     while read OPT DESC ; do
-      printf " %s\n     %s\n" "$OPT" "$DESC"
+      printf " %s\n     \342\224\224\342\224\200 %s\n" "$OPT" "$DESC"
     done
   echo
-  echo "For SubjAltName, add address type : DNS:<FQDN>, IP:ADDR"
+  echo "For Subject Alternative Names (SANs), add address type : DNS:<FQDN>, IP:ADDR"
   return 0
 }
 
@@ -495,24 +495,24 @@ declare XDEBUG=0
 
 while (( $# > 0 )); do
   case "$1" in
-    ## -h, --help: This help
+    ## -h, --help: Display help message
     -h|--help) usage && exit 0 ;;
-    ## -V, --version: Show version
+    ## -V, --version: View version
     -V|--version) version && exit 0 ;;
-    ## --x-debug: Enable bash debug mode
-    --x-debug)    XDEBUG=1 ;;
-    ## -v, --verbose: Define verbose level (must be repeat)
-    -v|--verbose) ((VERBOSE++)) ;;
-    ## -q, --quiet: Set verbose level to 0
-    -q|--quiet) ((VERBOSE=0)) ;;
     ## -C, --ca: Set current CA base directory
     -C|--ca) BASEDIR=$2 ; shift ;;
-    ## -Fcsr: Regenerate CSR even if exists (eg: change in SANs)
-    -Fcsr) FORCE_CREATE_CSR=1 ;;
-    ## -y, --yes: valid all response
+    ## -q, --quiet: Set verbose level to 0
+    -q|--quiet) ((VERBOSE=0)) ;;
+    ## -y, --yes: Validate all responses
     -y|--yes) YES=1 ;;
-    ## -c, --cipher CIPHER: Define cipher for key (none for no encryption)
+    ## -v, --verbose: Define verbose level (must be repeat)
+    -v|--verbose) ((VERBOSE++)) ;;
+    ## -c, --cipher [CIPHER]: Define cipher for key (none for no encryption)
     -c|--cipher) CIPHER=$2 ; [[ $CIPHER == none ]] && unset CIPHER ; shift ;;
+    ## --force: Regenerate CSR even if it exists (e.g. change in SANs)
+    --force) FORCE_CREATE_CSR=1 ;;
+    ## --x-debug: Enable bash debug mode
+    --x-debug) XDEBUG=1 ;;
     # generic args
     --) shift ; break ;;
     -*) usage "Unknown parameter '$1'" && exit 1 ;;
@@ -523,13 +523,11 @@ done
 
 [[ $XDEBUG == 1 ]] && set -x
 
-[[ -z ${ARGS[@]} ]] &&
-  fatal --usage "need ACTION"
+[[ -z ${ARGS[@]} ]] && fatal --usage "ACTION argument required"
 
 ACTION=${ARGS[0]}; ARGS=( "${ARGS[@]:1}" )
 
-declare -f "$ACTION" > /dev/null ||
-  fatal "undefine action '$ACTION'"
+declare -f "$ACTION" > /dev/null || fatal "Undefined action '$ACTION'"
 
 ####################################################
 ## main program starts here
@@ -543,7 +541,7 @@ declare -f "$ACTION" > /dev/null ||
 if [[ $BASEDIR ]]; then
   if [[ ! -d $BASEDIR ]]; then
     yesno "Create CA storage directory '$BASEDIR'" ||
-      fatal "Can't create CA storage directory '$BASEDIR'"
+      fatal "CA storage directory creation cancelled: '$BASEDIR'"
     mkdir -p $BASEDIR
   fi
   cd $BASEDIR
@@ -557,12 +555,12 @@ if [[ -r ${ARGS[0]} ]]; then
   # ARGV[0] is a filename
   FILENAME=${ARGV[0]}
 elif [[ ${ARGS[0]} == "/" ]]; then
-  # if ARGV[0] begin with /, it is a subject
+  # if ARGS[0] begin with /, it is a subject
   shopt -s nocasematch
   SUBJECT="${ARGS[0]}"
   COMMON_NAME="${SUBJECT##*/CN=}"
   [[ -z ${COMMON_NAME//[^/=]} ]] ||
-    fatal "empty or bad Common Name"
+    fatal "Empty or bad Common Name (CN)"
 elif [[ ${ARGS[0]} ]]; then
   # it's a non empty common name
   COMMON_NAME=${ARGS[0]}
