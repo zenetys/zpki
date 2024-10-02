@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificates Manager</title>
+    <link rel="icon" type="image/png" href="src/images/logo.png"/>
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="index.css"/>
+</head>
+<body>
+    <div class="container-fluid">
+        <form id="certForm">
+            <div class="form-group">
+
+                <!-- Create a certificate -->
+                <div class="dropdown mr-2">
+                    <button class="btn btn-secondary m-0 dropdown-toggle" type="button" id="createDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img src="src/images/plus-solid.svg" class="icon"/>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-left" aria-labelledby="createDropdown">
+                        <a class="dropdown-item create" data-count="1">1 Certificate</a>
+                        <a class="dropdown-item create" data-count="10">10 Certificates</a>
+                        <a class="dropdown-item create" data-count="100">100 Certificates</a>
+                        <a class="dropdown-item create" data-count="1000">1000 Certificates</a>
+                    </div>
+                </div>
+                <input type="hidden" id="certCount" value="">
+
+                <!-- Certificate name input -->
+                <input type="text" id="certName" class="form-control rounded mr-2" placeholder="Certificate name (ex: John Doe)">
+
+                <!-- Search Bar -->
+                <input type="text" id="certSearch" class="form-control rounded" placeholder="Search for a certificate">
+            </div>
+            
+            <!-- Actions -->
+            <div id="actionButtons" class="action-buttons">
+                <button id="revokeSelected" class="btn btn-dark btn-sm" hidden>
+                    <img src="src/images/ban-solid.svg" class="icon mr-1"/> Revoke
+                </button>
+                <button id="renewSelected" class="btn btn-dark btn-sm" hidden>
+                    <img src="src/images/plus-solid.svg" class="icon mr-1"/> Renew
+                </button>
+                <div class="dropdown float-right">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="languageDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img src="src/images/globe-solid.svg" class="icon"/>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="languageDropdown" id="languageMenu">
+                        <a class="dropdown-item d-flex justify-content-between" id="english" data-lang="en">
+                            English
+                        </a>
+                        <a class="dropdown-item d-flex justify-content-between" id="french" data-lang="fr">
+                            French
+                        </a>
+                        <a class="dropdown-item d-flex justify-content-between" id="spanish" data-lang="es">
+                            Spanish
+                        </a>
+                        <a class="dropdown-item d-flex justify-content-between" id="german" data-lang="de">
+                            Deutch
+                        </a>
+                    </div>
+                </div>
+                <button id="refresh" class="btn btn-secondary btn-sm float-right mr-1">
+                    <img src="src/images/rotate-solid.svg" class="icon mr-1"/> Refresh
+                </button>
+            </div>
+        </form>
+
+        <!-- Table header -->
+        <table class="table table-sm">
+            <thead class="thead">
+                <tr>
+                    <th class="resizable" scope="col" data-sort="selectBox" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
+                        <div class="sortable-handle">
+                            <img src="src/images/square-check-solid.svg" class="icon"/>
+                        </div>
+                    </th>
+                    <th class="resizable" scope="col" data-sort="status" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
+                        <div class="sortable-handle">
+                            <img src="src/images/chart-simple-solid.svg" class="icon mr-1"/> Status
+                        </div>
+                    </th>
+                    <th class="resizable" scope="col" data-sort="serial" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
+                        <div class="sortable-handle">
+                            <img src="src/images/hashtag-solid.svg" class="icon mr-1"/> Serial
+                        </div>
+                    </th>
+                    <th class="resizable" scope="col" data-sort="startDate" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
+                        <div class="sortable-handle">
+                            <img src="src/images/calendar-day-solid.svg" class="icon mr-1"/> Start Date
+                        </div>
+                    </th>
+                    <th class="resizable" scope="col" data-sort="endDate" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
+                        <div class="sortable-handle">
+                            <img src="src/images/calendar-days-solid.svg" class="icon mr-1"/> End Date
+                        </div>
+                    </th>
+                    <th class="resizable" scope="col" data-sort="id" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
+                        <div class="sortable-handle">
+                            <img src="src/images/file-lines-solid.svg" class="icon mr-1"/> Common Name (CN)
+                        </div>
+                    </th>
+                    <th class="resizable" scope="col" data-sort="downloads" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
+                        <div class="sortable-handle">
+                            <img src="src/images/download-solid.svg" class="icon mr-1"/> Downloads
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="certTableBody">
+                <!-- Certificates Data -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="index.js"></script>
+    <script>
+        let headers = [...document.querySelectorAll('th')];
+        let dragCurEl = null;
+        let dragNextEl = null;
+        let dragOldIndex = -1;
+        let dragNewIndex = -1;
+
+        function onDragStart(evt) {
+            dragCurEl = evt.target;
+            dragOldIndex = headers.findIndex((e) => e === dragCurEl);
+            evt.dataTransfer.effectAllowed = 'move';
+        }
+
+        function onDragOver(evt) {
+            evt.preventDefault();
+            if (dragNextEl) {
+                dragNextEl.classList.remove('autotable-drag-border');
+            }
+            dragNextEl = evt.target.closest('th');
+            if (dragNextEl) {
+                dragNextEl.classList.add('autotable-drag-border');
+            }
+        }
+
+        function onDragEnd() {
+            dragNewIndex = headers.findIndex((e) => e === dragNextEl);
+            if (dragNextEl) {
+                dragNextEl.classList.remove('autotable-drag-border');
+            }
+
+            if (dragOldIndex !== -1 && dragNewIndex !== -1 && dragNewIndex !== dragOldIndex) {
+                // Move header
+                arrayMove(headers, dragOldIndex, dragNewIndex);
+                
+                // Move table content
+                const rows = [...document.querySelectorAll('#certTableBody tr')];
+                rows.forEach(row => {
+                    const cells = [...row.children];
+                    arrayMove(cells, dragOldIndex, dragNewIndex);
+                    row.innerHTML = '';
+                    cells.forEach(cell => row.appendChild(cell));
+                });
+                updateTable();
+            }
+
+            dragCurEl = null;
+            dragNextEl = null;
+            dragOldIndex = -1;
+            dragNewIndex = -1;
+        }
+
+        function arrayMove(arr, oldIndex, newIndex) {
+            const movedItem = arr.splice(oldIndex, 1)[0];
+            arr.splice(newIndex, 0, movedItem);
+        }
+
+        function updateTable() {
+            const tableHeader = document.querySelector('.thead tr');
+            tableHeader.innerHTML = ''; 
+            headers.forEach(header => {
+                tableHeader.appendChild(header);
+            });
+        }
+    </script>
+</body>
+</html>

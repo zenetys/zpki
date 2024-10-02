@@ -1,0 +1,17 @@
+certs
+certs.new
+crl
+private
+.zpki
+ca.cnf
+ca.crlnum
+ca.crlnum.old
+ca.crt
+ca.idx
+ca.idx.attr
+ca.idx.attr.old
+ca.idx.old
+ca.idz
+ca.key
+ca.srl
+ca.srl.old
