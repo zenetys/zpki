@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Certificates Manager</title>
-    <link rel="icon" type="image/png" href="src/images/logo.png"/>
+    <link rel="icon" href="src/images/logo.ico"/>
     <!-- CSS -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
@@ -14,24 +14,6 @@
     <div class="container-fluid">
         <form id="certForm">
             <div class="form-group">
-
-                <!-- Create a certificate -->
-                <div class="dropdown mr-2">
-                    <button class="btn btn-secondary m-0 dropdown-toggle" type="button" id="createDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img src="src/images/plus-solid.svg" class="icon"/>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-left" aria-labelledby="createDropdown">
-                        <a class="dropdown-item create" data-count="1">1 Certificate</a>
-                        <a class="dropdown-item create" data-count="10">10 Certificates</a>
-                        <a class="dropdown-item create" data-count="100">100 Certificates</a>
-                        <a class="dropdown-item create" data-count="1000">1000 Certificates</a>
-                    </div>
-                </div>
-                <input type="hidden" id="certCount" value="">
-
-                <!-- Certificate name input -->
-                <input type="text" id="certName" class="form-control rounded mr-2" placeholder="Certificate name (ex: John Doe)">
-
                 <!-- Search Bar -->
                 <input type="text" id="certSearch" class="form-control rounded" placeholder="Search for a certificate">
             </div>
@@ -49,22 +31,14 @@
                         <img src="src/images/globe-solid.svg" class="icon"/>
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="languageDropdown" id="languageMenu">
-                        <a class="dropdown-item d-flex justify-content-between" id="english" data-lang="en">
-                            English
-                        </a>
-                        <a class="dropdown-item d-flex justify-content-between" id="french" data-lang="fr">
-                            French
-                        </a>
-                        <a class="dropdown-item d-flex justify-content-between" id="spanish" data-lang="es">
-                            Spanish
-                        </a>
-                        <a class="dropdown-item d-flex justify-content-between" id="german" data-lang="de">
-                            Deutch
-                        </a>
+                        <a class="dropdown-item d-flex justify-content-between" id="english" data-lang="en">English</a>
+                        <a class="dropdown-item d-flex justify-content-between" id="french" data-lang="fr">French</a>
+                        <a class="dropdown-item d-flex justify-content-between" id="spanish" data-lang="es">Spanish</a>
+                        <a class="dropdown-item d-flex justify-content-between" id="german" data-lang="de">Deutsch</a>
                     </div>
                 </div>
-                <button id="refresh" class="btn btn-secondary btn-sm float-right mr-1">
-                    <img src="src/images/rotate-solid.svg" class="icon mr-1"/> Refresh
+                <button class="btn btn-secondary btn-sm float-right mr-1" id="openModalBtn">
+                    <img src="src/images/lock-solid.svg" class="icon"/> Unlock
                 </button>
             </div>
         </form>
@@ -114,6 +88,62 @@
                 <!-- Certificates Data -->
             </tbody>
         </table>
+    </div>
+
+    <!-- Modal pour entrer le mot de passe -->
+    <div class="modal fade" id="passwordModal" tabindex="-1" role="dialog" aria-labelledby="passwordModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="passwordModalLabel">Enter Password</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="passwordForm" method="POST" action="/set-password">
+                        <div class="form-group">
+                            <label for="password"></label>
+                            <div class="input-group">
+                                <input type="password" id="password" class="form-control" name="password" required>
+                                <div class="input-group-append">
+                                    <button type="button" id="togglePassword" class="btn btn-outline-secondary">
+                                        <img id="togglePasswordIcon" src="src/images/eye-solid.svg" alt="Toggle password visibility" style="width: 20px; height: 20px;">
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary float-right">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="dynamicModal" tabindex="-1" aria-labelledby="dynamicModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="dynamicModalLabel">Certificate Action</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                <form id="dynamicForm">
+                    <div id="formContent">
+                    <!-- Contenu dynamique ici -->
+                    </div>
+                    <div class="mb-3" id="caPassphraseContainer" style="display: none;">
+                    <label for="caPassphrase" class="form-label">CA Passphrase (peut être vide)</label>
+                    <input type="password" class="form-control" id="caPassphrase" placeholder="CA Passphrase">
+                    </div>
+                </form>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" id="confirmAction">Confirmer</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- JS -->
