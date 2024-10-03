@@ -424,13 +424,13 @@ function ca-list() {
       return a[1];
     }
   }
-  function isExpired(value) {
-    currentTime = strftime("%Y%m%d%H%M%S");
-    return (value < currentTime);
+  function isExpired(expirationDate) {
+    currentTime = strftime("%Y-%m-%dT%H:%M:%S%z");
+    return (expirationDate < currentTime);
   }
 
   function entry_json() {
-    status = (isExpired(rfc3339($4)) ? "E" : $1);
+    status = (isExpired(rfc3339($2)) ? "E" : $1);
     printf("%s\n {",((NR==1)?"":","));
     printf("\"status\":\"%s\"", status);
     printf(",\"expiration\":\"%s\"", rfc3339($2));
