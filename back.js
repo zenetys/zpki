@@ -1,12 +1,16 @@
 const { exec, spawn } = require('child_process');
 
 const fs = require('fs');
+const crypto = require('crypto');
+
 const path = require('path');
 const helmet = require('helmet');
+const bodyParser = require('body-parser');
 const rateLimit = require('express-rate-limit');
 
-const express = require('express');
 const cors = require('cors');
+const express = require('express');
+const cookieSession = require('cookie-session');
 
 // Set basic variables
 const app = express();
@@ -25,7 +29,16 @@ app.use(cors({ methods: ['GET', 'POST'] }));
 app.use('/src', express.static(srcDir));
 app.use(express.static(__dirname));
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(handleError);
 app.use(helmet());
+
+app.use(cookieSession({
+    name: 'session',
+    keys: [crypto.randomBytes(16).toString('hex'), crypto.randomBytes(16).toString('hex')],
+    maxAge: 600000
+}));
 
 // Function to find a unique certificate name
 const findUniqueCertName = (baseName) => {
@@ -233,7 +246,25 @@ app.post('/renew', (req, res, next) => {
     processRenewals();
 });
 
-app.use(handleError);
+// Route pour définir le mot de passe
+app.post('/set-password', (req, res) => {
+    const password = req.body.password;
+    if (password) {
+        req.session.pkiaccess = password;
+        return res.send('Mot de passe enregistré avec succès !');
+    }
+    return res.status(400).send('Mot de passe manquant.');
+});
+
+// Route pour vérifier l'accès et récupérer le mot de passe
+app.get('/get-password', (req, res) => {
+    if (req.session.pkiaccess) {
+        res.json({ pkiaccess: req.session.pkiaccess });
+    } else {
+        res.json({ pkiaccess: '' });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server started: http://localhost:${port}`);
 });
