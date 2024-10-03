@@ -26,6 +26,17 @@
     align-items: center;
 }
 
+.modal-content {
+    border-radius: 30px;
+    transition: 0.5s;
+}
+.modal .input-group .btn:hover {
+    background: #eee;
+}
+.modal .input-group img:hover {
+    transition: 0.2s;
+}
+
 .dropdown #languageDropdown {
     padding: 3px 10px;
 }
@@ -106,6 +117,10 @@
     font-size: 16px;
     padding: 2px;
 }
+.button-container .btn {
+    min-width: 120px;
+    width: 75%;
+}
 
 .tooltip-container {
     position: relative;
@@ -119,6 +134,14 @@
 }
 
 /* Table */
+table {
+    text-align: center;
+}
+.table td {
+    vertical-align: middle;
+    padding: 2px 5px;
+}
+
 thead {
     position: sticky;
     top: 130px;
@@ -126,7 +149,6 @@ thead {
     text-align: center;
     z-index: 1;
 }
-
 thead::after {
     content: "";
     display: block;
@@ -139,32 +161,22 @@ thead::after {
     box-shadow: 0 6px 6px #0000001a;
     z-index: -1;
 }
-
-table {
-    text-align: center;
-}
-
-.table td {
-    vertical-align: middle;
-    padding: 2px 5px;
-}
-
-tr:first-child:hover {
+thead tr:first-child:hover {
     background: inherit;
 }
+
 tr:hover {
     background: #ebf0fae4;
+    transition: 0.2s;
 }
 
 th, td {
     position: relative;
     overflow: hidden;
     text-align: left;
+    text-wrap: nowrap;
 }
-th:first-child {
-    text-align: center;
-}
-td:first-child {
+th:first-child, td:first-child {
     text-align: center;
 }
 
