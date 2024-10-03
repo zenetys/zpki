@@ -680,6 +680,30 @@ function ca-dump-key() {
   awk '{if (substr($0, 1, 1) == "-") dump=1; if (dump) print $0;}' < $KEYFILE
 }
 
+function ca-dump-pkcs12() {
+  local args
+
+  if [[ -z $EXPORT_PASSWORD ]]; then
+     EXPORT_PASSWORD=$(openssl rand -base64 18)
+     echo "Export password is : $EXPORT_PASSWORD" >&2
+  fi
+
+  export EXPORT_PASSWORD
+
+  [[ -e $KEYFILE ]] ||
+    fatal "can't get $KEYFILE"
+  [[ -e $CRTFILE ]] ||
+    fatal "can't get $CRTFILE"
+  args=(
+    -export
+    -in "$CRTFILE"
+    -inkey "$KEYFILE" ${KEYPASS:+-passin "env:$PASSWORD"}
+    -CAfile "$CAFILE"
+    -passout "env:EXPORT_PASSORD"
+  )
+  openssl pkcs12 "${args[@]}"
+}
+
 
 function usage() {
   local IFS=$'\t'
