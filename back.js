@@ -10,7 +10,7 @@ const rateLimit = require('express-rate-limit');
 
 const cors = require('cors');
 const express = require('express');
-const cookieSession = require('cookie-session');
+const session = require('express-session');
 
 // Set basic variables
 const app = express();
@@ -33,11 +33,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(handleError);
 app.use(helmet());
-
-app.use(cookieSession({
-    name: 'session',
-    keys: [crypto.randomBytes(16).toString('hex'), crypto.randomBytes(16).toString('hex')],
-    maxAge: 600000
+app.use(session({
+    secret: crypto.randomBytes(16).toString('hex'),
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 600000,
+        secure: false,
+        httpOnly: true,
+    }
 }));
 
 // Function to find a unique certificate name
@@ -172,7 +176,7 @@ app.post('/revoke', (req, res, next) => {
     };
 
     const processRevocations = async () => {
-        const certData = readCertData();
+        const certData = readCertData(); // Refaire le code de récup
         const certMap = new Map(certData.map(cert => [cert.id, cert]));
 
         try {
@@ -228,7 +232,7 @@ app.post('/renew', (req, res, next) => {
     };
 
     const processRenewals = async () => {
-        const certData = readCertData();
+        const certData = readCertData(); // Refaire le code de récup
         const certMap = new Map(certData.map(cert => [cert.id, cert]));
 
         try {
@@ -251,9 +255,9 @@ app.post('/set-password', (req, res) => {
     const password = req.body.password;
     if (password) {
         req.session.pkiaccess = password;
-        return res.send('Mot de passe enregistré avec succès !');
+        return res.json({ response: 'Password saved!' })
     }
-    return res.status(400).send('Mot de passe manquant.');
+    return res.json({ response: 'Missing password.' });
 });
 
 // Route pour vérifier l'accès et récupérer le mot de passe
