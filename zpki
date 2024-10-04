@@ -4,22 +4,39 @@
 # Author: Benoit DOLEZ <bdolez@zenetys.com>
 # Copyright: 2020-2024
 # Version: 1.0
-#
 
 # Filename usage to determine action
 # zpki create-ca "CA-SUBJ"
 # zpki create-key "SUBJ"
 # zpki create-csr "SUBJ"
 # zpki create-crt "SUBJ"
+# zpki create-self "SUBJ"
+# zpki create-cnf
+# zpki ca-sign-csr "CSRFILE"
+# zpki ca-update-crt "CRTFILE"
+# zpki ca-revoke-crt "CRTFILE"
+# zpki ca-display-crt "CRTFILE"
+# zpki ca-dump-crt "CRTFILE"
+# zpki ca-dump-csr "CSRFILE"
+# zpki ca-dump-key "KEYFILE"
+# zpki ca-dump-pkcs12 "KEYFILE"
+# zpki ca-update-dump-crt "CRTFILE"
+# zpki ca-update-db
+# zpki ca-list
 
-# Directory tree :
-# zpki              : ZPKI managed directory
-# ca.crt            : CA Certificate
-# ca.cnf            : Config for CAb
-# ca.key            : CA Private Key
-# keys/SUBJ.key     : SUBJ CommonName Private Key
-# certs/SUBJ.crt    : SUBJ CommonName Certificate
-# requests/SUBJ.csr : SUBJ CommonName Certificate Request
+# Directory tree:
+# zpki                  : ZPKI managed directory
+# ca.crt                : CA Certificate
+# ca.cnf                : Config for CA
+# ca.key                : CA Private Key
+# ca.idx                : Index of issued certificates
+# ca.idx.attr           : Attributes of issued certificates
+# ca.srl                : Serial number for issued certificates
+# certs/SUBJ.crt        : SUBJ CommonName Certificate
+# certs/SUBJ.csr        : SUBJ CommonName Certificate Signing Request
+# certs.new/SERIAL.pem  : New certificates by serial number
+# private/SUBJ.key      : SUBJ CommonName Private Key
+# crl                   : Certificate Revocation List
 
 NUMBITS=${ZPKI_NUMBITS:-4096}
 NUMDAYS=${ZPKI_NUMDAYS:-366}
@@ -247,9 +264,11 @@ function create-cnf() {
 #X-ACTION create-key [CN|SUBJ]: Create a key file
 function create-key() {
   local KEYFILE=${1:-$KEYFILE}
+  [[ $SUBJECT ]] || fatal "Cannot create a private key file with empty subject"
   [[ $FORCE ]] && FORCE_CREATE_KEY=1 && unset FORCE
   is-exists -$FORCE_CREATE_KEY "$KEYFILE" && return 0
   yesno "Create key '$KEYFILE' ?" || return
+
   PARAMS=(
     -out "$KEYFILE"
     ${CIPHER:+-$CIPHER}
@@ -260,9 +279,11 @@ function create-key() {
   is-error "Cannot create key '$KEYFILE'" || return
 }
 
+
 #X-ACTION create-csr [CN|SUBJ] <ALTNAMES>: Generate a certificate signing request (CSR) file
 function create-csr() {
   local CSRFILE=${1:-$CSRFILE}
+  [[ $SUBJECT ]] || fatal "Cannot generate a certificate signing request with empty subject"
   [[ $FORCE ]] && FORCE_CREATE_CSR=1 && unset FORCE
   is-exists -$FORCE_CREATE_CSR "$CSRFILE" && return 0
   yesno "Create certificate request '$CSRFILE' ?" || return
@@ -284,7 +305,7 @@ function create-csr() {
 #X-ACTION create-self [CN|SUBJ] <ALTNAMES>: Create a self-signed certificate
 function create-self() {
   local CRTFILE=${1:-$CRTFILE}
-  [[ $SUBJECT ]] || fatal "Cannot get create CA with empty subject"
+  [[ $SUBJECT ]] || fatal "Cannot create self-signed certificate with empty subject"
   [[ $FORCE ]] && FORCE_CREATE_CRT=1 && unset FORCE
   is-exists -$FORCE_CREATE_CRT $CRTFILE && return 0
   yesno "Create self-signed certificate '$SUBJECT' ($CRTFILE) ?" || return
@@ -314,7 +335,8 @@ function create-ca() {
   local SUBJALT # empty
   local FORCE_CREATE_CRT # empty
   local SERIAL=$RANDOM$RANDOM$RANDOM
-
+  
+  [[ $SUBJECT ]] || fatal "Cannot create CA with empty subject"
   create-cnf  "$CNFFILE" || return
   PASSWORD=$CA_PASSWORD create-key "$KEYFILE" || return
   PASSWORD=$CA_PASSWORD EXT="ca_ext" create-self "$CRTFILE" || return
@@ -335,7 +357,7 @@ function create-cert() {
 #X-ACTION create-crt [CN|SUBJ] <ALTNAMES>: Create a certificate
 function create-crt() {
   local CRTFILE=${1:-$CRTFILE}
-  [[ $SUBJECT ]] || fatal "Cannot get create cert with empty subject"
+  [[ $SUBJECT ]] || fatal "Cannot create certificate with empty subject"
   [[ $FORCE ]] && FORCE_CREATE_CRT=1 && unset FORCE
   is-exists -$FORCE_CREATE_CRT "$CRTFILE" && return 0
   yesno "Create certificate '$SUBJECT' ($CRTFILE) ?" || return
@@ -354,28 +376,14 @@ function create-crt() {
   ca-update-db "$CRTFILE" >> ca.idz
 }
 
+#X-ACTION ca-update-db: Reload all certificates in the ca.idz file
 function ca-update-db() {
-  if [[ $1 ]]; then
-    local CRTFILE=$1
-    local IFS=$'\n'
-    local hash serial notBefore notAfter subject issuer email
-    for A in hash=$(openssl x509 -in "$CRTFILE" -noout -hash -serial \
-                        -startdate -enddate -email -subject -issuer); do
-      eval "${A%%=*}='${A#*=}'"
-    done
-    subject="/${subject//, /\/}"; subject="${subject// = /=}"
-    issuer="/${issuer//, /\/}"; issuer="${issuer// = /=}"
-    printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "$serial" "$hash" \
-         $(date -Iseconds -d "$notBefore") $(date -Iseconds -d "$notAfter") \
-         "$subject" "$issuer" "$email"
-    return
-  fi
-
   $OPENSSL ca -config "$CA_CNFFILE" -updatedb
-  rm ca.idz.new
+  rm -f ca.idz.new
   find certs.new -maxdepth 1 -type f -name "*.pem" | while read -r; do
-    ca-update-db "$REPLY" >> ca.idz.new
+    ca-update-dump-crt "$REPLY" >> ca.idz.new
   done
+  echo "Updated ca.idz file"
   mv -f ca.idz.new ca.idz
 }
 
@@ -430,7 +438,6 @@ function ca-list() {
   }
 
   function entry_json() {
-    status = (isExpired(rfc3339($2)) ? "E" : $1);
     printf("%s\n {",((NR==1)?"":","));
     printf("\"status\":\"%s\"", status);
     printf(",\"expiration\":\"%s\"", rfc3339($2));
@@ -448,7 +455,7 @@ function ca-list() {
     printf("}");
   }
   function entry_tsv() {
-    printf("%s\t", $1);
+    printf("%s\t", status);
     printf("%s\t", notBefore[$4]);
     printf("%s\t", rfc3339($2));
     printf("%s\t", rfc3339($3));
@@ -461,6 +468,7 @@ function ca-list() {
     # printf("%s\t", "filename");
   }
   {
+    status = (isExpired(rfc3339($2)) ? "E" : $1);
     if (FORMAT_JSON)
       entry_json();
     else
@@ -476,6 +484,7 @@ function ca-list() {
 function ca-sign-csr() {
   local CSRFILE=${1:-$CSRFILE}
   local CRTFILE=${CRTFILE:-${CSRFILE%.csr}.crt}
+  [[ -z ${ARGS[0]} ]] && fatal "Function needs an argument" && return
   SUBJECT=$(openssl req -in $CSRFILE -subject -noout)
   [[ ${SUBJECT:0:8} == "subject=" ]] && SUBJECT=${SUBJECT:8} ||
     fatal "Cannot get subject in CSR '$CSRFILE'"
@@ -490,6 +499,7 @@ function ca-sign-csr() {
 function ca-update-crt() {
   local CRTFILE=${1:-$CRTFILE}
   local CSRFILE=${CSRFILE:-${CRTFILE%.crt}.csr}
+  [[ -z ${ARGS[0]} ]] && fatal "Function needs an argument" && return
   SUBJECT=$(openssl req -in "$CSRFILE" -subject -noout)
   [[ ${SUBJECT:0:8} == "subject=" ]] && SUBJECT=${SUBJECT:8} ||
     fatal "Cannot get subject in CSR '$CSRFILE'"
@@ -502,6 +512,7 @@ function ca-update-crt() {
 #X-ACTION ca-revoke-crt [CN|SUBJ|CRTFILE]: Revoke a certificate
 function ca-revoke-crt() {
   local CRTFILE=${1:-$CRTFILE}
+  [[ -z ${ARGS[0]} ]] && fatal "Function needs an argument" && return
   SUBJECT=$(openssl x509 -in $CRTFILE -subject -noout)
   [[ ${SUBJECT:0:8} == "subject=" ]] && SUBJECT=${SUBJECT:8} ||
     fatal "Cannot get subject in CRT '$CRTFILE'"
@@ -566,9 +577,8 @@ function x509-to-json() {
 #X-ACTION ca-display-crt [CRTFILE]: Display an entire certificate file (.crt)
 function ca-display-crt() {
   local CRTFILE=${1:-$CRTFILE}
-
-  [[ -e $CRTFILE ]] ||
-    fatal "Cannot get $CRTFILE"
+  [[ -z ${ARGS[0]} ]] && fatal "Function needs an argument" && return
+  [[ -e $CRTFILE ]] || fatal "Cannot get $CRTFILE"
   if [[ $FORMAT == JSON ]]; then
     openssl x509 -noout -text -in $CRTFILE | x509-to-json
   else
@@ -576,58 +586,70 @@ function ca-display-crt() {
   fi
 }
 
+#X-ACTION ca-update-dump-crt [CRTFILE]: Update and dump the content of a certificate file (.crt) file
+function ca-update-dump-crt() {
+  local CRTFILE=${1:-$CRTFILE}
+  local IFS=$'\n'
+  local hash serial notBefore notAfter subject issuer email
+  [[ -z ${ARGS[0]} ]] && fatal "Function needs an argument" && return
+  [[ -e $CRTFILE ]] || fatal "Cannot get $CRTFILE"
+  for A in hash=$(openssl x509 -in "$CRTFILE" -noout -hash -serial \
+                          -startdate -enddate -email -subject -issuer); do
+    eval "${A%%=*}='${A#*=}'"
+  done
+  subject="/${subject//, /\/}"; subject="${subject// = /=}"
+  issuer="/${issuer//, /\/}"; issuer="${issuer// = /=}"
+  printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "$serial" "$hash" \
+      $(date -Iseconds -d "$notBefore") $(date -Iseconds -d "$notAfter") \
+      "$subject" "$issuer" "$email"
+}
+
 #X-ACTION ca-dump-crt [CRTFILE]: Dump the content of a certificate (.crt) file
 function ca-dump-crt() {
   local CRTFILE=${1:-$CRTFILE}
-
-  [[ -e $CRTFILE ]] ||
-    fatal "Cannot get $CRTFILE"
+  [[ -z ${ARGS[0]} ]] && fatal "Function needs an argument: CRTFILE" && return
+  [[ -e $CRTFILE ]] || fatal "Cannot get $CRTFILE"
   gawk '{if (substr($0, 1, 1) == "-") dump=1; if (dump) print $0;}' < $CRTFILE
 }
 
 #X-ACTION ca-dump-csr [CSRFILE]: Dump the content of a certificate signing request (.csr) file
 function ca-dump-csr() {
   local CSRFILE=${1:-$CSRFILE}
-
-  [[ -e $CSRFILE ]] ||
-    fatal "Cannot get $CSRFILE"
+  [[ -z ${ARGS[0]} ]] && fatal "Function needs an argument: CSRFILE" && return
+  [[ -e $CSRFILE ]] || fatal "Cannot get $CSRFILE"
   gawk '{if (substr($0, 1, 1) == "-") dump=1; if (dump) print $0;}' < $CSRFILE
 }
 
 #X-ACTION ca-dump-key [KEYFILE]: Dump the content of a private key (.key) file
 function ca-dump-key() {
   local KEYFILE=${1:-$KEYFILE}
-
-  [[ -e $KEYFILE ]] ||
-    fatal "Cannot get $KEYFILE"
+  [[ -z ${ARGS[0]} ]] && fatal "Function needs an argument: KEYFILE" && return
+  [[ -e $KEYFILE ]] || fatal "Cannot get $KEYFILE"
   gawk '{if (substr($0, 1, 1) == "-") dump=1; if (dump) print $0;}' < $KEYFILE
 }
 
-#X-ACTION ca-dump-pkcs12: Dump the content of a certificate in the pkcs12 format
+#X-ACTION ca-dump-pkcs12 [KEYFILE]: Dump the content of certificate in the pkcs12 format
 function ca-dump-pkcs12() {
   local args
-
+  [[ -z ${ARGS[0]} ]] && fatal "Function needs an argument : FILE" && return
   if [[ -z $EXPORT_PASSWORD ]]; then
-     EXPORT_PASSWORD=$(openssl rand -base64 18)
-     echo "Export password is : $EXPORT_PASSWORD" >&2
+    EXPORT_PASSWORD=$(openssl rand -base64 18)
+    echo "Export password is: $EXPORT_PASSWORD" >&2
   fi
 
   export EXPORT_PASSWORD
 
-  [[ -e $KEYFILE ]] ||
-    fatal "can't get $KEYFILE"
-  [[ -e $CRTFILE ]] ||
-    fatal "can't get $CRTFILE"
+  [[ -e $KEYFILE ]] || fatal "Cannot get $KEYFILE"
+  [[ -e $CRTFILE ]] || fatal "Cannot get $CRTFILE"
   args=(
     -export
     -in "$CRTFILE"
     -inkey "$KEYFILE" ${KEYPASS:+-passin "env:$PASSWORD"}
     -CAfile "$CAFILE"
-    -passout "env:EXPORT_PASSORD"
+    -passout "env:EXPORT_PASSWORD"
   )
   openssl pkcs12 "${args[@]}"
 }
-
 
 function usage() {
   local IFS=$'\t'
@@ -648,7 +670,7 @@ function usage() {
       printf " %s\n     \342\224\224\342\224\200 %s\n" "$OPT" "$DESC"
     done
   echo
-  echo "For Subject Alternative Names (SANs), add address type : DNS:<FQDN>, IP:ADDR"
+  echo "For Subject Alternative Names (SANs), add address type: DNS:<FQDN>, IP:ADDR"
   return 0
 }
 
