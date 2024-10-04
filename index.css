@@ -28,13 +28,15 @@
 
 .modal-content {
     border-radius: 30px;
-    transition: 0.5s;
+}
+.modal input {
+    transition: 0.2s;
+}
+.modal input:hover {
+    background: #eee;
 }
 .modal .input-group .btn:hover {
     background: #eee;
-}
-.modal .input-group img:hover {
-    transition: 0.2s;
 }
 
 .dropdown #languageDropdown {
@@ -119,7 +121,6 @@
 }
 .button-container .btn {
     min-width: 120px;
-    width: 75%;
 }
 
 .tooltip-container {
@@ -161,10 +162,10 @@ thead::after {
     box-shadow: 0 6px 6px #0000001a;
     z-index: -1;
 }
-thead tr:first-child:hover {
+
+tr:first-child:hover {
     background: inherit;
 }
-
 tr:hover {
     background: #ebf0fae4;
     transition: 0.2s;
@@ -184,7 +185,6 @@ th.resizable {
     resize: horizontal;
     overflow: auto;
 }
-
 th.resizable:hover {
     background: #fafafa;
     border-radius: 10px;
