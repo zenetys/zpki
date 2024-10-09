@@ -1,13 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
-    const createItems = document.querySelectorAll('.create');
-    const createDropdown = document.getElementById('createDropdown');
-    const certCountInput = document.getElementById('certCount');
-    const certNameInput = document.getElementById('certName');
+    const createBtn = document.getElementById('createBtn');
     const certSearchInput = document.getElementById('certSearch');
     const certTableBody = document.getElementById('certTableBody');
-    const revokeSelectedButton = document.getElementById('revokeSelected');
-    const renewSelectedButton = document.getElementById('renewSelected');
     const openModalBtn = document.getElementById('openModalBtn');
     const passwordInput = document.getElementById('password');
     const texts = {
@@ -145,8 +140,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update top page content
         $('#certName').attr('placeholder', texts[lang].certificateNamePlaceholder);
         $('#certSearch').attr('placeholder', texts[lang].searchPlaceholder);
-        $('#revokeSelected').html(`<img src="images/ban-solid.svg" class="icon me-1"/> ${texts[lang].revoke}`);
-        $('#renewSelected').html(`<img src="images/rotate-right-solid.svg" class="icon me-1"/> ${texts[lang].renew}`);
         $('#openModalBtn').html(`<img src="images/lock-solid.svg" class="icon me-1"/> ${texts[lang].unlock}`);
         $('#english').html(`${texts[lang].lang.english} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
         $('#french').html(`${texts[lang].lang.french} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
@@ -170,23 +163,26 @@ document.addEventListener('DOMContentLoaded', function() {
             .replace(/[^a-zA-Z0-9-_ ]/g, '');
     }
 
+    // Replace space with underscore
+    function replaceSpaces(str) {
+        return str.replace(/\s+/g, '_');
+    }
+
     // Format date to YYYY/MM/DD from ISO format
     function formatDate(isoDateString) {
         const date = new Date(isoDateString);
-        return date.toLocaleDateString('fr-CA');
+        return date.toLocaleDateString('fr-FR');
     }
     
-    // Update actions buttons
-    function updateActionButtons() {
-        const selectedCerts = document.querySelectorAll('.cert-checkbox.active');
-        if (selectedCerts.length > 0) {
-            revokeSelectedButton.hidden = false;
-            renewSelectedButton.hidden = false;
-        } else {
-            revokeSelectedButton.hidden = true;
-            renewSelectedButton.hidden = true;
-        }
-    }
+    // // Update actions buttons
+    // function updateActionButtons() {
+    //     const selectedCerts = document.querySelectorAll('.cert-checkbox.active');
+    //     if (selectedCerts.length > 0) {
+    //         pass
+    //     } else {
+    //         pass
+    //     }
+    // }
 
     // Sorting columns
     function sortTable(sortKey, order) {
@@ -236,7 +232,6 @@ document.addEventListener('DOMContentLoaded', function() {
         rows.forEach(row => certTableBody.appendChild(row));
     }
 
-    // Load data from files, create and update table & check checkboxes
     function loadCertData() {
         fetch('/list')
             .then(response => response.json())
@@ -245,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 data.forEach(cert => {
                     const status = cert.status;
                     let statusColor, statusBtn, statusText;
-
+    
                     if (status === 'V') {
                         statusColor = 'success';
                         statusText = texts[lang].statusBtn.valid;
@@ -263,8 +258,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         statusText = texts[lang].statusBtn.unknown;
                         statusBtn = `<img src="images/question-solid.svg" class="icon me-1"/> ${statusText}`;
                     }
-
+    
                     const row = document.createElement('tr');
+                    row.addEventListener('click', function() {
+                        showModal('view', cert);
+                    });
+    
                     row.innerHTML = `
                         <td><input type="checkbox" class="cert-checkbox" data-id="${cert.id}" ${status === 'R' ? 'disabled' : ''}></td>                        
                         <td data-sort="status">
@@ -282,20 +281,24 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td data-sort="startDate"><span class="tooltip-container" data-toggle="tooltip" data-placement="bottom" title="${cert.startDate}">${formatDate(cert.startDate)}</span></td>
                         <td data-sort="endDate"><span class="tooltip-container" data-toggle="tooltip" data-placement="bottom" title="${cert.endDate}">${formatDate(cert.endDate)}</span></td>
                         <td data-sort="downloads">
-                            <a class="btn btn-light btn-sm" href="/src/certs/${cert.id}.crt" download><img src="images/file-arrow-down-solid.svg" class="icon me-1"/>.crt</a>
-                            <a class="btn btn-light btn-sm" href="/src/certs/${cert.id}.csr" download><img src="images/file-arrow-down-solid.svg" class="icon me-1"/>.csr</a>
-                            <a class="btn btn-light btn-sm" href="/src/private/${cert.id}.key" download><img src="images/file-arrow-down-solid.svg" class="icon me-1"/>.key</a>
+                            <button type="button" class="btn btn-light btn-sm" data-bs-toggle="popover" data-bs-html="true" data-bs-content="
+                                <a class='btn btn-light btn-sm d-block mb-1' href='/src/certs/${replaceSpaces(cert.id)}.crt' download><img src='images/file-arrow-down-solid.svg' class='icon me-1'/>.crt</a>
+                                <a class='btn btn-light btn-sm d-block mb-1' href='/src/certs/${replaceSpaces(cert.id)}.csr' download><img src='images/file-arrow-down-solid.svg' class='icon me-1'/>.csr</a>
+                                <a class='btn btn-light btn-sm d-block' href='/src/private/${replaceSpaces(cert.id)}.key' download><img src='images/file-arrow-down-solid.svg' class='icon me-1'/>.key</a>
+                            ">
+                                <img src="images/file-arrow-down-solid.svg" class="icon me-1"/> Téléchargements
+                            </button>
                         </td>
                     `;
                     certTableBody.appendChild(row);
                 });
-
                 // Shift + click
                 let lastChecked = null;
                 const checkboxes = document.querySelectorAll('.cert-checkbox');
 
                 checkboxes.forEach(checkbox => {
                     checkbox.addEventListener('click', function(e) {
+                        e.stopPropagation();
                         if (!lastChecked) {
                             lastChecked = this;
                             return;
@@ -317,33 +320,46 @@ document.addEventListener('DOMContentLoaded', function() {
                         updateActionButtons();
                     });
                 });
+                var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+                var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+                    return new bootstrap.Popover(popoverTriggerEl);
+                });
 
-                // Add event listeners for cert checkboxes
-                checkboxes.forEach(checkbox => {
-                    checkbox.addEventListener('click', function() {
-                        updateActionButtons();
+                popoverTriggerList.forEach((triggerEl) => {
+                    triggerEl.addEventListener('click', function(event) {
+                        popoverList.forEach(popover => {
+                            if (popover._element !== this) {
+                                popover.hide();
+                            }
+                        });
+                        const popoverInstance = bootstrap.Popover.getInstance(this);
+                        if (popoverInstance) {
+                            popoverInstance.hide();
+                        } else {
+                            new bootstrap.Popover(this).show();
+                        }
+                        event.stopPropagation();
                     });
                 });
-                updateActionButtons();
+
+                document.addEventListener('click', function(event) {
+                    popoverList.forEach(popover => {
+                        popover.hide();
+                    });
+                });
+
                 initializeTooltips();
                 loadPassword();
             })
             .catch(error => console.error('Certificate loading error:', error));
     }
-
-    function updateDates() {
-        const now = new Date();
-        const offset = now.getTimezoneOffset() * 60000;
-        document.getElementById("startDate").value = new Date(now.getTime() - offset).toISOString().slice(0, 16);
-        document.getElementById("endDate").value = new Date(now.setFullYear(now.getFullYear() + 1, now.getMonth(), now.getDate() + 1) - offset).toISOString().slice(0, 16);
-    }
     
     function showModal(action, certData) {
         const modalTitle = document.getElementById('dynamicModalLabel');
         const formContent = document.getElementById('formContent');
+        const footerContent = document.getElementById('footerContent');
         const caPassphraseContainer = document.getElementById('caPassphraseContainer');
     
-        // Vider le contenu précédent
         formContent.innerHTML = '';
         caPassphraseContainer.style.display = 'none';
     
@@ -355,16 +371,22 @@ document.addEventListener('DOMContentLoaded', function() {
                         <input type="text" class="form-control" id="commonName" placeholder="Common Name" required>
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="subject" placeholder="Subject Subject (OU / O / L)" required>
+                        <input type="text" class="form-control" id="subject" placeholder="Subject (OU / O / L)" required>
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="san" placeholder="SAN (Subject Alternative Name)">
-                    </div>
-                    <div class="mb-3">
-                        <input type="text" class="form-control" id="ip" placeholder="IP">
-                    </div>
-                    <div class="mb-3">
-                        <input type="text" class="form-control" id="dns" placeholder="DNS">
+                        <label class="form-label">SAN (Subject Alternative Name)</label>
+                        <div id="sanContainer">
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control" placeholder="IP" id="sanIp">
+                                <button class="btn btn border" type="button" id="addIpButton">+</button>
+                            </div>
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control" placeholder="DNS" id="sanDns">
+                                <button class="btn btn border" type="button" id="addDnsButton">+</button>
+                            </div>
+                        </div>
+                        <div id="addedSanIPs" class="mt-2"></div>
+                        <div id="addedDnsNames" class="mt-2"></div>
                     </div>
                     <div class="mb-3">
                         <label for="type" class="form-label">Certificate Type</label>
@@ -374,10 +396,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="startDate" class="form-label">Start / End Date</label>
+                        <label for="startDate" class="form-label">Start Date</label>
                         <input type="datetime-local" class="form-control" id="startDate" value="">
                     </div>
                     <div class="mb-3">
+                        <label for="endDate" class="form-label">End Date</label>
                         <input type="datetime-local" class="form-control" id="endDate" value="">
                     </div>
                     <div class="mb-3">
@@ -387,21 +410,101 @@ document.addEventListener('DOMContentLoaded', function() {
                         <input type="password" class="form-control" id="confirmPassphrase" placeholder="Confirm your passphrase">
                     </div>
                 `;
+                footerContent.innerHTML = `
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmAction">Confirm</button>
+                `;
+    
+                document.getElementById('addIpButton').onclick = function() {
+                    const ipValue = document.getElementById('sanIp').value;
+                    if (ipValue) {
+                        const ipList = document.getElementById('addedSanIPs');
+                        ipList.innerHTML += `<div class="alert alert-info d-flex justify-content-between align-items-center">
+                            ${ipValue}
+                            <button class="btn btn-close" onclick="this.parentElement.remove();"></button>
+                        </div>`;
+                        document.getElementById('sanIp').value = '';
+                    }
+                };
+    
+                document.getElementById('addDnsButton').onclick = function() {
+                    const dnsValue = document.getElementById('sanDns').value;
+                    if (dnsValue) {
+                        const dnsList = document.getElementById('addedDnsNames');
+                        dnsList.innerHTML += `<div class="alert alert-info d-flex justify-content-between align-items-center">
+                            ${dnsValue}
+                            <button class="btn btn-close" onclick="this.parentElement.remove();"></button>
+                        </div>`;
+                        document.getElementById('sanDns').value = '';
+                    }
+                };
+    
+                document.getElementById('confirmAction').onclick = async function() {
+                    const commonName = document.getElementById('commonName').value;
+                    const subject = document.getElementById('subject').value;
+                    const sanIPs = Array.from(document.getElementById('addedSanIPs').children).map(el => el.innerText);
+                    const sanDns = Array.from(document.getElementById('addedDnsNames').children).map(el => el.innerText);
+                    const type = document.getElementById('type').value;
+                    const startDate = document.getElementById('startDate').value;
+                    const endDate = document.getElementById('endDate').value;
+                    const passphrase = document.getElementById('passphrase').value;
+    
+                    const data = {
+                        name: commonName,
+                        subject: subject,
+                        sanIPs: sanIPs,
+                        sanDns: sanDns,
+                        type: type,
+                        startDate: startDate,
+                        endDate: endDate,
+                        passphrase: passphrase
+                    };
+    
+                    try {
+                        const response = await fetch('/create', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        });
+    
+                        const result = await response.json();
+                        if (response.ok) {
+                            alert(result.response);
+                            modal.hide();
+                        } else {
+                            alert(`Error: ${result.error}`);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                    }
+                };
                 break;
             case 'view':
                 modalTitle.textContent = 'View Certificate';
                 formContent.innerHTML = `
                     <div id="certDetails">
-                        <!-- Les détails du certificat, par exemple : -->
-                        <p><strong>Common Name:</strong> ${certData.id}</p>
-                        <p><strong>Subject:</strong> ${certData.subject}</p>
-                        <p><strong>SAN:</strong> ${certData.san}</p>
-                        <p><strong>IP:</strong> ${certData.ip}</p>
-                        <p><strong>DNS:</strong> ${certData.dns}</p>
-                        <p><strong>Type:</strong> ${certData.type}</p>
-                        <p><strong>Start Date:</strong> ${certData.startDate}</p>
-                        <p><strong>End Date:</strong> ${certData.endDate}</p>
+                        <p><strong>Common Name:</strong> ${certData.id ? certData.id : "Non défini"}</p>
+                        <p><strong>Subject:</strong> ${certData.subject ? certData.subject : "Non défini"}</p>
+
+                        <p><strong>IP(s):</strong> ${certData.ip && certData.ip.length > 0 
+                            ? certData.ip.map(ip => `<span>${ip}</span>`).join(', ') 
+                            : "Aucune IP définie"}
+                        </p>
+
+                        <p><strong>DNS:</strong> ${certData.dns && certData.dns.length > 0 
+                            ? certData.dns.map(dns => `<span>${dns}</span>`).join(', ') 
+                            : "Aucun DNS défini"}
+                        </p>
+
+                        <p><strong>Type:</strong> ${certData.type ? certData.type : "Non défini"}</p>
+                        <p><strong>Start Date:</strong> ${certData.startDate ? certData.startDate : "Non défini"}</p>
+                        <p><strong>End Date:</strong> ${certData.endDate ? certData.endDate : "Non défini"}</p>
                     </div>
+                `;
+                footerContent.innerHTML = `
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 `;
                 break;
             case 'revoke':
@@ -409,6 +512,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 caPassphraseContainer.style.display = 'block';
                 formContent.innerHTML = `
                     <p>Êtes-vous sûr de vouloir révoquer ce certificat ?</p>
+                `;
+                footerContent.innerHTML = `
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">Confirm</button>
                 `;
                 break;
             case 'renew':
@@ -418,7 +525,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         <label for="commonNameRenew" class="form-label">Common Name</label>
                         <input type="text" class="form-control" id="commonNameRenew" value="${certData.id}" placeholder="Common Name" readonly>
                     </div>
-                    <!-- Ajouter d'autres champs préremplis -->
+                `;
+                footerContent.innerHTML = `
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">Confirm</button>
                 `;
                 break;
             case 'remove':
@@ -427,15 +537,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 formContent.innerHTML = `
                     <p>Êtes-vous sûr de vouloir supprimer ce certificat ?</p>
                 `;
+                footerContent.innerHTML = `
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">Confirm</button>
+                `;
                 break;
         }
     
         // Afficher le modal
         const modal = new bootstrap.Modal(document.getElementById('dynamicModal'));
-        modal.show();
-    }
-    showModal('create');
+        const now = new Date();
+        const offset = now.getTimezoneOffset() * 60000;
 
+        modal.show();
+
+        document.getElementById("startDate").value = new Date(now.getTime() - offset).toISOString().slice(0, 16);
+        document.getElementById("endDate").value = new Date(now.setFullYear(now.getFullYear() + 1, now.getMonth(), now.getDate() + 1) - offset).toISOString().slice(0, 16);
+    }
+   
     // Initialize tool tips
     function initializeTooltips() {
         $('[data-toggle="tooltip"]').tooltip({
@@ -443,7 +562,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Fonction pour récupérer le mot de passe depuis le serveur
+    // Get password from server
     function loadPassword() {
         fetch('/get-password')
             .then(response => {
@@ -461,29 +580,33 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error =>  console.error('Error fetching password:', error));
     }
 
-    // Dropdown menu to generate a specific number of certificates
-    createItems.forEach(item => {
-        item.addEventListener('click', function() {
-            const certCount = this.getAttribute('data-count');
-            const certName = "Testing Zenetys Certificate Authority with a long name";
-            certCountInput.value = certCount;
+    // // Dropdown menu to generate a specific number of certificates
+    // createItems.forEach(item => {
+    //     item.addEventListener('click', function() {
+    //         const certCount = this.getAttribute('data-count');
+    //         const certName = "Testing Zenetys Certificate Authority with a long name";
+    //         certCountInput.value = certCount;
 
-            createDropdown.setAttribute('disabled', 'true');
+    //         createDropdown.setAttribute('disabled', 'true');
 
-            setInterval(() => loadCertData(), 2000)
+    //         setInterval(() => loadCertData(), 2000)
 
-            // Request create a certificate
-            fetch(`/create?name=${encodeURIComponent(certName)}&count=${certCount}`)
-                .then(response => response.text())
-                .catch(error => {
-                    console.error('Error:', error);
-                })
-                .finally(() => {
-                    setTimeout(() => {
-                        createDropdown.removeAttribute('disabled');
-                    }, 2000);
-                });
-        });
+    //         // Request create a certificate
+    //         fetch(`/create?name=${encodeURIComponent(certName)}&count=${certCount}`)
+    //             .then(response => response.text())
+    //             .catch(error => {
+    //                 console.error('Error:', error);
+    //             })
+    //             .finally(() => {
+    //                 setTimeout(() => {
+    //                     createDropdown.removeAttribute('disabled');
+    //                 }, 2000);
+    //             });
+    //     });
+    // });
+
+    createBtn.addEventListener('click', function() {
+        showModal('create');
     });
 
     // Filter certificates by name
@@ -502,40 +625,46 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Renew multiple certificates
-    renewSelectedButton.addEventListener('click', function(event) {
-        event.preventDefault();
-        const selectedCerts = Array.from(document.querySelectorAll('.cert-checkbox.active')).map(button => button.getAttribute('data-id'));
-        if (selectedCerts.length > 0) {
-            fetch('/renew', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ id: selectedCerts })
-            })
-            .then(response => response.text())
-            .then(() => loadCertData())
-            .catch(error => console.error('Renewal error:', error));
-        }
-    });
+    // // Renew multiple certificates
+    // renewSelectedButton.addEventListener('click', function(event) {
+    //     event.preventDefault();
+    //     const selectedCerts = Array.from(document.querySelectorAll('.cert-checkbox.active')).map(button => button.getAttribute('data-id'));
+    //     if (selectedCerts.length > 0) {
+    //         fetch('/renew', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify({ id: selectedCerts })
+    //         })
+    //         .then(response => response.text())
+    //         .then(() => loadCertData())
+    //         .catch(error => console.error('Renewal error:', error));
+    //     }
+    // });
 
-    // Revoke multiple certificates
-    revokeSelectedButton.addEventListener('click', function(event) {
-        event.preventDefault();
-        const selectedCerts = Array.from(document.querySelectorAll('.cert-checkbox.active')).map(button => button.getAttribute('data-id'));
-        if (selectedCerts.length > 0) {
-            fetch('/revoke', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ id: selectedCerts })
-            })
-            .then(response => response.text())
-            .then(() => loadCertData())
-            .catch(error => console.error('Revocation error:', error));
-        }
+    // // Revoke multiple certificates
+    // revokeSelectedButton.addEventListener('click', function(event) {
+    //     event.preventDefault();
+    //     const selectedCerts = Array.from(document.querySelectorAll('.cert-checkbox.active')).map(button => button.getAttribute('data-id'));
+    //     if (selectedCerts.length > 0) {
+    //         fetch('/revoke', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify({ id: selectedCerts })
+    //         })
+    //         .then(response => response.text())
+    //         .then(() => loadCertData())
+    //         .catch(error => console.error('Revocation error:', error));
+    //     }
+    // });
+    
+    // Open modal & send password
+    openModalBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        passwordModal.show();
     });
 
     // Sorting columns
@@ -549,33 +678,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Ajoutez des événements de survol pour afficher/masquer les boutons
-    document.querySelectorAll('.button-container').forEach(container => {
-        const mainBtn = container.querySelector('.main-btn');
-        const additionalBtns = container.querySelector('.additional-buttons');
-
-        mainBtn.addEventListener('mouseenter', () => {
-            mainBtn.style.display = 'none';
-            additionalBtns.style.display = 'block';
-        });
-
-        mainBtn.addEventListener('mouseleave', () => {
-            mainBtn.style.display = 'block'; 
-            additionalBtns.style.display = 'none';
-        });
-    });
-
-    // Open modal & send password
-    openModalBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        passwordModal.show();
-    });
     document.getElementById('togglePassword').addEventListener('click', function () {
         const toggleIcon = document.getElementById('togglePasswordIcon');
         const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         passwordInput.setAttribute('type', type);
         toggleIcon.src = toggleIcon.src.includes('images/eye-solid.svg') ? 'images/eye-slash-solid.svg' : 'images/eye-solid.svg';
     });
+
     document.getElementById('passwordForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const password = passwordInput.value;
@@ -590,12 +699,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response.ok) {
                 console.log('Password saved successfully!');
                 passwordModal.hide();
+                openModalBtn.innerHTML = `<img src="images/unlock-solid.svg" class="icon me-1"/> ${texts[lang].lock}`;
             } else {
                 console.error('Error saving password:', response.statusText);
             }
         })
         .catch(err => console.error('Fetch error:', err));
-    });    
+    });
 
     // Renew one certificate
     window.renewCert = function(id) {
@@ -627,6 +737,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
     loadCertData();
     loadPassword();
-    updateDates();
-    setInterval(updateDates, 10000);
 });
