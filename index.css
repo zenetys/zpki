@@ -163,12 +163,10 @@ thead::after {
     z-index: -1;
 }
 
-tr:first-child:hover {
-    background: inherit;
-}
-tr:hover {
-    background: #ebf0fae4;
+tr:hover td {
+    background: #f5f8ffe4;
     transition: 0.2s;
+    cursor: pointer;
 }
 
 th, td {
