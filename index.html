@@ -14,20 +14,19 @@
     <div class="container-fluid">
         <form id="certForm">
             <div class="form-group mb-2">
+                <!-- Create a certificate -->
+                <button class="btn btn-secondary me-2" id="createBtn" type="button">
+                    <img src="images/plus-solid.svg" class="icon"/>
+                </button>
+
                 <!-- Search Bar -->
-                <input type="text" id="certSearch" class="form-control rounded" placeholder="Search for a certificate">
+                <input type="text" id="certSearch" class="form-control rounded-pill" placeholder="Search for a certificate">
             </div>
-            
+
             <!-- Actions -->
             <div id="actionButtons" class="action-buttons">
-                <button id="revokeSelected" class="btn btn-dark btn-sm" hidden>
-                    <img src="images/ban-solid.svg" class="icon me-1"/> Revoke
-                </button>
-                <button id="renewSelected" class="btn btn-dark btn-sm" hidden>
-                    <img src="images/plus-solid.svg" class="icon me-1"/> Renew
-                </button>
                 <div class="dropdown float-end">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="languageDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-secondary rounded-pill dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <img src="images/globe-solid.svg" class="icon"/>
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="languageDropdown" id="languageMenu">
@@ -37,8 +36,8 @@
                         <a class="dropdown-item d-flex justify-content-between" id="german" data-lang="de">Deutsch</a>
                     </div>
                 </div>
-                <button class="btn btn-secondary btn-sm float-end me-1" id="openModalBtn">
-                    <img src="images/lock-solid.svg" class="icon"/> Unlock
+                <button class="btn btn-secondary btn-sm rounded-pill float-end me-1" id="openModalBtn">
+                    <img src="images/unlock-solid.svg" class="icon"/> Lock
                 </button>
             </div>
         </form>
@@ -90,19 +89,19 @@
         </table>
     </div>
 
-    <!-- Modal for entering password -->
+    <!-- Modal for unlocking -->
     <div class="modal fade" id="passwordModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog float-end me-3">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Enter Password</h5>
-                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="passwordForm" method="POST" action="/set-password">
                         <div class="input-group mb-3">
-                            <input type="password" id="password" class="form-control border-secondary" name="password" required>
-                            <button type="button" class="btn border-secondary" id="togglePassword">
+                            <input type="password" id="password" class="form-control border" name="password" required>
+                            <button type="button" class="btn border" id="togglePassword">
                                 <img src="images/eye-solid.svg" id="togglePasswordIcon" width="20px" height="20px" alt="Toggle password visibility">
                             </button>
                         </div>
@@ -113,28 +112,26 @@
         </div>
     </div>
 
+    <!-- Dynamic modal (Create Renew Revoke Remove)-->
     <div class="modal fade" id="dynamicModal" tabindex="-1" aria-labelledby="dynamicModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered float-end me-3">
             <div class="modal-content">
                 <div class="modal-header">
                 <h5 class="modal-title" id="dynamicModalLabel">Certificate Action</h5>
-                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" tabindex="-1"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" tabindex="-1"></button>
                 </div>
                 <div class="modal-body">
                     <form id="dynamicForm">
                         <div id="formContent">
-                        <!-- Contenu dynamique ici -->
+                        <!-- Modal content (dynamic) -->
                         </div>
                         <div class="mb-3" id="caPassphraseContainer" style="display: none;">
-                            <label for="caPassphrase" class="form-label">CA Passphrase (peut être vide)</label>
-                            <input type="password" class="form-control" id="caPassphrase" placeholder="CA Passphrase">
+                            <label for="caPassphrase" class="form-label"></label>
+                            <input type="password" class="form-control" id="caPassphrase" placeholder="CA Passphrase (can be empty)">
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                    <button type="button" class="btn btn-primary" id="confirmAction">Confirmer</button>
-                </div>
+                <div class="modal-footer" id="footerContent"></div>
             </div>
         </div>
     </div>
@@ -143,7 +140,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="index.js"></script>
     <script>
         let headers = [...document.querySelectorAll('th')];
