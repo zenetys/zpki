@@ -175,9 +175,6 @@ th, td {
     text-align: left;
     text-wrap: nowrap;
 }
-th:first-child, td:first-child {
-    text-align: center;
-}
 
 th.resizable {
     resize: horizontal;
