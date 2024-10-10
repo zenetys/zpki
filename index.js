@@ -16,6 +16,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 spanish: "Spanish",
                 german: "German"
             },
+            certificate: {
+                createMultiSan: "Create Multi SAN Certificate",
+                CN: "Common Name",
+                SUBJ: "Subject (OU / O / L)",
+                type: "Certificate Type",
+                select1: "Server",
+                select1: "User",
+                startDate: "Start Date",
+                endDate: "End Date",
+                enterPass: "Enter your passphrase (can be empty)",
+                confirmPass: "Confirm your passphrase",
+                cancel: "Cancel",
+                confirm: "Confirm",
+                undefined: "Undefined",
+            },
             lock: "Lock",
             unlock: "Unlock",
             done: "Done!",
@@ -30,7 +45,8 @@ document.addEventListener('DOMContentLoaded', function() {
             common_name: "Common Name (CN)",
             startDate: "Start Date",
             endDate: "End Date",            
-            downloads: "Downloads"
+            downloads: "Downloads",
+            download: "Download"
         },
         fr: {
             searchPlaceholder: "Rechercher un certificat",
@@ -41,6 +57,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 french: "Français",
                 spanish: "Espagnol",
                 german: "Allemand"
+            },
+            certificate: {
+                createMultiSan: "Créer un certificat multi-SAN",
+                CN: "Common Name",
+                SUBJ: "Subject (OU / O / L)",
+                type: "Type de certificat",
+                select1: "Serveur",
+                select2: "Utilisateur",
+                startDate: "Date de début",
+                endDate: "Date de fin",
+                enterPass: "Entrez votre passphrase (peut être vide)",
+                confirmPass: "Confirmez votre phrase secrète",
+                cancel: "Annuler",
+                confirm: "Confirmer",
+                undefined: "Non défini",
             },
             lock: "Verrouiller",
             unlock: "Déverrouiller",
@@ -56,7 +87,8 @@ document.addEventListener('DOMContentLoaded', function() {
             common_name: "Actions",
             startDate: "Date de début",
             endDate: "Date de fin",            
-            downloads: "Téléchargements"
+            downloads: "Téléchargements",
+            download: "Télécharger"
         },
         es: {
             searchPlaceholder: "Buscar un certificado",
@@ -67,6 +99,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 french: "Francés",
                 spanish: "Español",
                 german: "Alemán"
+            },
+            certificate: {
+                createMultiSan: "Crear certificado Multi SAN",
+                CN: "Nombre común",
+                SUBJ: "Asunto (OU / O / L)",
+                type: "Tipo de certificado",
+                select1: "Servidor",
+                select2: "Usuario",
+                startDate: "Fecha de inicio",
+                endDate: "Fecha de finalización",
+                enterPass: "Ingrese su frase de contraseña (puede estar vacía)",
+                confirmPass: "Confirme su frase de contraseña",
+                cancel: "Cancelar",
+                confirm: "Confirmar",
+                undefined: "No definido",
             },
             lock: "Bloquear",
             unlock: "Desbloquear",
@@ -82,7 +129,8 @@ document.addEventListener('DOMContentLoaded', function() {
             common_name: "Nombre común (CN)",
             startDate: "Fecha de inicio",
             endDate: "Fecha de finalización",
-            downloads: "Descargas"
+            downloads: "Descargas",
+            download: "Descargar"
         },
         de: {
             searchPlaceholder: "Nach einem Zertifikat suchen",
@@ -93,6 +141,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 french: "Französisch",
                 spanish: "Spanisch",
                 german: "Deutsch"
+            },
+            certificate: {
+                createMultiSan: "Multi-SAN-Zertifikat erstellen",
+                CN: "Allgemeiner Name",
+                SUBJ: "Betreff (OU / O / L)",
+                type: "Zertifikatstyp",
+                select1: "Server",
+                select2: "Benutzer",
+                startDate: "Anfangsdatum",
+                endDate: "Enddatum",
+                enterPass: "Geben Sie Ihre Passphrase ein (kann leer sein)",
+                confirmPass: "Bestätigen Sie Ihre Passphrase",
+                cancel: "Abbrechen",
+                confirm: "Bestätigen",
+                undefined: "Nicht definiert",
             },
             lock: "Sperren",
             unlock: "Entsperren",
@@ -108,7 +171,8 @@ document.addEventListener('DOMContentLoaded', function() {
             common_name: "Allgemeiner Name (CN)",
             startDate: "Startdatum",
             endDate: "Enddatum",
-            downloads: "Downloads"
+            downloads: "Downloads",
+            download: "Download"
         },        
     };    
 
@@ -286,7 +350,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <a class='btn btn-light btn-sm d-block mb-1' href='/src/certs/${replaceSpaces(cert.id)}.csr' download><img src='images/file-arrow-down-solid.svg' class='icon me-1'/>.csr</a>
                                 <a class='btn btn-light btn-sm d-block' href='/src/private/${replaceSpaces(cert.id)}.key' download><img src='images/file-arrow-down-solid.svg' class='icon me-1'/>.key</a>
                             ">
-                                <img src="images/file-arrow-down-solid.svg" class="icon me-1"/> Téléchargements
+                                <img src="images/file-arrow-down-solid.svg" class="icon me-1"/> ${texts[lang].download}
                             </button>
                         </td>
                     `;
@@ -365,13 +429,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
         switch (action) {
             case 'create':
-                modalTitle.textContent = 'Create Multi SAN Certificate';
+                modalTitle.textContent = texts[lang].certificate.createMultiSan;
                 formContent.innerHTML = `
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="commonName" placeholder="Common Name" required>
+                        <input type="text" class="form-control" id="commonName" placeholder="${texts[lang].certificate.CN}" required>
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="subject" placeholder="Subject (OU / O / L)" required>
+                        <input type="text" class="form-control" id="subject" placeholder="${texts[lang].certificate.SUBJ}" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">SAN (Subject Alternative Name)</label>
@@ -389,30 +453,30 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div id="addedDnsNames" class="mt-2"></div>
                     </div>
                     <div class="mb-3">
-                        <label for="type" class="form-label">Certificate Type</label>
+                        <label for="type" class="form-label">${texts[lang].certificate.type}</label>
                         <select class="form-select" id="type" name="type">
-                            <option value="server">Server</option>
-                            <option value="user">User</option>
+                            <option value="server">${texts[lang].certificate.select1}</option>
+                            <option value="user">${texts[lang].certificate.select2}</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="startDate" class="form-label">Start Date</label>
+                        <label for="startDate" class="form-label">${texts[lang].certificate.startDate}</label>
                         <input type="datetime-local" class="form-control" id="startDate" value="">
                     </div>
                     <div class="mb-3">
-                        <label for="endDate" class="form-label">End Date</label>
+                        <label for="endDate" class="form-label">${texts[lang].certificate.endDate}</label>
                         <input type="datetime-local" class="form-control" id="endDate" value="">
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="passphrase" placeholder="Enter your passphrase (can be empty)">
+                        <input type="password" class="form-control" id="passphrase" placeholder="${texts[lang].certificate.enterPass}">
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="confirmPassphrase" placeholder="Confirm your passphrase">
+                        <input type="password" class="form-control" id="confirmPassphrase" placeholder="${texts[lang].certificate.confirmPass}">
                     </div>
                 `;
                 footerContent.innerHTML = `
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="confirmAction">Confirm</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].certificate.cancel}</button>
+                    <button type="button" class="btn btn-primary" id="confirmAction">${texts[lang].certificate.confirm}</button>
                 `;
     
                 document.getElementById('addIpButton').onclick = function() {
@@ -485,8 +549,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 modalTitle.textContent = 'View Certificate';
                 formContent.innerHTML = `
                     <div id="certDetails">
-                        <p><strong>Common Name:</strong> ${certData.id ? certData.id : "Non défini"}</p>
-                        <p><strong>Subject:</strong> ${certData.subject ? certData.subject : "Non défini"}</p>
+                        <p><strong>${texts[lang].certificate.CN}:</strong> ${certData.id ? certData.id : `${texts[lang].certificate.undefined}`}</p>
+                        <p><strong>${texts[lang].certificate.SUBJ}:</strong> ${certData.subject ? certData.subject : `${texts[lang].certificate.undefined}`}</p>
 
                         <p><strong>IP(s):</strong> ${certData.ip && certData.ip.length > 0 
                             ? certData.ip.map(ip => `<span>${ip}</span>`).join(', ') 
@@ -498,9 +562,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             : "Aucun DNS défini"}
                         </p>
 
-                        <p><strong>Type:</strong> ${certData.type ? certData.type : "Non défini"}</p>
-                        <p><strong>Start Date:</strong> ${certData.startDate ? certData.startDate : "Non défini"}</p>
-                        <p><strong>End Date:</strong> ${certData.endDate ? certData.endDate : "Non défini"}</p>
+                        <p><strong>${texts[lang].certificate.type}:</strong> ${certData.type ? certData.type : `${texts[lang].certificate.undefined}`}</p>
+                        <p><strong>${texts[lang].certificate.startDate}:</strong> ${certData.startDate ? certData.startDate : `${texts[lang].certificate.undefined}`}</p>
+                        <p><strong>${texts[lang].certificate.endDate}:</strong> ${certData.endDate ? certData.endDate : `${texts[lang].certificate.undefined}`}</p>
                     </div>
                 `;
                 footerContent.innerHTML = `
