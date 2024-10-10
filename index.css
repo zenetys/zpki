@@ -15,7 +15,7 @@
     position: sticky;
     top: 0;
     width: 100%;
-    height: 130px;
+    height: 80px;
     padding: 15px;
     background: #fefefe;
     z-index: 99;
@@ -49,7 +49,6 @@
     margin-top: 7px;
     border: 2px solid #000000aa;
     border-radius: 20px;
-    box-shadow: 5px 5px 0 #000000aa;
     cursor: pointer;
     z-index: 999;
 }
@@ -145,7 +144,7 @@ table {
 
 thead {
     position: sticky;
-    top: 130px;
+    top: 80px;
     background: #fefefe;
     text-align: center;
     z-index: 1;
@@ -157,7 +156,7 @@ thead::after {
     left: 0;
     bottom: 0;
     width: 100%;
-    height: 110px;
+    height: 100px;
     background: #fefefe;
     box-shadow: 0 6px 6px #0000001a;
     z-index: -1;
