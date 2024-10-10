@@ -3,13 +3,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const createBtn = document.getElementById('createBtn');
     const certSearchInput = document.getElementById('certSearch');
     const certTableBody = document.getElementById('certTableBody');
-    const openModalBtn = document.getElementById('openModalBtn');
+    const selectBoxHeader = document.querySelector('[data-sort="selectBox"]');
+    const checkAll = document.querySelectorAll('input[type="checkbox"].cert-checkbox');
+    const lockInterface = document.getElementById('lockInterface');
     const passwordInput = document.getElementById('password');
     const texts = {
         en: {
             searchPlaceholder: "Search for a certificate",
             revoke: "Revoke",
             renew: "Renew",
+            lock: "Lock",
+            unlock: "Unlock",
+            done: "Done!",
             lang: {
                 english: "English",
                 french: "French",
@@ -20,38 +25,39 @@ document.addEventListener('DOMContentLoaded', function() {
                 createMultiSan: "Create Multi SAN Certificate",
                 CN: "Common Name",
                 SUBJ: "Subject (OU / O / L)",
+                IP: "No IP defined",
+                DNS: "No DNS defined",
                 type: "Certificate Type",
                 select1: "Server",
-                select1: "User",
+                select2: "User",
                 startDate: "Start Date",
                 endDate: "End Date",
+                passPhrase: "Enter Passphrase",
                 enterPass: "Enter your passphrase (can be empty)",
                 confirmPass: "Confirm your passphrase",
                 cancel: "Cancel",
                 confirm: "Confirm",
                 undefined: "Undefined",
+                status: "Status",
+                serial: "Serial",
+                signature: "Signature",
+                common_name: "Common Name (CN)",
+                downloads: "Downloads",
+                statusBtn: {
+                    valid: "Valid",
+                    expired: "Expired",
+                    revoked: "Revoked",
+                    unknown: "Unknown"
+                },
             },
-            lock: "Lock",
-            unlock: "Unlock",
-            done: "Done!",
-            statusBtn: {
-                valid: "Valid",
-                expired: "Expired",
-                revoked: "Revoked",
-                unknown: "Unknown"
-            },
-            status: "Status",
-            serial: "Serial",
-            common_name: "Common Name (CN)",
-            startDate: "Start Date",
-            endDate: "End Date",            
-            downloads: "Downloads",
-            download: "Download"
         },
         fr: {
             searchPlaceholder: "Rechercher un certificat",
             revoke: "Révoquer",
             renew: "Renouveler",
+            lock: "Verrouiller",
+            unlock: "Déverrouiller",
+            done: "Fait !",
             lang: {
                 english: "Anglais",
                 french: "Français",
@@ -59,41 +65,42 @@ document.addEventListener('DOMContentLoaded', function() {
                 german: "Allemand"
             },
             certificate: {
-                createMultiSan: "Créer un certificat multi-SAN",
+                createMultiSan: "Créer un certificat Multi SAN",
                 CN: "Common Name",
-                SUBJ: "Subject (OU / O / L)",
-                type: "Type de certificat",
+                SUBJ: "Objet (OU / O / L)",
+                IP: "Aucune IP définie",
+                DNS: "Aucun DNS défini",
+                type: "Type de Certificat",
                 select1: "Serveur",
                 select2: "Utilisateur",
-                startDate: "Date de début",
-                endDate: "Date de fin",
+                startDate: "Date de Début",
+                endDate: "Date de Fin",
+                passPhrase: "Entrez la passphrase",
                 enterPass: "Entrez votre passphrase (peut être vide)",
-                confirmPass: "Confirmez votre phrase secrète",
+                confirmPass: "Confirmez votre passphrase",
                 cancel: "Annuler",
                 confirm: "Confirmer",
-                undefined: "Non défini",
+                undefined: "Indéfini",
+                status: "Statut",
+                serial: "Série",
+                signature: "Signature",
+                common_name: "Common Name (CN)",
+                downloads: "Téléchargements",
+                statusBtn: {
+                    valid: "Valide",
+                    expired: "Expiré",
+                    revoked: "Révoqué",
+                    unknown: "Inconnu"
+                },
             },
-            lock: "Verrouiller",
-            unlock: "Déverrouiller",
-            done: "Terminé !",
-            statusBtn: {
-                valid: "Valide",
-                expired: "Expiré",
-                revoked: "Révoqué",
-                unknown: "Inconnu"
-            },
-            status: "Statut",
-            serial: "Numéro de série",
-            common_name: "Actions",
-            startDate: "Date de début",
-            endDate: "Date de fin",            
-            downloads: "Téléchargements",
-            download: "Télécharger"
         },
         es: {
             searchPlaceholder: "Buscar un certificado",
             revoke: "Revocar",
             renew: "Renovar",
+            lock: "Bloquear",
+            unlock: "Desbloquear",
+            done: "¡Hecho!",
             lang: {
                 english: "Inglés",
                 french: "Francés",
@@ -101,41 +108,42 @@ document.addEventListener('DOMContentLoaded', function() {
                 german: "Alemán"
             },
             certificate: {
-                createMultiSan: "Crear certificado Multi SAN",
-                CN: "Nombre común",
-                SUBJ: "Asunto (OU / O / L)",
-                type: "Tipo de certificado",
+                createMultiSan: "Crear un Certificado Multi SAN",
+                CN: "Nombre Común",
+                SUBJ: "Sujeto (OU / O / L)",
+                IP: "No hay IP definida",
+                DNS: "No hay DNS definido",
+                type: "Tipo de Certificado",
                 select1: "Servidor",
                 select2: "Usuario",
-                startDate: "Fecha de inicio",
-                endDate: "Fecha de finalización",
+                startDate: "Fecha de Inicio",
+                endDate: "Fecha de Fin",
+                passPhrase: "Introduzca la frase de contraseña",
                 enterPass: "Ingrese su frase de contraseña (puede estar vacía)",
                 confirmPass: "Confirme su frase de contraseña",
                 cancel: "Cancelar",
                 confirm: "Confirmar",
-                undefined: "No definido",
+                undefined: "Indefinido",
+                status: "Estado",
+                serial: "Número de serie",
+                signature: "Firma",
+                common_name: "Nombre Común (CN)",
+                downloads: "Descargas",
+                statusBtn: {
+                    valid: "Válido",
+                    expired: "Expirado",
+                    revoked: "Revocado",
+                    unknown: "Desconocido"
+                },
             },
-            lock: "Bloquear",
-            unlock: "Desbloquear",
-            done: "¡Hecho!",
-            statusBtn: {
-                valid: "Válido",
-                expired: "Expirado",
-                revoked: "Revocado",
-                unknown: "Desconocido"
-            },
-            status: "Estado",
-            serial: "Número de serie",
-            common_name: "Nombre común (CN)",
-            startDate: "Fecha de inicio",
-            endDate: "Fecha de finalización",
-            downloads: "Descargas",
-            download: "Descargar"
         },
         de: {
-            searchPlaceholder: "Nach einem Zertifikat suchen",
+            searchPlaceholder: "Zertifikat suchen",
             revoke: "Widerrufen",
             renew: "Erneuern",
+            lock: "Sperren",
+            unlock: "Entsperren",
+            done: "Fertig!",
             lang: {
                 english: "Englisch",
                 french: "Französisch",
@@ -143,37 +151,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 german: "Deutsch"
             },
             certificate: {
-                createMultiSan: "Multi-SAN-Zertifikat erstellen",
-                CN: "Allgemeiner Name",
+                createMultiSan: "Multi SAN-Zertifikat erstellen",
+                CN: "Gemeinsamer Name",
                 SUBJ: "Betreff (OU / O / L)",
+                IP: "Keine IP definiert",
+                DNS: "Kein DNS definiert",
                 type: "Zertifikatstyp",
                 select1: "Server",
                 select2: "Benutzer",
-                startDate: "Anfangsdatum",
+                startDate: "Startdatum",
                 endDate: "Enddatum",
+                passPhrase: "Geben Sie die Passphrase ein",
                 enterPass: "Geben Sie Ihre Passphrase ein (kann leer sein)",
                 confirmPass: "Bestätigen Sie Ihre Passphrase",
                 cancel: "Abbrechen",
                 confirm: "Bestätigen",
-                undefined: "Nicht definiert",
+                undefined: "Undefiniert",
+                status: "Status",
+                serial: "Seriennummer",
+                signature: "Unterschrift",
+                common_name: "Gemeinsamer Name (CN)",
+                downloads: "Downloads",
+                statusBtn: {
+                    valid: "Gültig",
+                    expired: "Abgelaufen",
+                    revoked: "Widerrufen",
+                    unknown: "Unbekannt"
+                },
             },
-            lock: "Sperren",
-            unlock: "Entsperren",
-            done: "Fertig!",
-            statusBtn: {
-                valid: "Gültig",
-                expired: "Abgelaufen",
-                revoked: "Widerrufen",
-                unknown: "Unbekannt"
-            },
-            status: "Status",
-            serial: "Seriennummer",
-            common_name: "Allgemeiner Name (CN)",
-            startDate: "Startdatum",
-            endDate: "Enddatum",
-            downloads: "Downloads",
-            download: "Download"
-        },        
+        },
     };    
 
     // Set default language from localStorage or use English as default
@@ -204,19 +210,17 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update top page content
         $('#certName').attr('placeholder', texts[lang].certificateNamePlaceholder);
         $('#certSearch').attr('placeholder', texts[lang].searchPlaceholder);
-        $('#openModalBtn').html(`<img src="images/lock-solid.svg" class="icon me-1"/> ${texts[lang].unlock}`);
         $('#english').html(`${texts[lang].lang.english} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
         $('#french').html(`${texts[lang].lang.french} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
         $('#spanish').html(`${texts[lang].lang.spanish} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
         $('#german').html(`${texts[lang].lang.german} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
         
         // Update table headers
-        $('th[data-sort="status"]').html(`<img src="images/chart-simple-solid.svg" class="icon me-1"/> ${texts[lang].status}`);
-        $('th[data-sort="serial"]').html(`<img src="images/hashtag-solid.svg" class="icon me-1"/> ${texts[lang].serial}`);
-        $('th[data-sort="startDate"]').html(`<img src="images/calendar-day-solid.svg" class="icon me-1"/> ${texts[lang].startDate}`);
-        $('th[data-sort="endDate"]').html(`<img src="images/calendar-days-solid.svg" class="icon me-1"/> ${texts[lang].endDate}`);
-        $('th[data-sort="actions"]').html(`<img src="images/gear-solid.svg" class="icon me-1"/> ${texts[lang].actions}`);
-        $('th[data-sort="downloads"]').html(`<img src="images/download-solid.svg" class="icon me-1"/> ${texts[lang].downloads}`);
+        $('th[data-sort="status"]').html(`<img src="images/chart-simple-solid.svg" class="icon me-1"/> ${texts[lang].certificate.status}`);
+        $('th[data-sort="serial"]').html(`<img src="images/hashtag-solid.svg" class="icon me-1"/> ${texts[lang].certificate.serial}`);
+        $('th[data-sort="id"]').html(`<img src="images/file-lines-solid.svg" class="icon me-1"/> ${texts[lang].certificate.CN}`);
+        $('th[data-sort="startDate"]').html(`<img src="images/calendar-day-solid.svg" class="icon me-1"/> ${texts[lang].certificate.startDate}`);
+        $('th[data-sort="endDate"]').html(`<img src="images/calendar-days-solid.svg" class="icon me-1"/> ${texts[lang].certificate.endDate}`);
     }
 
     // Adapt name, normalize
@@ -307,29 +311,25 @@ document.addEventListener('DOMContentLoaded', function() {
     
                     if (status === 'V') {
                         statusColor = 'success';
-                        statusText = texts[lang].statusBtn.valid;
+                        statusText = texts[lang].certificate.statusBtn.valid;
                         statusBtn = `<img src="images/circle-check-solid.svg" class="icon me-1"/> ${statusText}`;
                     } else if (status === 'E') {
                         statusColor = 'warning';
-                        statusText = texts[lang].statusBtn.expired;
+                        statusText = texts[lang].certificate.statusBtn.expired;
                         statusBtn = `<img src="images/triangle-exclamation-solid.svg" class="icon me-1"/> ${statusText}`;
                     } else if (status === 'R') {
                         statusColor = 'danger';
-                        statusText = texts[lang].statusBtn.revoked;
+                        statusText = texts[lang].certificate.statusBtn.revoked;
                         statusBtn = `<img src="images/circle-xmark-solid.svg" class="icon me-1"/> ${statusText}`;
                     } else {
                         statusColor = 'secondary';
-                        statusText = texts[lang].statusBtn.unknown;
+                        statusText = texts[lang].certificate.statusBtn.unknown;
                         statusBtn = `<img src="images/question-solid.svg" class="icon me-1"/> ${statusText}`;
                     }
     
-                    const row = document.createElement('tr');
-                    row.addEventListener('click', function() {
-                        showModal('view', cert);
-                    });
-    
+                    const row = document.createElement('tr');    
                     row.innerHTML = `
-                        <td><input type="checkbox" class="cert-checkbox" data-id="${cert.id}" ${status === 'R' ? 'disabled' : ''}></td>                        
+                        <td class="text-center check-container"><input type="checkbox" class="cert-checkbox data-id="${cert.id}" ${status === 'D' ? 'disabled' : ''}></td>                        
                         <td data-sort="status">
                             <div class="button-container">
                                 <button class="btn btn-ssm btn-${statusColor} rounded-pill main-btn" data-id="${cert.id}">${statusBtn}</button>
@@ -340,22 +340,30 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </div>
                             </div>
                         </td>
-                        <td data-sort="serial"><span class="tooltip-container" data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>Signature: ${cert.hash}</div>">${cert.serial}</span></td>
                         <td data-sort="id">${cert.id}</td>
+                        <td data-sort="serial"><span class="tooltip-container" data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>${texts[lang].certificate.signature}: ${cert.hash}</div>">${cert.serial}</span></td>
                         <td data-sort="startDate"><span class="tooltip-container" data-toggle="tooltip" data-placement="bottom" title="${cert.startDate}">${formatDate(cert.startDate)}</span></td>
                         <td data-sort="endDate"><span class="tooltip-container" data-toggle="tooltip" data-placement="bottom" title="${cert.endDate}">${formatDate(cert.endDate)}</span></td>
-                        <td data-sort="downloads">
+                        <td>
                             <button type="button" class="btn btn-light btn-sm" data-bs-toggle="popover" data-bs-html="true" data-bs-content="
-                                <a class='btn btn-light btn-sm d-block mb-1' href='/src/certs/${replaceSpaces(cert.id)}.crt' download><img src='images/file-arrow-down-solid.svg' class='icon me-1'/>.crt</a>
-                                <a class='btn btn-light btn-sm d-block mb-1' href='/src/certs/${replaceSpaces(cert.id)}.csr' download><img src='images/file-arrow-down-solid.svg' class='icon me-1'/>.csr</a>
-                                <a class='btn btn-light btn-sm d-block' href='/src/private/${replaceSpaces(cert.id)}.key' download><img src='images/file-arrow-down-solid.svg' class='icon me-1'/>.key</a>
+                                <a class='btn btn-light btn-sm d-block mb-1' href='/src/certs/${replaceSpaces(cert.id)}.crt' download><img src='images/certificate-solid.svg' class='icon me-1'/>.crt</a>
+                                <a class='btn btn-light btn-sm d-block mb-1' href='/src/certs/${replaceSpaces(cert.id)}.csr' download><img src='images/lock-solid.svg' class='icon me-1'/>.csr</a>
+                                <a class='btn btn-light btn-sm d-block mb-1' href='/src/private/${replaceSpaces(cert.id)}.key' download><img src='images/key-solid.svg' class='icon me-1'/>.key</a>
+                                <a class='btn btn-light btn-sm d-block' href='/src/custom/${replaceSpaces(cert.id)}.pkcs12' download><img src='images/file-export-solid.svg' class='icon me-1'/>.pkcs12</a>
                             ">
-                                <img src="images/file-arrow-down-solid.svg" class="icon me-1"/> ${texts[lang].download}
+                                <img src="images/file-arrow-down-solid.svg" class="icon"/>
                             </button>
                         </td>
                     `;
                     certTableBody.appendChild(row);
+
+                    row.addEventListener('click', function(event) {
+                        if (!event.target.classList.contains('check-container')) {
+                            showModal('view', cert);
+                        }
+                    });
                 });
+
                 // Shift + click
                 let lastChecked = null;
                 const checkboxes = document.querySelectorAll('.cert-checkbox');
@@ -381,9 +389,21 @@ document.addEventListener('DOMContentLoaded', function() {
                             });
                         }
                         lastChecked = this;
-                        updateActionButtons();
                     });
                 });
+
+                // Select all checkboxes on header click
+                selectBoxHeader.addEventListener('click', function() {
+                    const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked || checkbox.disabled);
+                    
+                    checkboxes.forEach(checkbox => {
+                        if (!checkbox.disabled) {
+                            checkbox.checked = !allChecked;
+                        }
+                    });
+                });
+
+                // Popovers
                 var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
                 var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
                     return new bootstrap.Popover(popoverTriggerEl);
@@ -406,7 +426,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 });
 
-                document.addEventListener('click', function(event) {
+                document.addEventListener('click', function() {
                     popoverList.forEach(popover => {
                         popover.hide();
                     });
@@ -444,13 +464,13 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <input type="text" class="form-control" placeholder="IP" id="sanIp">
                                 <button class="btn btn border" type="button" id="addIpButton">+</button>
                             </div>
+                            <div id="addedSanIP" class="mt-2"></div>
                             <div class="input-group mb-2">
                                 <input type="text" class="form-control" placeholder="DNS" id="sanDns">
                                 <button class="btn btn border" type="button" id="addDnsButton">+</button>
                             </div>
+                            <div id="addedDnsNames" class="mt-2"></div>
                         </div>
-                        <div id="addedSanIPs" class="mt-2"></div>
-                        <div id="addedDnsNames" class="mt-2"></div>
                     </div>
                     <div class="mb-3">
                         <label for="type" class="form-label">${texts[lang].certificate.type}</label>
@@ -479,13 +499,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button type="button" class="btn btn-primary" id="confirmAction">${texts[lang].certificate.confirm}</button>
                 `;
     
+                const now = new Date();
+                const offset = now.getTimezoneOffset() * 60000;
+                document.getElementById("startDate").value = new Date(now.getTime() - offset).toISOString().slice(0, 16);
+                document.getElementById("endDate").value = new Date(now.setFullYear(now.getFullYear() + 1, now.getMonth(), now.getDate() + 1) - offset).toISOString().slice(0, 16);
+
                 document.getElementById('addIpButton').onclick = function() {
                     const ipValue = document.getElementById('sanIp').value;
                     if (ipValue) {
-                        const ipList = document.getElementById('addedSanIPs');
-                        ipList.innerHTML += `<div class="alert alert-info d-flex justify-content-between align-items-center">
+                        const ipList = document.getElementById('addedSanIP');
+                        ipList.innerHTML += `<div class="alert alert-secondary p-2 d-flex justify-content-between align-items-center">
                             ${ipValue}
-                            <button class="btn btn-close" onclick="this.parentElement.remove();"></button>
+                            <button class="btn btn-sm btn-close" onclick="this.parentElement.remove();"></button>
                         </div>`;
                         document.getElementById('sanIp').value = '';
                     }
@@ -495,9 +520,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     const dnsValue = document.getElementById('sanDns').value;
                     if (dnsValue) {
                         const dnsList = document.getElementById('addedDnsNames');
-                        dnsList.innerHTML += `<div class="alert alert-info d-flex justify-content-between align-items-center">
+                        dnsList.innerHTML += `<div class="alert alert-secondary p-2 d-flex justify-content-between align-items-center">
                             ${dnsValue}
-                            <button class="btn btn-close" onclick="this.parentElement.remove();"></button>
+                            <button class="btn btn-sm btn-close" onclick="this.parentElement.remove();"></button>
                         </div>`;
                         document.getElementById('sanDns').value = '';
                     }
@@ -506,7 +531,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('confirmAction').onclick = async function() {
                     const commonName = document.getElementById('commonName').value;
                     const subject = document.getElementById('subject').value;
-                    const sanIPs = Array.from(document.getElementById('addedSanIPs').children).map(el => el.innerText);
+                    const sanIP = Array.from(document.getElementById('addedSanIP').children).map(el => el.innerText);
                     const sanDns = Array.from(document.getElementById('addedDnsNames').children).map(el => el.innerText);
                     const type = document.getElementById('type').value;
                     const startDate = document.getElementById('startDate').value;
@@ -516,7 +541,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const data = {
                         name: commonName,
                         subject: subject,
-                        sanIPs: sanIPs,
+                        sanIP: sanIP,
                         sanDns: sanDns,
                         type: type,
                         startDate: startDate,
@@ -552,27 +577,36 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p><strong>${texts[lang].certificate.CN}:</strong> ${certData.id ? certData.id : `${texts[lang].certificate.undefined}`}</p>
                         <p><strong>${texts[lang].certificate.SUBJ}:</strong> ${certData.subject ? certData.subject : `${texts[lang].certificate.undefined}`}</p>
 
-                        <p><strong>IP(s):</strong> ${certData.ip && certData.ip.length > 0 
+                        <p><strong>${texts[lang].certificate.serial}:</strong> ${certData.serial}</p>
+                        <p><strong>${texts[lang].certificate.signature}:</strong> ${certData.hash}</p>
+
+
+                        <p><strong>IP:</strong> ${certData.ip && certData.ip.length > 0 
                             ? certData.ip.map(ip => `<span>${ip}</span>`).join(', ') 
-                            : "Aucune IP définie"}
+                            : `${texts[lang].certificate.IP}`}
                         </p>
 
                         <p><strong>DNS:</strong> ${certData.dns && certData.dns.length > 0 
                             ? certData.dns.map(dns => `<span>${dns}</span>`).join(', ') 
-                            : "Aucun DNS défini"}
+                            : `${texts[lang].certificate.DNS}`}
                         </p>
 
                         <p><strong>${texts[lang].certificate.type}:</strong> ${certData.type ? certData.type : `${texts[lang].certificate.undefined}`}</p>
                         <p><strong>${texts[lang].certificate.startDate}:</strong> ${certData.startDate ? certData.startDate : `${texts[lang].certificate.undefined}`}</p>
                         <p><strong>${texts[lang].certificate.endDate}:</strong> ${certData.endDate ? certData.endDate : `${texts[lang].certificate.undefined}`}</p>
+
+                        <p><strong>${texts[lang].certificate.downloads}:</strong>
+                            <a class="btn btn-light btn-sm" href="/src/certs/${replaceSpaces(certData.id)}.crt" download><img src="images/file-arrow-down-solid.svg" class="icon me-1"/>.crt</a>
+                            <a class="btn btn-light btn-sm" href="/src/certs/${replaceSpaces(certData.id)}.csr" download><img src="images/file-arrow-down-solid.svg" class="icon me-1"/>.csr</a>
+                            <a class="btn btn-light btn-sm" href="/src/private/${replaceSpaces(certData.id)}.key" download><img src="images/file-arrow-down-solid.svg" class="icon me-1"/>.key</a>
+                            <a class="btn btn-light btn-sm" href="/src/custom/${replaceSpaces(certData.id)}.pkcs12" download><img src="images/file-arrow-down-solid.svg" class="icon me-1"/>.pkcs12</a>
+                        </p>
                     </div>
                 `;
-                footerContent.innerHTML = `
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                `;
+                footerContent.style.display = 'none';
                 break;
             case 'revoke':
-                modalTitle.textContent = 'Revoke Certificate';
+                modalTitle.textContent = `${texts[lang].certificate.revoke}`;
                 caPassphraseContainer.style.display = 'block';
                 formContent.innerHTML = `
                     <p>Êtes-vous sûr de vouloir révoquer ce certificat ?</p>
@@ -586,13 +620,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 modalTitle.textContent = 'Renew Certificate';
                 formContent.innerHTML = `
                     <div class="mb-3">
-                        <label for="commonNameRenew" class="form-label">Common Name</label>
-                        <input type="text" class="form-control" id="commonNameRenew" value="${certData.id}" placeholder="Common Name" readonly>
+                        <input type="text" class="form-control" id="commonNameRenew" value="${certData.id}" placeholder="${texts[lang].certificate.CN}" readonly>
                     </div>
                 `;
                 footerContent.innerHTML = `
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">Confirm</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].certificate.cancel}</button>
+                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">${texts[lang].certificate.confirm}</button>
                 `;
                 break;
             case 'remove':
@@ -602,21 +635,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p>Êtes-vous sûr de vouloir supprimer ce certificat ?</p>
                 `;
                 footerContent.innerHTML = `
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">Confirm</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].certificate.cancel}</button>
+                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">${texts[lang].certificate.confirm}</button>
                 `;
                 break;
         }
     
         // Afficher le modal
         const modal = new bootstrap.Modal(document.getElementById('dynamicModal'));
-        const now = new Date();
-        const offset = now.getTimezoneOffset() * 60000;
-
         modal.show();
-
-        document.getElementById("startDate").value = new Date(now.getTime() - offset).toISOString().slice(0, 16);
-        document.getElementById("endDate").value = new Date(now.setFullYear(now.getFullYear() + 1, now.getMonth(), now.getDate() + 1) - offset).toISOString().slice(0, 16);
     }
    
     // Initialize tool tips
@@ -636,9 +663,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
+                const checkboxes = document.querySelectorAll('.cert-checkbox');
                 passwordInput.value = data.pkiaccess || '';
                 if (passwordInput.value !== '') {
-                    openModalBtn.innerHTML = `<img src="images/unlock-solid.svg" class="icon me-1"/> ${texts[lang].lock}`;
+                    checkboxes.forEach(checkbox => {
+                        checkbox.disabled = false;
+                    });
+                    lockInterface.classList.add('btn-success');
+                    lockInterface.innerHTML = `<img src="images/unlock-solid.svg" class="icon"/>`;
+                }
+                else {
+                    checkboxes.forEach(checkbox => {
+                        checkbox.disabled = true;
+                    });
+                    lockInterface.classList.add('btn-danger');
                 }
             })
             .catch(error =>  console.error('Error fetching password:', error));
@@ -669,7 +707,8 @@ document.addEventListener('DOMContentLoaded', function() {
     //     });
     // });
 
-    createBtn.addEventListener('click', function() {
+    createBtn.addEventListener('click', function(e) {
+        e.preventDefault();
         showModal('create');
     });
 
@@ -726,7 +765,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // });
     
     // Open modal & send password
-    openModalBtn.addEventListener('click', (e) => {
+    lockInterface.addEventListener('click', (e) => {
         e.preventDefault();
         passwordModal.show();
     });
@@ -751,6 +790,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('passwordForm').addEventListener('submit', function(e) {
         e.preventDefault();
+        const checkboxes = document.querySelectorAll('.cert-checkbox');
         const password = passwordInput.value;
         fetch('/set-password', {
             method: 'POST',
@@ -761,10 +801,18 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => {
             if (response.ok) {
-                console.log('Password saved successfully!');
                 passwordModal.hide();
-                openModalBtn.innerHTML = `<img src="images/unlock-solid.svg" class="icon me-1"/> ${texts[lang].lock}`;
+                checkboxes.forEach(checkbox => {
+                    checkbox.disabled = false;
+                });
+                lockInterface.classList.add('btn-success');
+                lockInterface.classList.remove('btn-danger');
+                lockInterface.innerHTML = `<img src="images/unlock-solid.svg" class="icon"/>`;
             } else {
+                checkboxes.forEach(checkbox => {
+                    checkbox.disabled = true;
+                });
+                lockInterface.classList.add('btn-danger');
                 console.error('Error saving password:', response.statusText);
             }
         })
