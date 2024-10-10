@@ -13,32 +13,30 @@
 <body>
     <div class="container-fluid">
         <form id="certForm">
-            <div class="form-group mb-2">
+            <div class="form-group">
+                <!-- Lock interface button -->
+                <button class="btn btn-secondary rounded-3 float-end me-2" id="lockInterface">
+                    <img src="images/lock-white-solid.svg" class="icon"/>
+                </button>
+
                 <!-- Create a certificate -->
-                <button class="btn btn-secondary me-2" id="createBtn" type="button">
+                <button class="btn btn-secondary rounded-3 me-2" id="createBtn">
                     <img src="images/plus-solid.svg" class="icon"/>
                 </button>
 
                 <!-- Search Bar -->
-                <input type="text" id="certSearch" class="form-control shadow-sm rounded-pill" placeholder="Search for a certificate">
-            </div>
+                <input type="text" id="certSearch" class="form-control border-light shadow-sm rounded-3 me-2" placeholder="Search for a certificate">
 
-            <!-- Actions -->
-            <div id="actionButtons" class="action-buttons">
-                <div class="dropdown float-end">
-                    <button class="btn btn-secondary rounded-pill dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img src="images/globe-solid.svg" class="icon"/>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="languageDropdown" id="languageMenu">
-                        <a class="dropdown-item d-flex justify-content-between" id="english" data-lang="en">English</a>
-                        <a class="dropdown-item d-flex justify-content-between" id="french" data-lang="fr">French</a>
-                        <a class="dropdown-item d-flex justify-content-between" id="spanish" data-lang="es">Spanish</a>
-                        <a class="dropdown-item d-flex justify-content-between" id="german" data-lang="de">Deutsch</a>
-                    </div>
-                </div>
-                <button class="btn btn-secondary btn-sm rounded-pill float-end me-1" id="openModalBtn">
-                    <img src="images/unlock-solid.svg" class="icon"/> Lock
+                <!-- Language dropdown -->
+                <button class="btn btn-secondary rounded-3" id="languageDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="images/globe-solid.svg" class="icon"/>
                 </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="languageDropdown" id="languageMenu">
+                    <a class="dropdown-item d-flex justify-content-between" id="english" data-lang="en">English</a>
+                    <a class="dropdown-item d-flex justify-content-between" id="french" data-lang="fr">French</a>
+                    <a class="dropdown-item d-flex justify-content-between" id="spanish" data-lang="es">Spanish</a>
+                    <a class="dropdown-item d-flex justify-content-between" id="german" data-lang="de">Deutsch</a>
+                </div>
             </div>
         </form>
 
@@ -46,7 +44,7 @@
         <table class="table table-sm">
             <thead class="thead">
                 <tr>
-                    <th class="resizable text-center" scope="col" data-sort="selectBox" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
+                    <th class="text-center" width="50px" scope="col" data-sort="selectBox" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
                         <div class="sortable-handle">
                             <img src="images/square-check-solid.svg" class="icon"/>
                         </div>
@@ -56,14 +54,14 @@
                             <img src="images/chart-simple-solid.svg" class="icon me-1"/> Status
                         </div>
                     </th>
-                    <th class="resizable" scope="col" data-sort="serial" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
-                        <div class="sortable-handle">
-                            <img src="images/hashtag-solid.svg" class="icon me-1"/> Serial
-                        </div>
-                    </th>
                     <th class="resizable" scope="col" data-sort="id" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
                         <div class="sortable-handle">
                             <img src="images/file-lines-solid.svg" class="icon me-1"/> Common Name (CN)
+                        </div>
+                    </th>
+                    <th class="resizable" scope="col" data-sort="serial" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
+                        <div class="sortable-handle">
+                            <img src="images/hashtag-solid.svg" class="icon me-1"/> Serial
                         </div>
                     </th>
                     <th class="resizable" scope="col" data-sort="startDate" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
@@ -76,9 +74,8 @@
                             <img src="images/calendar-days-solid.svg" class="icon me-1"/> End Date
                         </div>
                     </th>
-                    <th class="resizable text-center" scope="col" data-sort="downloads" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
+                    <th class="text-center" width="1px" scope="col" data-sort="downloads" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
                         <div class="sortable-handle">
-                            <img src="images/download-solid.svg" class="icon"/>
                         </div>
                     </th>
                 </tr>
@@ -94,14 +91,14 @@
         <div class="modal-dialog float-end me-3">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Enter Password</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Enter Passphrase</h5>
+                    <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="passwordForm" method="POST" action="/set-password">
                         <div class="input-group mb-3">
                             <input type="password" id="password" class="form-control border" name="password" required>
-                            <button type="button" class="btn border" id="togglePassword">
+                            <button class="btn border" id="togglePassword">
                                 <img src="images/eye-solid.svg" id="togglePasswordIcon" width="20px" height="20px" alt="Toggle password visibility">
                             </button>
                         </div>
@@ -118,7 +115,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                 <h5 class="modal-title" id="dynamicModalLabel">Certificate Action</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" tabindex="-1"></button>
+                <button class="btn-close" data-bs-dismiss="modal" aria-label="Close" tabindex="-1"></button>
                 </div>
                 <div class="modal-body">
                     <form id="dynamicForm">
