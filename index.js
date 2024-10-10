@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const certSearchInput = document.getElementById('certSearch');
     const certTableBody = document.getElementById('certTableBody');
     const selectBoxHeader = document.querySelector('[data-sort="selectBox"]');
-    const checkAll = document.querySelectorAll('input[type="checkbox"].cert-checkbox');
     const lockInterface = document.getElementById('lockInterface');
     const passwordInput = document.getElementById('password');
     const texts = {
@@ -223,6 +222,28 @@ document.addEventListener('DOMContentLoaded', function() {
         $('th[data-sort="endDate"]').html(`<img src="images/calendar-days-solid.svg" class="icon me-1"/> ${texts[lang].certificate.endDate}`);
     }
 
+    let isLocked = JSON.parse(localStorage.getItem('isLocked')) || false;
+
+    // Update lock / unlock buttons
+    function updateInterface() {
+        const checkboxes = document.querySelectorAll('.cert-checkbox');
+        if (!isLocked) {
+            checkboxes.forEach(checkbox => {
+                checkbox.disabled = false;
+            });
+            lockInterface.classList.remove('btn-danger');
+            lockInterface.classList.add('btn-success');
+            lockInterface.innerHTML = `<img src="images/unlock-solid.svg" class="icon"/>`;
+        } else {
+            checkboxes.forEach(checkbox => {
+                checkbox.disabled = true;
+            });
+            lockInterface.classList.remove('btn-success');
+            lockInterface.classList.add('btn-danger');
+            lockInterface.innerHTML = `<img src="images/lock-solid.svg" class="icon"/>`;
+        }
+    }
+
     // Adapt name, normalize
     function encodeName(name) {
         return name
@@ -346,10 +367,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td data-sort="endDate"><span class="tooltip-container" data-toggle="tooltip" data-placement="bottom" title="${cert.endDate}">${formatDate(cert.endDate)}</span></td>
                         <td>
                             <button type="button" class="btn btn-light btn-sm" data-bs-toggle="popover" data-bs-html="true" data-bs-content="
-                                <a class='btn btn-light btn-sm d-block mb-1' href='/src/certs/${replaceSpaces(cert.id)}.crt' download><img src='images/certificate-solid.svg' class='icon me-1'/>.crt</a>
-                                <a class='btn btn-light btn-sm d-block mb-1' href='/src/certs/${replaceSpaces(cert.id)}.csr' download><img src='images/lock-solid.svg' class='icon me-1'/>.csr</a>
-                                <a class='btn btn-light btn-sm d-block mb-1' href='/src/private/${replaceSpaces(cert.id)}.key' download><img src='images/key-solid.svg' class='icon me-1'/>.key</a>
-                                <a class='btn btn-light btn-sm d-block' href='/src/custom/${replaceSpaces(cert.id)}.pkcs12' download><img src='images/file-export-solid.svg' class='icon me-1'/>.pkcs12</a>
+                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='/src/certs/${replaceSpaces(cert.id)}.crt' download><img src='images/certificate-solid.svg' class='icon me-1'/>.crt</a>
+                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='/src/certs/${replaceSpaces(cert.id)}.csr' download><img src='images/lock-solid.svg' class='icon me-1'/>.csr</a>
+                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='/src/private/${replaceSpaces(cert.id)}.key' download><img src='images/key-solid.svg' class='icon me-1'/>.key</a>
+                                <a class='btn btn-light btn-sm d-block text-start' href='/src/custom/${replaceSpaces(cert.id)}.pkcs12' download><img src='images/file-export-solid.svg' class='icon me-1'/>.pkcs12</a>
                             ">
                                 <img src="images/file-arrow-down-solid.svg" class="icon"/>
                             </button>
@@ -663,23 +684,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                const checkboxes = document.querySelectorAll('.cert-checkbox');
                 passwordInput.value = data.pkiaccess || '';
-                if (passwordInput.value !== '') {
-                    checkboxes.forEach(checkbox => {
-                        checkbox.disabled = false;
-                    });
-                    lockInterface.classList.add('btn-success');
-                    lockInterface.innerHTML = `<img src="images/unlock-solid.svg" class="icon"/>`;
-                }
-                else {
-                    checkboxes.forEach(checkbox => {
-                        checkbox.disabled = true;
-                    });
-                    lockInterface.classList.add('btn-danger');
-                }
+                updateInterface();
             })
-            .catch(error =>  console.error('Error fetching password:', error));
+            .catch(error => console.error('Error fetching password:', error));
     }
 
     // // Dropdown menu to generate a specific number of certificates
@@ -769,29 +777,12 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         passwordModal.show();
     });
-
-    // Sorting columns
-    document.querySelectorAll('thead th').forEach(header => {
-        header.addEventListener('click', function() {
-            const sortKey = this.getAttribute('data-sort');
-            const currentOrder = this.classList.contains('asc') ? 'desc' : 'asc';
-            this.classList.remove('asc', 'desc');
-            this.classList.add(currentOrder);
-            sortTable(sortKey, currentOrder);
-        });
-    });
-
-    document.getElementById('togglePassword').addEventListener('click', function () {
-        const toggleIcon = document.getElementById('togglePasswordIcon');
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInput.setAttribute('type', type);
-        toggleIcon.src = toggleIcon.src.includes('images/eye-solid.svg') ? 'images/eye-slash-solid.svg' : 'images/eye-solid.svg';
-    });
-
-    document.getElementById('passwordForm').addEventListener('submit', function(e) {
+    
+    document.getElementById('passwordForm').addEventListener('submit', function (e) {
         e.preventDefault();
-        const checkboxes = document.querySelectorAll('.cert-checkbox');
+    
         const password = passwordInput.value;
+    
         fetch('/set-password', {
             method: 'POST',
             headers: {
@@ -802,21 +793,33 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => {
             if (response.ok) {
                 passwordModal.hide();
-                checkboxes.forEach(checkbox => {
-                    checkbox.disabled = false;
-                });
-                lockInterface.classList.add('btn-success');
-                lockInterface.classList.remove('btn-danger');
-                lockInterface.innerHTML = `<img src="images/unlock-solid.svg" class="icon"/>`;
+                isLocked = !isLocked;
+                localStorage.setItem('isLocked', JSON.stringify(isLocked));    
+                updateInterface();
             } else {
-                checkboxes.forEach(checkbox => {
-                    checkbox.disabled = true;
-                });
-                lockInterface.classList.add('btn-danger');
                 console.error('Error saving password:', response.statusText);
             }
         })
         .catch(err => console.error('Fetch error:', err));
+    });
+
+    document.getElementById('togglePassword').addEventListener('click', function (event) {
+        event.preventDefault();
+        const toggleIcon = document.getElementById('togglePasswordIcon');
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        toggleIcon.src = toggleIcon.src.includes('images/eye-solid.svg') ? 'images/eye-slash-solid.svg' : 'images/eye-solid.svg';
+    });
+    
+    // Sorting columns
+    document.querySelectorAll('thead th').forEach(header => {
+        header.addEventListener('click', function() {
+            const sortKey = this.getAttribute('data-sort');
+            const currentOrder = this.classList.contains('asc') ? 'desc' : 'asc';
+            this.classList.remove('asc', 'desc');
+            this.classList.add(currentOrder);
+            sortTable(sortKey, currentOrder);
+        });
     });
 
     // Renew one certificate
