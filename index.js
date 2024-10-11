@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     valid: "Valid",
                     expired: "Expired",
                     revoked: "Revoked",
+                    disabled: "Disabled",
                     unknown: "Unknown"
                 },
             },
@@ -89,6 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     valid: "Valide",
                     expired: "Expiré",
                     revoked: "Révoqué",
+                    disabled: "Désactivé",
                     unknown: "Inconnu"
                 },
             },
@@ -132,6 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     valid: "Válido",
                     expired: "Expirado",
                     revoked: "Revocado",
+                    disabled: "Desactivado",
                     unknown: "Desconocido"
                 },
             },
@@ -175,6 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     valid: "Gültig",
                     expired: "Abgelaufen",
                     revoked: "Widerrufen",
+                    disabled: "Deaktiviert",
                     unknown: "Unbekannt"
                 },
             },
@@ -293,9 +297,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const statusOrder = {
                     'btn-success': 1,
-                    'btn-danger': 2,
-                    'btn-warning': 3,
-                    'btn-secondary': 4
+                    'btn-warning': 2,
+                    'btn-danger': 3,
+                    'btn-dark': 4,
+                    'btn-secondary': 5
                 };
 
                 const orderA = Array.from(buttonClassA || []).find(cls => statusOrder[cls]);
@@ -342,6 +347,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         statusColor = 'danger';
                         statusText = texts[lang].certificate.statusBtn.revoked;
                         statusBtn = `<img src="images/circle-xmark-solid.svg" class="icon me-1"/> ${statusText}`;
+                    } else if (status === 'D') {
+                        statusColor = 'dark';
+                        statusText = texts[lang].certificate.statusBtn.disabled;
+                        statusBtn = `<img src="images/circle-minus-solid.svg" class="icon me-1"/> ${statusText}`;
                     } else {
                         statusColor = 'secondary';
                         statusText = texts[lang].certificate.statusBtn.unknown;
