@@ -1,10 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
+    const lockState = JSON.parse(localStorage.getItem('isLocked'));
     const createBtn = document.getElementById('createBtn');
     const certSearchInput = document.getElementById('certSearch');
     const certTableBody = document.getElementById('certTableBody');
     const selectBoxHeader = document.querySelector('[data-sort="selectBox"]');
     const lockInterface = document.getElementById('lockInterface');
+    const passwordModalTitle = document.getElementById('passwordModalTitle');
+    const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
     const passwordInput = document.getElementById('password');
     const texts = {
         en: {
@@ -183,7 +185,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
             },
         },
-    };    
+    };
+    isLocked = lockState !== null ? lockState : true;
 
     // Set default language from localStorage or use English as default
     let lang = localStorage.getItem('language') || 'en';
@@ -226,8 +229,6 @@ document.addEventListener('DOMContentLoaded', function() {
         $('th[data-sort="endDate"]').html(`<img src="images/calendar-days-solid.svg" class="icon me-1"/> ${texts[lang].certificate.endDate}`);
     }
 
-    let isLocked = JSON.parse(localStorage.getItem('isLocked')) || false;
-
     // Update lock / unlock buttons
     function updateInterface() {
         const checkboxes = document.querySelectorAll('.cert-checkbox');
@@ -235,6 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
             checkboxes.forEach(checkbox => {
                 checkbox.disabled = false;
             });
+            createBtn.classList.remove('disabled');
             lockInterface.classList.remove('btn-danger');
             lockInterface.classList.add('btn-success');
             lockInterface.innerHTML = `<img src="images/unlock-solid.svg" class="icon"/>`;
@@ -242,6 +244,7 @@ document.addEventListener('DOMContentLoaded', function() {
             checkboxes.forEach(checkbox => {
                 checkbox.disabled = true;
             });
+            createBtn.classList.add('disabled');
             lockInterface.classList.remove('btn-success');
             lockInterface.classList.add('btn-danger');
             lockInterface.innerHTML = `<img src="images/lock-solid.svg" class="icon"/>`;
@@ -469,6 +472,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 initializeTooltips();
+                updateInterface();
                 loadPassword();
             })
             .catch(error => console.error('Certificate loading error:', error));
@@ -699,8 +703,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                passwordInput.value = data.pkiaccess || '';
-                updateInterface();
+                const fetchedPassword = data.pkiaccess || '';
+                passwordInput.value = fetchedPassword;
+                passwordModalTitle.textContent = fetchedPassword ? "Enter your Passphrase" : "Define a passphrase";
             })
             .catch(error => console.error('Error fetching password:', error));
     }
@@ -786,36 +791,65 @@ document.addEventListener('DOMContentLoaded', function() {
     //         .catch(error => console.error('Revocation error:', error));
     //     }
     // });
-    
+
     // Open modal & send password
     lockInterface.addEventListener('click', (e) => {
         e.preventDefault();
         passwordModal.show();
+        loadPassword();
     });
-    
+   
+    // Handle password form submission
     document.getElementById('passwordForm').addEventListener('submit', function (e) {
         e.preventDefault();
-    
         const password = passwordInput.value;
-    
-        fetch('/set-password', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ password: password })
-        })
-        .then(response => {
-            if (response.ok) {
-                passwordModal.hide();
-                isLocked = !isLocked;
-                localStorage.setItem('isLocked', JSON.stringify(isLocked));    
-                updateInterface();
-            } else {
-                console.error('Error saving password:', response.statusText);
-            }
-        })
-        .catch(err => console.error('Fetch error:', err));
+
+        if (!password) {
+            console.error('Password cannot be empty');
+            return;
+        }
+
+        fetch('/get-password')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Request failed');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const tmpPassword = data.pkiaccess;
+
+                if (!tmpPassword) {
+                    fetch('/set-password', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ password: password })
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            isLocked = false;
+                            localStorage.setItem('isLocked', JSON.stringify(isLocked));
+                            updateInterface();
+                            passwordModal.hide();
+                            passwordInput.classList.add('is-valid');
+                        } else {
+                            console.error('Error saving password:', response.statusText);
+                        }
+                    });
+                } else if (password === tmpPassword) {
+                    isLocked = !isLocked;
+                    localStorage.setItem('isLocked', JSON.stringify(isLocked));
+                    updateInterface();
+                    passwordModal.hide();
+                    passwordInput.classList.add('is-valid');
+                } else {
+                    passwordInput.classList.add('is-invalid');
+                    console.error('Password is incorrect');
+                }
+            })
+            .catch(err => console.error('Fetch error:', err));
     });
 
     document.getElementById('togglePassword').addEventListener('click', function (event) {
@@ -865,6 +899,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => console.error('Revocation error:', error));
     };
 
+    updateInterface();
     loadCertData();
     loadPassword();
 });
