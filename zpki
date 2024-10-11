@@ -422,10 +422,11 @@ function ca-list() {
       # printf("%s\t", "filename");
     }
   }
-  function rfc3339(date) {
+  function rfc3339(date, formattedDate) {
     if (!date) return;
     ds = gensub(/(..)/, "\\1 ", "g", date);
-    return substr(strftime("%Y-%m-%dT%H:%M:%S%z", mktime("20" ds)), 1, 22) ":" substr(strftime("%Y-%m-%dT%H:%M:%S%z", mktime("20" ds)), 23);
+    formattedDate = strftime("%Y-%m-%dT%H:%M:%S%z", mktime("20" ds));
+    return substr(formattedDate, 1, 22) ":" substr(formattedDate, 23);
   }
   function cn(dn, a) {
     if (match(dn, /CN=([^/]*)(,.*)?$/, a)) {
