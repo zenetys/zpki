@@ -91,14 +91,14 @@
         <div class="modal-dialog float-end me-3">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Enter Passphrase</h5>
+                    <h5 class="modal-title" id="passwordModalTitle">Enter your Passphrase</h5>
                     <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="passwordForm" method="POST" action="/set-password">
-                        <div class="input-group mb-3">
-                            <input type="password" id="password" class="form-control border" name="password" required>
-                            <button class="btn border" id="togglePassword">
+                        <div class="input-group has-validation mb-3">
+                            <input type="password" id="password" class="form-control" name="password" required>
+                            <button class="btn border rounded-end" id="togglePassword">
                                 <img src="images/eye-solid.svg" id="togglePasswordIcon" width="20px" height="20px" alt="Toggle password visibility">
                             </button>
                         </div>
