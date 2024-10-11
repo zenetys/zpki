@@ -29,15 +29,6 @@
 .modal-content {
     border-radius: 30px;
 }
-.modal input {
-    transition: 0.2s;
-}
-.modal input:hover {
-    background: #eee;
-}
-.modal .input-group .btn:hover {
-    background: #eee;
-}
 
 .dropdown #languageDropdown {
     padding: 3px 10px;
@@ -111,9 +102,6 @@
     opacity: 0.9;
     font-weight: 500;
 }
-.btn[disabled] {
-    cursor: not-allowed;
-}
 .btn-ssm {
     font-size: 16px;
     padding: 2px;
@@ -127,10 +115,6 @@
 }
 .button-container .action-buttons img {
     width: 15px;
-    transition: 0.5s;
-}
-.button-container .action-buttons img:hover {
-    width: 20px;
 }
 
 .tooltip-container {
