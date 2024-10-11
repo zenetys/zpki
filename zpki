@@ -423,9 +423,9 @@ function ca-list() {
     }
   }
   function rfc3339(date) {
-    if (!date) return ;
+    if (!date) return;
     ds = gensub(/(..)/, "\\1 ", "g", date);
-    return (strftime("%Y-%m-%dT%H:%M:%S%z", mktime("20" ds)));
+    return substr(strftime("%Y-%m-%dT%H:%M:%S%z", mktime("20" ds)), 1, 22) ":" substr(strftime("%Y-%m-%dT%H:%M:%S%z", mktime("20" ds)), 23);
   }
   function cn(dn, a) {
     if (match(dn, /CN=([^/]*)(,.*)?$/, a)) {
