@@ -121,6 +121,17 @@
 .button-container .btn {
     min-width: 120px;
 }
+.button-container .action-buttons {
+    display: flex;
+    gap: 10px;
+}
+.button-container .action-buttons img {
+    width: 15px;
+    transition: 0.5s;
+}
+.button-container .action-buttons img:hover {
+    width: 20px;
+}
 
 .tooltip-container {
     position: relative;

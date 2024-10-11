@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 confirm: "Confirmer",
                 undefined: "Indéfini",
                 status: "Statut",
-                serial: "Série",
+                serial: "Numéro de série",
                 signature: "Signature",
                 common_name: "Common Name (CN)",
                 downloads: "Téléchargements",
@@ -354,10 +354,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td data-sort="status">
                             <div class="button-container">
                                 <button class="btn btn-ssm btn-${statusColor} rounded-pill main-btn" data-id="${cert.id}">${statusBtn}</button>
-                                <div class="additional-buttons" style="display: none;">
-                                    <img src="images/ban-solid.svg" class="icon" data-id="${cert.id}" onclick="openModal('renew', ${cert.id})"/>
-                                    <img src="images/ban-solid.svg" class="icon" data-id="${cert.id}" onclick="openModal('revoke', ${cert.id})"/>
-                                    <img src="images/ban-solid.svg" class="icon" data-id="${cert.id}" onclick="openModal('remove', ${cert.id})"/>
+                                <div class="action-buttons" style="display: none;">
+                                    <button class="btn btn-light btn-sm">
+                                        <img src="images/rotate-right-solid.svg" class="icon" data-id="${cert.id}" onclick="openModal('renew', ${cert.id})"/>
+                                    </button>
+                                    <button class="btn btn-light btn-sm">
+                                        <img src="images/ban-solid.svg" class="icon" data-id="${cert.id}" onclick="openModal('revoke', ${cert.id})"/>
+                                    </button>
+                                    <button class="btn btn-light btn-sm">
+                                        <img src="images/rotate-right-solid.svg" class="icon" data-id="${cert.id}" onclick="openModal('remove', ${cert.id})"/>
+                                    </button>
                                 </div>
                             </div>
                         </td>
