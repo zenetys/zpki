@@ -23,6 +23,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 german: "German"
             },
             certificate: {
+                revokeCert: "Revoke certificate",
+                renewCert: "Renew certificate",
+                disableCert: "Disable certificate",
                 createMultiSan: "Create Multi SAN Certificate",
                 CN: "Common Name",
                 SUBJ: "Subject (OU / O / L)",
@@ -67,6 +70,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 german: "Allemand"
             },
             certificate: {
+                revokeCert: "Révoquer le certificat",
+                renewCert: "Renouveler le certificat",
+                disableCert: "Désactiver le certificat",
                 createMultiSan: "Créer un certificat Multi SAN",
                 CN: "Common Name",
                 SUBJ: "Objet (OU / O / L)",
@@ -111,6 +117,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 german: "Alemán"
             },
             certificate: {
+                revokeCert: "Revocar certificado",
+                renewCert: "Renovar certificado",
+                disableCert: "Desactivar certificado",
                 createMultiSan: "Crear un Certificado Multi SAN",
                 CN: "Nombre Común",
                 SUBJ: "Sujeto (OU / O / L)",
@@ -155,6 +164,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 german: "Deutsch"
             },
             certificate: {
+                revokeCert: "Zertifikat widerrufen",
+                renewCert: "Zertifikat erneuern",
+                disableCert: "Zertifikat deaktivieren",
                 createMultiSan: "Multi SAN-Zertifikat erstellen",
                 CN: "Gemeinsamer Name",
                 SUBJ: "Betreff (OU / O / L)",
@@ -237,6 +249,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 checkbox.disabled = false;
             });
             createBtn.classList.remove('disabled');
+            createBtn.classList.remove('btn-secondary');
+            createBtn.classList.add('btn-primary');
             lockInterface.classList.remove('btn-danger');
             lockInterface.classList.add('btn-success');
             lockInterface.innerHTML = `<img src="images/unlock-solid.svg" class="icon"/>`;
@@ -245,9 +259,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 checkbox.disabled = true;
             });
             createBtn.classList.add('disabled');
+            createBtn.classList.remove('btn-primary');
+            createBtn.classList.add('btn-secondary');
             lockInterface.classList.remove('btn-success');
             lockInterface.classList.add('btn-danger');
-            lockInterface.innerHTML = `<img src="images/lock-solid.svg" class="icon"/>`;
+            lockInterface.innerHTML = `<img src="images/lock-white-solid.svg" class="icon"/>`;
         }
     }
 
@@ -269,16 +285,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const date = new Date(isoDateString);
         return date.toLocaleDateString('fr-FR');
     }
-    
-    // // Update actions buttons
-    // function updateActionButtons() {
-    //     const selectedCerts = document.querySelectorAll('.cert-checkbox.active');
-    //     if (selectedCerts.length > 0) {
-    //         pass
-    //     } else {
-    //         pass
-    //     }
-    // }
 
     // Sorting columns
     function sortTable(sortKey, order) {
@@ -337,7 +343,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 data.forEach(cert => {
                     const status = cert.status;
                     let statusColor, statusBtn, statusText;
-    
+
                     if (status === 'V') {
                         statusColor = 'success';
                         statusText = texts[lang].certificate.statusBtn.valid;
@@ -359,22 +365,22 @@ document.addEventListener('DOMContentLoaded', function() {
                         statusText = texts[lang].certificate.statusBtn.unknown;
                         statusBtn = `<img src="images/question-solid.svg" class="icon me-1"/> ${statusText}`;
                     }
-    
-                    const row = document.createElement('tr');    
+
+                    const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td class="text-center check-container"><input type="checkbox" class="cert-checkbox data-id="${cert.id}" ${status === 'D' ? 'disabled' : ''}></td>                        
-                        <td data-sort="status">
+                        <td class="text-center check-container"><input type="checkbox" class="cert-checkbox" data-id="${cert.id}" ${status === 'D' ? 'disabled' : ''}></td>                        
+                        <td class="status-container" data-sort="status">
                             <div class="button-container">
-                                <button class="btn btn-ssm btn-${statusColor} rounded-pill main-btn" data-id="${cert.id}">${statusBtn}</button>
+                                <button class="btn btn-ssm btn-status btn-${statusColor} rounded-pill" data-id="${cert.id}">${statusBtn}</button>
                                 <div class="action-buttons" style="display: none;">
-                                    <button class="btn btn-light btn-sm">
-                                        <img src="images/rotate-right-solid.svg" class="icon" data-id="${cert.id}" onclick="openModal('renew', ${cert.id})"/>
+                                    <button class="btn btn-action">
+                                        <img src="images/rotate-right-solid.svg" class="icon rotate-icon" data-id="${cert.id}" onclick="showModal('renew', ${cert.id})"/>
                                     </button>
-                                    <button class="btn btn-light btn-sm">
-                                        <img src="images/ban-solid.svg" class="icon" data-id="${cert.id}" onclick="openModal('revoke', ${cert.id})"/>
+                                    <button class="btn btn-action">
+                                        <img src="images/ban-solid.svg" class="icon" data-id="${cert.id}" onclick="showModal('revoke', ${cert.id})"/>
                                     </button>
-                                    <button class="btn btn-light btn-sm">
-                                        <img src="images/rotate-right-solid.svg" class="icon" data-id="${cert.id}" onclick="openModal('remove', ${cert.id})"/>
+                                    <button class="btn btn-action">
+                                        <img src="images/circle-minus-regular.svg" class="icon" data-id="${cert.id}" onclick="showModal('remove', ${cert.id})"/>
                                     </button>
                                 </div>
                             </div>
@@ -388,7 +394,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <a class='btn btn-light btn-sm d-block text-start mb-1' href='/src/certs/${replaceSpaces(cert.id)}.crt' download><img src='images/certificate-solid.svg' class='icon me-1'/>.crt</a>
                                 <a class='btn btn-light btn-sm d-block text-start mb-1' href='/src/certs/${replaceSpaces(cert.id)}.csr' download><img src='images/lock-solid.svg' class='icon me-1'/>.csr</a>
                                 <a class='btn btn-light btn-sm d-block text-start mb-1' href='/src/private/${replaceSpaces(cert.id)}.key' download><img src='images/key-solid.svg' class='icon me-1'/>.key</a>
-                                <a class='btn btn-light btn-sm d-block text-start' href='/src/custom/${replaceSpaces(cert.id)}.pkcs12' download><img src='images/file-export-solid.svg' class='icon me-1'/>.pkcs12</a>
+                                <a class='btn btn-light btn-sm d-block text-start disabled'><img src='images/file-export-solid.svg' class='icon me-1'/>.pkcs12</a>
                             ">
                                 <img src="images/file-arrow-down-solid.svg" class="icon"/>
                             </button>
@@ -397,13 +403,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     certTableBody.appendChild(row);
 
                     row.addEventListener('click', function(event) {
-                        if (!event.target.classList.contains('check-container')) {
+                        if (!event.target.closest('.check-container') && !event.target.closest('.status-container')) {
                             showModal('view', cert);
                         }
                     });
                 });
 
-                // Shift + click
+                // Shift + click checkboxes
                 let lastChecked = null;
                 const checkboxes = document.querySelectorAll('.cert-checkbox');
 
@@ -448,6 +454,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     return new bootstrap.Popover(popoverTriggerEl);
                 });
 
+                // Set popovers for downloads
                 popoverTriggerList.forEach((triggerEl) => {
                     triggerEl.addEventListener('click', function(event) {
                         popoverList.forEach(popover => {
@@ -465,9 +472,39 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 });
 
+                // Hide popovers on outside click
                 document.addEventListener('click', function() {
                     popoverList.forEach(popover => {
                         popover.hide();
+                    });
+                });
+
+                // On line hover, show action buttons
+                document.querySelectorAll('tr').forEach((line) => {
+                    line.addEventListener('mouseover', function() {
+                        if (!isLocked) {
+                            const btn = line.querySelector('.btn-status');
+                            const actionButtons = line.querySelector('.action-buttons');
+                            if (btn) {
+                                btn.style.display = 'none';
+                            }
+                            if (actionButtons) {
+                                actionButtons.style.display = 'flex';
+                            }
+                        }
+                    });
+                    
+                    line.addEventListener('mouseout', function() {
+                        if (!isLocked) {
+                            const btn = line.querySelector('.btn-status');
+                            const actionButtons = line.querySelector('.action-buttons');
+                            if (btn) {
+                                btn.style.display = '';
+                            }
+                            if (actionButtons) {
+                                actionButtons.style.display = 'none';
+                            }
+                        }
                     });
                 });
 
@@ -477,7 +514,8 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => console.error('Certificate loading error:', error));
     }
-    
+
+    // Function to manage all modals
     function showModal(action, certData) {
         const modalTitle = document.getElementById('dynamicModalLabel');
         const formContent = document.getElementById('formContent');
@@ -538,12 +576,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].certificate.cancel}</button>
                     <button type="button" class="btn btn-primary" id="confirmAction">${texts[lang].certificate.confirm}</button>
                 `;
-    
+
                 const now = new Date();
                 const offset = now.getTimezoneOffset() * 60000;
                 document.getElementById("startDate").value = new Date(now.getTime() - offset).toISOString().slice(0, 16);
                 document.getElementById("endDate").value = new Date(now.setFullYear(now.getFullYear() + 1, now.getMonth(), now.getDate() + 1) - offset).toISOString().slice(0, 16);
 
+                // Add multiples IPs with style
                 document.getElementById('addIpButton').onclick = function() {
                     const ipValue = document.getElementById('sanIp').value;
                     if (ipValue) {
@@ -555,7 +594,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('sanIp').value = '';
                     }
                 };
-    
+
+                // Add multiples DNS with style
                 document.getElementById('addDnsButton').onclick = function() {
                     const dnsValue = document.getElementById('sanDns').value;
                     if (dnsValue) {
@@ -567,7 +607,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('sanDns').value = '';
                     }
                 };
-    
+
+                // Confirm certificate creation
                 document.getElementById('confirmAction').onclick = async function() {
                     const commonName = document.getElementById('commonName').value;
                     const subject = document.getElementById('subject').value;
@@ -577,7 +618,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const startDate = document.getElementById('startDate').value;
                     const endDate = document.getElementById('endDate').value;
                     const passphrase = document.getElementById('passphrase').value;
-    
+
                     const data = {
                         name: commonName,
                         subject: subject,
@@ -598,12 +639,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             body: JSON.stringify(data)
                         });
     
-                        const result = await response.json();
                         if (response.ok) {
-                            alert(result.response);
                             modal.hide();
                         } else {
-                            alert(`Error: ${result.error}`);
                         }
                     } catch (error) {
                         console.error('Error:', error);
@@ -646,7 +684,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 footerContent.style.display = 'none';
                 break;
             case 'revoke':
-                modalTitle.textContent = `${texts[lang].certificate.revoke}`;
+                modalTitle.textContent = `${texts[lang].certificate.revokeCert}`;
                 caPassphraseContainer.style.display = 'block';
                 formContent.innerHTML = `
                     <p>Êtes-vous sûr de vouloir révoquer ce certificat ?</p>
@@ -657,7 +695,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 break;
             case 'renew':
-                modalTitle.textContent = 'Renew Certificate';
+                modalTitle.textContent = `${texts[lang].certificate.renewCert}`;
                 formContent.innerHTML = `
                     <div class="mb-3">
                         <input type="text" class="form-control" id="commonNameRenew" value="${certData.id}" placeholder="${texts[lang].certificate.CN}" readonly>
@@ -669,10 +707,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 break;
             case 'remove':
-                modalTitle.textContent = 'Remove Certificate';
+                modalTitle.textContent = `${texts[lang].certificate.disableCert}`;
                 caPassphraseContainer.style.display = 'block';
                 formContent.innerHTML = `
-                    <p>Êtes-vous sûr de vouloir supprimer ce certificat ?</p>
+                    <p>Êtes-vous sûr de vouloir désactiver ce certificat ?</p>
                 `;
                 footerContent.innerHTML = `
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].certificate.cancel}</button>
@@ -706,35 +744,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 const fetchedPassword = data.pkiaccess || '';
                 passwordInput.value = fetchedPassword;
                 passwordModalTitle.textContent = fetchedPassword ? "Enter your Passphrase" : "Define a passphrase";
+                if (!fetchedPassword) {
+                    isLocked = true;
+                    localStorage.setItem('isLocked', JSON.stringify(isLocked));
+                    updateInterface();
+                }
             })
             .catch(error => console.error('Error fetching password:', error));
     }
 
-    // // Dropdown menu to generate a specific number of certificates
-    // createItems.forEach(item => {
-    //     item.addEventListener('click', function() {
-    //         const certCount = this.getAttribute('data-count');
-    //         const certName = "Testing Zenetys Certificate Authority with a long name";
-    //         certCountInput.value = certCount;
-
-    //         createDropdown.setAttribute('disabled', 'true');
-
-    //         setInterval(() => loadCertData(), 2000)
-
-    //         // Request create a certificate
-    //         fetch(`/create?name=${encodeURIComponent(certName)}&count=${certCount}`)
-    //             .then(response => response.text())
-    //             .catch(error => {
-    //                 console.error('Error:', error);
-    //             })
-    //             .finally(() => {
-    //                 setTimeout(() => {
-    //                     createDropdown.removeAttribute('disabled');
-    //                 }, 2000);
-    //             });
-    //     });
-    // });
-
+    // Creation button clicked
     createBtn.addEventListener('click', function(e) {
         e.preventDefault();
         showModal('create');
@@ -756,43 +775,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // // Renew multiple certificates
-    // renewSelectedButton.addEventListener('click', function(event) {
-    //     event.preventDefault();
-    //     const selectedCerts = Array.from(document.querySelectorAll('.cert-checkbox.active')).map(button => button.getAttribute('data-id'));
-    //     if (selectedCerts.length > 0) {
-    //         fetch('/renew', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             },
-    //             body: JSON.stringify({ id: selectedCerts })
-    //         })
-    //         .then(response => response.text())
-    //         .then(() => loadCertData())
-    //         .catch(error => console.error('Renewal error:', error));
-    //     }
-    // });
-
-    // // Revoke multiple certificates
-    // revokeSelectedButton.addEventListener('click', function(event) {
-    //     event.preventDefault();
-    //     const selectedCerts = Array.from(document.querySelectorAll('.cert-checkbox.active')).map(button => button.getAttribute('data-id'));
-    //     if (selectedCerts.length > 0) {
-    //         fetch('/revoke', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             },
-    //             body: JSON.stringify({ id: selectedCerts })
-    //         })
-    //         .then(response => response.text())
-    //         .then(() => loadCertData())
-    //         .catch(error => console.error('Revocation error:', error));
-    //     }
-    // });
-
-    // Open modal & send password
+    // Open modal & load password
     lockInterface.addEventListener('click', (e) => {
         e.preventDefault();
         passwordModal.show();
@@ -809,6 +792,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        // Fetch password
         fetch('/get-password')
             .then(response => {
                 if (!response.ok) {
@@ -819,6 +803,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 const tmpPassword = data.pkiaccess;
 
+                // If no password, set password
                 if (!tmpPassword) {
                     fetch('/set-password', {
                         method: 'POST',
@@ -852,6 +837,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(err => console.error('Fetch error:', err));
     });
 
+    // Toggle eye on password modal
     document.getElementById('togglePassword').addEventListener('click', function (event) {
         event.preventDefault();
         const toggleIcon = document.getElementById('togglePasswordIcon');
