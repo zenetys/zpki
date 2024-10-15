@@ -28,10 +28,10 @@
                 <input type="text" id="certSearch" class="form-control border-light shadow-sm rounded-3 me-2" placeholder="Search for a certificate">
 
                 <!-- Language dropdown -->
-                <button class="btn btn-secondary rounded-3" id="languageDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img src="images/globe-solid.svg" class="icon"/>
+                <button class="btn btn-secondary rounded-3" id="settingsDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="images/gear-solid.svg" class="icon"/>
                 </button>
-                <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="languageDropdown" id="languageMenu">
+                <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="settingsDropdown" id="languageMenu">
                     <a class="dropdown-item d-flex justify-content-between" id="english" data-lang="en">English</a>
                     <a class="dropdown-item d-flex justify-content-between" id="french" data-lang="fr">French</a>
                     <a class="dropdown-item d-flex justify-content-between" id="spanish" data-lang="es">Spanish</a>
@@ -49,7 +49,7 @@
                             <img src="images/square-check-solid.svg" class="icon"/>
                         </div>
                     </th>
-                    <th class="resizable" scope="col" data-sort="status" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
+                    <th class="resizable" width="150px" scope="col" data-sort="status" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
                         <div class="sortable-handle">
                             <img src="images/chart-simple-solid.svg" class="icon me-1"/> Status
                         </div>
