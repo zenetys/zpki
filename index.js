@@ -674,10 +674,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p><strong>${texts[lang].certificate.endDate}:</strong> ${certData.endDate ? certData.endDate : `${texts[lang].certificate.undefined}`}</p>
 
                         <p><strong>${texts[lang].certificate.downloads}:</strong>
-                            <a class="btn btn-light btn-sm" href="/src/certs/${replaceSpaces(certData.id)}.crt" download><img src="images/file-arrow-down-solid.svg" class="icon me-1"/>.crt</a>
-                            <a class="btn btn-light btn-sm" href="/src/certs/${replaceSpaces(certData.id)}.csr" download><img src="images/file-arrow-down-solid.svg" class="icon me-1"/>.csr</a>
-                            <a class="btn btn-light btn-sm" href="/src/private/${replaceSpaces(certData.id)}.key" download><img src="images/file-arrow-down-solid.svg" class="icon me-1"/>.key</a>
-                            <a class="btn btn-light btn-sm" href="/src/custom/${replaceSpaces(certData.id)}.pkcs12" download><img src="images/file-arrow-down-solid.svg" class="icon me-1"/>.pkcs12</a>
+                            <a class="btn btn-light btn-sm" href="/src/certs/${replaceSpaces(certData.id)}.crt" download><img src="images/certificate-solid.svg" class="icon me-1"/>.crt</a>
+                            <a class="btn btn-light btn-sm" href="/src/certs/${replaceSpaces(certData.id)}.csr" download><img src="images/lock-solid.svg" class="icon me-1"/>.csr</a>
+                            <a class="btn btn-light btn-sm" href="/src/private/${replaceSpaces(certData.id)}.key" download><img src="images/key-solid.svg" class="icon me-1"/>.key</a>
+                            <a class="btn btn-light btn-sm disabled"><img src="images/file-export-solid.svg" class="icon me-1"/>.pkcs12</a>
                         </p>
                     </div>
                 `;
