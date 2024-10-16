@@ -106,7 +106,7 @@ $ zpki ca-list --json | jq
 [
   {
     "status": "V",
-    "expiration": "2025-10-05T18:36:31+0200",
+    "expiration": "2025-10-05T18:36:31+02+00",
     "serial": "905DF0B1A0E4",
     "id": "Certificate Example 1",
     "hash": "68efa5ed",
@@ -114,11 +114,11 @@ $ zpki ca-list --json | jq
     "cn": "Certificate Example 1",
     "subject": "/CN=Certificate Example 1",
     "startDate": "2024-10-04T20:36:31+02:00",
-    "endDate": "2025-10-05T18:36:31+0200"
+    "endDate": "2025-10-05T18:36:31+02+00"
   },
   {
     "status": "V",
-    "expiration": "2025-10-05T18:36:35+0200",
+    "expiration": "2025-10-05T18:36:35+02+00",
     "serial": "905DF0B1A0E5",
     "id": "Certificate Example 2",
     "hash": "358813ab",
@@ -126,7 +126,7 @@ $ zpki ca-list --json | jq
     "cn": "Certificate Example 2",
     "subject": "/CN=Certificate Example 2",
     "startDate": "2024-10-04T20:36:35+02:00",
-    "endDate": "2025-10-05T18:36:35+0200"
+    "endDate": "2025-10-05T18:36:35+02+00"
   }
 ]
 ```
