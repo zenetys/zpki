@@ -652,7 +652,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     splitSubject = `<br>${splitSubject}`;
                 }
 
-
                 modalTitle.textContent = `${texts[lang].certificate.viewCert}`;
                 caPassphraseContainer.style.display = 'none';
                 formContent.innerHTML = `
@@ -951,64 +950,49 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Get password from server
-    function loadPassword() {
-        fetch('/get-password')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Request failed');
-                }
-                return response.json();
-            })
-            .then(data => {
-                const fetchedPassword = data.pkiaccess || '';
-                passwordInput.value = fetchedPassword;
-                passwordModalTitle.textContent = fetchedPassword ? "Enter your Passphrase" : "Define a passphrase";
-                if (!fetchedPassword) {
-                    isLocked = true;
-                    localStorage.setItem('isLocked', JSON.stringify(isLocked));
-                    updateInterface();
-                }
-            })
-            .catch(error => console.error('Error fetching password:', error));
+    // Utility function to fetch password from the server
+    async function fetchPassword() {
+        const response = await fetch('/get-password');
+        if (!response.ok) throw new Error('Request failed');
+        return (await response.json()).pkiaccess || '';
     }
 
-    // Confirm that password is good (avoid errors)
-    function checkPasswordForm() {
+    // Load password and update interface
+    async function loadPassword() {
+        const fetchedPassword = await fetchPassword();
+        passwordInput.value = fetchedPassword;
+        passwordModalTitle.textContent = fetchedPassword ? "Enter your Passphrase" : "Define a passphrase";
+
+        if (!fetchedPassword) {
+            isLocked = true;
+            localStorage.setItem('isLocked', JSON.stringify(isLocked));
+            updateInterface();
+        }
+    }
+
+    // Check if the input password is valid
+    async function checkPassword() {
+        const tmpPassword = await fetchPassword();
         const passwordSubmit = document.getElementById('passwordSubmit');
         passwordInput.classList.remove('is-invalid', 'is-valid');
-    
-        // Fetch password
-        fetch('/get-password')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Request failed');
-                }
-                return response.json();
-            })
-            .then(data => {
-                const tmpPassword = data.pkiaccess;
-                if (!tmpPassword) {
-                    passwordSubmit.disabled = false;
-                    passwordSubmit.classList.remove('btn-danger');
-                    passwordSubmit.classList.add('btn-success');
-                    return;
-                }
 
-                // If a password exists, validate
-                if (passwordInput.value) {
-                    const isValid = passwordInput.value === tmpPassword;
-                    passwordInput.classList.add(isValid ? 'is-valid' : 'is-invalid');
-                    passwordSubmit.disabled = !isValid;
-                    passwordSubmit.classList.remove('btn-primary');
-                    passwordSubmit.classList.remove(isValid ? 'btn-danger' : 'btn-success');
-                    passwordSubmit.classList.add(isValid ? 'btn-success' : 'btn-danger');
-                }
-            });
-    };
+        if (!tmpPassword) {
+            passwordSubmit.disabled = false;
+            passwordSubmit.classList.remove('btn-danger');
+            passwordSubmit.classList.add('btn-success');
+            return;
+        }
 
-    // Creation button clicked
-    createBtn.addEventListener('click', function(e) {
+        const isValid = passwordInput.value === tmpPassword;
+        passwordInput.classList.toggle('is-valid', isValid);
+        passwordInput.classList.toggle('is-invalid', !isValid);
+        passwordSubmit.disabled = !isValid;
+        passwordSubmit.classList.toggle('btn-danger', !isValid);
+        passwordSubmit.classList.toggle('btn-success', isValid);
+    }
+
+    // Handle button clicks and input events
+    createBtn.addEventListener('click', (e) => {
         e.preventDefault();
         showModal('create');
     });
@@ -1018,13 +1002,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const searchText = encodeName(this.value).toLowerCase();
         const rows = certTableBody.querySelectorAll('tr');
         rows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            let match = false;
-            cells.forEach(cell => {
-                if (encodeName(cell.textContent).toLowerCase().includes(searchText)) {
-                    match = true;
-                }
-            });
+            const match = Array.from(row.querySelectorAll('td')).some(cell => 
+                encodeName(cell.textContent).toLowerCase().includes(searchText)
+            );
             row.style.display = match ? '' : 'none';
         });
     });
@@ -1034,60 +1014,45 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         passwordModal.show();
         loadPassword();
-        checkPasswordForm();
+        checkPassword();
     });
 
     // Check password while input
-    document.getElementById('passwordForm').oninput = checkPasswordForm;
+    document.getElementById('passwordForm').oninput = checkPassword;
 
     // Handle password form submission
-    document.getElementById('passwordForm').addEventListener('submit', function (e) {
+    document.getElementById('passwordForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const password = passwordInput.value;
 
-        // Fetch password
-        fetch('/get-password')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Request failed');
-                }
-                return response.json();
-            })
-            .then(data => {
-                const tmpPassword = data.pkiaccess;
+        const tmpPassword = await fetchPassword();
+        if (!tmpPassword) {
+            // Set new password
+            const response = await fetch('/set-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password }),
+            });
 
-                // If no password, set password
-                if (!tmpPassword) {
-                    fetch('/set-password', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ password: password })
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            isLocked = false;
-                            localStorage.setItem('isLocked', JSON.stringify(isLocked));
-                            updateInterface();
-                            passwordModal.hide();
-                            passwordInput.classList.add('is-valid');
-                        } else {
-                            console.error('Error saving password:', response.statusText);
-                        }
-                    });
-                } else if (password === tmpPassword) {
-                    isLocked = !isLocked;
-                    localStorage.setItem('isLocked', JSON.stringify(isLocked));
-                    updateInterface();
-                    passwordModal.hide();
-                    passwordInput.classList.add('is-valid');
-                } else {
-                    passwordInput.classList.add('is-invalid');
-                    console.error('Password is incorrect');
-                }
-            })
-            .catch(err => console.error('Fetch error:', err));
+            if (response.ok) {
+                isLocked = false;
+                localStorage.setItem('isLocked', JSON.stringify(isLocked));
+                updateInterface();
+                passwordModal.hide();
+                passwordInput.classList.add('is-valid');
+            } else {
+                console.error('Error saving password:', response.statusText);
+            }
+        } else if (password === tmpPassword) {
+            isLocked = !isLocked;
+            localStorage.setItem('isLocked', JSON.stringify(isLocked));
+            updateInterface();
+            passwordModal.hide();
+            passwordInput.classList.add('is-valid');
+        } else {
+            passwordInput.classList.add('is-invalid');
+            console.error('Password is incorrect');
+        }
     });
 
     // Toggle eye on password modal
