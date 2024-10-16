@@ -24,11 +24,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 german: "German"
             },
             certificate: {
-                renewCert: "Renew certificate",
+                viewCert: "View Certificate",
+                renewCert: "Renew Certificate",
                 confirmRenew: "Are you sure you want to renew this certificate?",
-                revokeCert: "Revoke certificate",
+                revokeCert: "Revoke Certificate",
                 confirmRevoke: "Are you sure you want to revoke this certificate?",
-                disableCert: "Disable certificate",
+                disableCert: "Disable Certificate",
                 confirmDisable: "Are you sure you want to disable this certificate?",
                 createMultiSan: "Create Multi SAN Certificate",
                 CN: "Common Name",
@@ -75,6 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 german: "Allemand"
             },
             certificate: {
+                viewCert: "Voir le certificat",
                 renewCert: "Renouveler le certificat",
                 confirmRenew: "Êtes-vous sûr de vouloir renouveler ce certificat ?",
                 revokeCert: "Révoquer le certificat",
@@ -126,12 +128,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 german: "Alemán"
             },
             certificate: {
-                renewCert: "Renovar certificado",
-                confirmRenew: "¿Está seguro de que desea renovar este certificado?",
-                revokeCert: "Revocar certificado",
-                confirmRevoke: "¿Está seguro de que desea revocar este certificado?",
-                disableCert: "Deshabilitar certificado",
-                confirmDisable: "¿Está seguro de que desea deshabilitar este certificado?",
+                viewCert: "Ver Certificado",
+                renewCert: "Renovar Certificado",
+                confirmRenew: "¿Estás seguro de que quieres renovar este certificado?",
+                revokeCert: "Revocar Certificado",
+                confirmRevoke: "¿Estás seguro de que quieres revocar este certificado?",
+                disableCert: "Deshabilitar Certificado",
+                confirmDisable: "¿Estás seguro de que quieres deshabilitar este certificado?",
                 createMultiSan: "Crear un Certificado Multi SAN",
                 CN: "Nombre Común",
                 SUBJ: "Sujeto (OU / O / L)",
@@ -177,6 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 german: "Deutsch"
             },
             certificate: {
+                viewCert: "Zertifikat anzeigen",
                 renewCert: "Zertifikat erneuern",
                 confirmRenew: "Sind Sie sicher, dass Sie dieses Zertifikat erneuern möchten?",
                 revokeCert: "Zertifikat widerrufen",
@@ -242,7 +246,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update the language
     function updateLanguage(lang) {
         // Update top page content
-        $('#certName').attr('placeholder', texts[lang].certificateNamePlaceholder);
         $('#certSearch').attr('placeholder', texts[lang].searchPlaceholder);
         $('#english').html(`${texts[lang].lang.english} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
         $('#french').html(`${texts[lang].lang.french} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
@@ -418,11 +421,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     `;
                     certTableBody.appendChild(row);
 
-                    ['renew', 'revoke', 'disable'].forEach(action => {
-                        document.querySelectorAll(`.${action}`).forEach(btn => {
-                            btn.addEventListener('click', () => showModal(action, cert));
-                        });
-                    });
+                    row.querySelector('.renew').addEventListener('click', () => showModal('renew', cert));
+                    row.querySelector('.revoke').addEventListener('click', () => showModal('revoke', cert));
+                    row.querySelector('.disable').addEventListener('click', () => showModal('disable', cert));
 
                     row.addEventListener('click', function(event) {
                         if (!event.target.closest('.check-container') && !event.target.closest('.status-container')) {
@@ -545,7 +546,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const caPassphraseContainer = document.getElementById('caPassphraseContainer');
     
         formContent.innerHTML = '';
-        caPassphraseContainer.style.display = 'none';
     
         switch (action) {
             case 'create':
@@ -634,7 +634,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Show confirm input if passphrase entered
                 document.getElementById('passphrase').oninput = function() {
                     document.getElementById('confirmPassphrase').hidden = !this.value;
-                };                
+                };
 
                 // Confirm certificate creation
                 document.getElementById('confirmAction').onclick = async function() {
@@ -677,7 +677,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
                 break;
             case 'view':
-                modalTitle.textContent = 'View Certificate';
+                modalTitle.textContent = `${texts[lang].certificate.viewCert}`;
+                caPassphraseContainer.style.display = 'none';
                 formContent.innerHTML = `
                     <div id="certDetails">
                         <p><strong>${texts[lang].certificate.CN}:</strong> ${certData.id ? certData.id : `${texts[lang].certificate.undefined}`}</p>
@@ -713,11 +714,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 break;
             case 'renew':
                 modalTitle.textContent = `${texts[lang].certificate.renewCert}`;
-                caPassphraseContainer.style.display = 'block';
                 formContent.innerHTML = `
                     <p>${texts[lang].certificate.confirmRenew}</p>
                     <div class="mb-3">
                         <input type="text" class="form-control" id="commonNameRenew" value="${certData.id}" placeholder="${texts[lang].certificate.CN}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" id="passphrase" placeholder="${texts[lang].certificate.enterPass}">
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" id="confirmPassphrase" placeholder="${texts[lang].certificate.confirmPass}" hidden>
                     </div>
                 `;
                 footerContent.innerHTML = `
@@ -727,9 +733,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 break;
             case 'revoke':
                 modalTitle.textContent = `${texts[lang].certificate.revokeCert}`;
-                caPassphraseContainer.style.display = 'block';
                 formContent.innerHTML = `
                     <p>${texts[lang].certificate.confirmRevoke}</p>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" id="passphrase" placeholder="${texts[lang].certificate.enterPass}">
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" id="confirmPassphrase" placeholder="${texts[lang].certificate.confirmPass}" hidden>
+                    </div>
                 `;
                 footerContent.innerHTML = `
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].certificate.cancel}</button>
@@ -738,9 +749,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 break;
             case 'disable':
                 modalTitle.textContent = `${texts[lang].certificate.disableCert}`;
-                caPassphraseContainer.style.display = 'block';
                 formContent.innerHTML = `
                     <p>${texts[lang].certificate.confirmDisable}</p>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" id="passphrase" placeholder="${texts[lang].certificate.enterPass}">
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" id="confirmPassphrase" placeholder="${texts[lang].certificate.confirmPass}" hidden>
+                    </div>
                 `;
                 footerContent.innerHTML = `
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].certificate.cancel}</button>
