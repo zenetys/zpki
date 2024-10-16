@@ -55,11 +55,11 @@
     border-radius: 10px;
 }
 
-#languageMenu .dropdown-item.active {
+.dropdown-item.active {
     background: #6198f6;
     color: #fff;
 }
-#languageMenu .dropdown-item:active {
+.dropdown-item:active {
     background: #eee;
     color: inherit;
 }
@@ -100,7 +100,6 @@
 .rotate-icon {
     transition: 0.35s;
 }
-
 
 .button-container .btn-status {
     min-width: 120px;
