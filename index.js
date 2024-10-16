@@ -26,7 +26,6 @@ document.addEventListener('DOMContentLoaded', function() {
             certificate: {
                 viewCert: "View Certificate",
                 renewCert: "Renew Certificate",
-                confirmRenew: "Are you sure you want to renew this certificate?",
                 revokeCert: "Revoke Certificate",
                 confirmRevoke: "Are you sure you want to revoke this certificate?",
                 disableCert: "Disable Certificate",
@@ -36,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 SUBJ: "Subject (O / OU / CN)",
                 IP: "No IP defined",
                 DNS: "No DNS defined",
+                TYPE: "No type defined",
                 type: "Certificate Type",
                 select1: "Server",
                 select2: "User",
@@ -78,7 +78,6 @@ document.addEventListener('DOMContentLoaded', function() {
             certificate: {
                 viewCert: "Voir le certificat",
                 renewCert: "Renouveler le certificat",
-                confirmRenew: "Êtes-vous sûr de vouloir renouveler ce certificat ?",
                 revokeCert: "Révoquer le certificat",
                 confirmRevoke: "Êtes-vous sûr de vouloir révoquer ce certificat ?",
                 disableCert: "Désactiver le certificat",
@@ -88,6 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 SUBJ: "Objet (O / OU / CN)",
                 IP: "Aucune IP définie",
                 DNS: "Aucun DNS défini",
+                TYPE: "Aucun type défini",
                 type: "Type de Certificat",
                 select1: "Serveur",
                 select2: "Utilisateur",
@@ -130,7 +130,6 @@ document.addEventListener('DOMContentLoaded', function() {
             certificate: {
                 viewCert: "Ver Certificado",
                 renewCert: "Renovar Certificado",
-                confirmRenew: "¿Estás seguro de que quieres renovar este certificado?",
                 revokeCert: "Revocar Certificado",
                 confirmRevoke: "¿Estás seguro de que quieres revocar este certificado?",
                 disableCert: "Deshabilitar Certificado",
@@ -140,6 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 SUBJ: "Sujeto (O / OU / CN)",
                 IP: "No hay IP definida",
                 DNS: "No hay DNS definido",
+                TYPE: "No hay typo definido",
                 type: "Tipo de Certificado",
                 select1: "Servidor",
                 select2: "Usuario",
@@ -182,7 +182,6 @@ document.addEventListener('DOMContentLoaded', function() {
             certificate: {
                 viewCert: "Zertifikat anzeigen",
                 renewCert: "Zertifikat erneuern",
-                confirmRenew: "Sind Sie sicher, dass Sie dieses Zertifikat erneuern möchten?",
                 revokeCert: "Zertifikat widerrufen",
                 confirmRevoke: "Sind Sie sicher, dass Sie dieses Zertifikat widerrufen möchten?",
                 disableCert: "Zertifikat deaktivieren",
@@ -192,6 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 SUBJ: "Betreff (O / OU / CN)",
                 IP: "Keine IP definiert",
                 DNS: "Kein DNS definiert",
+                TYPE: "Kein Typ definiert",
                 type: "Zertifikatstyp",
                 select1: "Server",
                 select2: "Benutzer",
@@ -240,6 +240,7 @@ document.addEventListener('DOMContentLoaded', function() {
         lang = $(this).data('lang');
         localStorage.setItem('language', lang);
         updateLanguage(lang);
+        updateInterface()
         loadCertData();
     });
 
@@ -421,6 +422,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     `;
                     certTableBody.appendChild(row);
 
+                    // On action buttons click, show modal
                     row.querySelector('.renew').addEventListener('click', () => showModal('renew', cert));
                     row.querySelector('.revoke').addEventListener('click', () => showModal('revoke', cert));
                     row.querySelector('.disable').addEventListener('click', () => showModal('disable', cert));
@@ -428,6 +430,30 @@ document.addEventListener('DOMContentLoaded', function() {
                     row.addEventListener('click', function(event) {
                         if (!event.target.closest('.check-container') && !event.target.closest('.status-container')) {
                             showModal('view', cert);
+                        }
+                    });
+
+                    // On line hover, show / hide action buttons
+                    row.addEventListener('mouseover', function() {
+                        if (!isLocked) {
+                            const btn = row.querySelector('.btn-status');
+                            const actionButtons = row.querySelector('.action-buttons');
+
+                            if (status === 'D') {
+                                return;
+                            }
+
+                            btn.style.display = 'none';
+                            actionButtons.style.display = 'flex';
+                        }
+                    });
+                    row.addEventListener('mouseout', function() {
+                        if (!isLocked) {
+                            const btn = row.querySelector('.btn-status');
+                            const actionButtons = row.querySelector('.action-buttons');
+
+                            btn.style.display = '';
+                            actionButtons.style.display = 'none';
                         }
                     });
                 });
@@ -502,35 +528,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 });
 
-                // On line hover, show action buttons
-                document.querySelectorAll('tr').forEach((line) => {
-                    line.addEventListener('mouseover', function() {
-                        if (!isLocked) {
-                            const btn = line.querySelector('.btn-status');
-                            const actionButtons = line.querySelector('.action-buttons');
-                            if (btn) {
-                                btn.style.display = 'none';
-                            }
-                            if (actionButtons) {
-                                actionButtons.style.display = 'flex';
-                            }
-                        }
-                    });
-                    
-                    line.addEventListener('mouseout', function() {
-                        if (!isLocked) {
-                            const btn = line.querySelector('.btn-status');
-                            const actionButtons = line.querySelector('.action-buttons');
-                            if (btn) {
-                                btn.style.display = '';
-                            }
-                            if (actionButtons) {
-                                actionButtons.style.display = 'none';
-                            }
-                        }
-                    });
-                });
-
                 initializeTooltips();
                 updateInterface();
                 loadPassword();
@@ -598,38 +595,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].certificate.cancel}</button>
                     <button type="button" class="btn btn-primary" id="confirmAction">${texts[lang].certificate.confirm}</button>
                 `;
-
-                // Set start date to now & add 1 year and 1 day to end
-                const now = new Date();
-                const offset = now.getTimezoneOffset() * 60000;
-                document.getElementById("startDate").value = new Date(now.getTime() - offset).toISOString().slice(0, 16);
-                document.getElementById("endDate").value = new Date(now.setFullYear(now.getFullYear() + 1, now.getMonth(), now.getDate() + 1) - offset).toISOString().slice(0, 16);
-
-                // Add multiples IPs with style
-                document.getElementById('addIpButton').onclick = function() {
-                    const ipValue = document.getElementById('sanIp').value;
-                    if (ipValue) {
-                        const ipList = document.getElementById('addedSanIP');
-                        ipList.innerHTML += `<div class="alert alert-secondary p-2 d-flex justify-content-between align-items-center">
-                            ${ipValue}
-                            <button class="btn btn-sm btn-close" onclick="this.parentElement.remove();"></button>
-                        </div>`;
-                        document.getElementById('sanIp').value = '';
-                    }
-                };
-
-                // Add multiples DNS with style
-                document.getElementById('addDnsButton').onclick = function() {
-                    const dnsValue = document.getElementById('sanDns').value;
-                    if (dnsValue) {
-                        const dnsList = document.getElementById('addedDnsNames');
-                        dnsList.innerHTML += `<div class="alert alert-secondary p-2 d-flex justify-content-between align-items-center">
-                            ${dnsValue}
-                            <button class="btn btn-sm btn-close" onclick="this.parentElement.remove();"></button>
-                        </div>`;
-                        document.getElementById('sanDns').value = '';
-                    }
-                };
 
                 // Confirm certificate creation
                 document.getElementById('confirmAction').onclick = async function() {
@@ -708,7 +673,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             : `${texts[lang].certificate.DNS}`}
                         </p>
 
-                        <p><strong>${texts[lang].certificate.type}:</strong> ${certData.type ? certData.type : `${texts[lang].certificate.undefined}`}</p>
+                        <p><strong>${texts[lang].certificate.type}:</strong> ${certData.type ? certData.type : `${texts[lang].certificate.TYPE}`}</p>
                         <p><strong>${texts[lang].certificate.startDate}:</strong> ${certData.startDate ? certData.startDate : `${texts[lang].certificate.undefined}`}</p>
                         <p><strong>${texts[lang].certificate.endDate}:</strong> ${certData.endDate ? certData.endDate : `${texts[lang].certificate.undefined}`}</p>
 
@@ -725,9 +690,45 @@ document.addEventListener('DOMContentLoaded', function() {
             case 'renew':
                 modalTitle.textContent = `${texts[lang].certificate.renewCert}`;
                 formContent.innerHTML = `
-                    <p>${texts[lang].certificate.confirmRenew}</p>
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="commonNameRenew" value="${certData.id}" placeholder="${texts[lang].certificate.CN}" readonly>
+                        <input type="text" class="form-control" id="commonName" value="${certData.id}" placeholder="${texts[lang].certificate.CN}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="subject" value="${certData.subject}" placeholder="${texts[lang].certificate.SUBJ}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">SAN (Subject Alternative Name)</label>
+                        <div id="sanContainer">
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control" placeholder="IP" id="sanIp" value="${certData.ip && certData.ip.length > 0 
+                                    ? certData.ip.map(ip => `<span>${ip}</span>`).join(', ') 
+                                    : `${texts[lang].certificate.IP}`}">
+                                <button class="btn btn border" type="button" id="addIpButton">+</button>
+                            </div>
+                            <div id="addedSanIP" class="mt-2"></div>
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control" placeholder="DNS" id="sanDns" value="${certData.dns && certData.dns.length > 0 
+                                    ? certData.dns.map(dns => `<span>${dns}</span>`).join(', ') 
+                                    : `${texts[lang].certificate.DNS}`}">
+                                <button class="btn btn border" type="button" id="addDnsButton">+</button>
+                            </div>
+                            <div id="addedDnsNames" class="mt-2"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="type" class="form-label">${texts[lang].certificate.type}</label>
+                        <select class="form-select" id="type" name="type">
+                            <option value="server">${texts[lang].certificate.select1}</option>
+                            <option value="user">${texts[lang].certificate.select2}</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="startDate" class="form-label">${texts[lang].certificate.startDate}</label>
+                        <input type="datetime-local" class="form-control" id="startDate" value="">
+                    </div>
+                    <div class="mb-3">
+                        <label for="endDate" class="form-label">${texts[lang].certificate.endDate}</label>
+                        <input type="datetime-local" class="form-control" id="endDate" value="">
                     </div>
                     <div class="mb-3">
                         <input type="password" class="form-control" id="passphrase" placeholder="${texts[lang].certificate.enterPass}">
@@ -776,11 +777,46 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         updateConfirm();
 
-        // Afficher le modal
+        // Show modal & conditions for interactions
+        const now = new Date();
+        const startDate = document.getElementById("startDate");
+        const endDate = document.getElementById("endDate");
+        const addIpButton = document.getElementById('addIpButton');
+        const addDnsButton = document.getElementById('addDnsButton');
+        const offset = now.getTimezoneOffset() * 60000;
         const modal = new bootstrap.Modal(document.getElementById('dynamicModal'));
         modal.show();
+
+        if (startDate && endDate && addIpButton && addDnsButton) {
+            startDate.value = new Date(now.getTime() - offset).toISOString().slice(0, 16);
+            endDate.value = new Date(now.setFullYear(now.getFullYear() + 1, now.getMonth(), now.getDate() + 1) - offset).toISOString().slice(0, 16);
+
+            addIpButton.onclick = function() {
+                const ipValue = document.getElementById('sanIp').value;
+                if (ipValue) {
+                    const ipList = document.getElementById('addedSanIP');
+                    ipList.innerHTML += `<div class="alert alert-secondary p-2 d-flex justify-content-between align-items-center">
+                        ${ipValue}
+                        <button class="btn btn-sm btn-close" onclick="this.parentElement.remove();"></button>
+                    </div>`;
+                    document.getElementById('sanIp').value = '';
+                }
+            };
+
+            addDnsButton.onclick = function() {
+                const dnsValue = document.getElementById('sanDns').value;
+                if (dnsValue) {
+                    const dnsList = document.getElementById('addedDnsNames');
+                    dnsList.innerHTML += `<div class="alert alert-secondary p-2 d-flex justify-content-between align-items-center">
+                        ${dnsValue}
+                        <button class="btn btn-sm btn-close" onclick="this.parentElement.remove();"></button>
+                    </div>`;
+                    document.getElementById('sanDns').value = '';
+                }
+            };
+        }
     }
-   
+
     // Update confirmation input visibility and validation
     function updateConfirm() {
         const passPhrase = document.getElementById('passphrase');
