@@ -11,8 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const texts = {
         en: {
             searchPlaceholder: "Search for a certificate",
-            revoke: "Revoke",
             renew: "Renew",
+            revoke: "Revoke",
+            disable: "Disable",
             lock: "Lock",
             unlock: "Unlock",
             done: "Done!",
@@ -23,10 +24,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 german: "German"
             },
             certificate: {
+                renewCert: "Renew certificate",
+                confirmRenew: "Are you sure you want to renew this certificate?",
                 revokeCert: "Revoke certificate",
                 confirmRevoke: "Are you sure you want to revoke this certificate?",
-                renewCert: "Renew certificate",
                 disableCert: "Disable certificate",
+                confirmDisable: "Are you sure you want to disable this certificate?",
                 createMultiSan: "Create Multi SAN Certificate",
                 CN: "Common Name",
                 SUBJ: "Subject (OU / O / L)",
@@ -59,8 +62,9 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         fr: {
             searchPlaceholder: "Rechercher un certificat",
-            revoke: "Révoquer",
             renew: "Renouveler",
+            revoke: "Révoquer",
+            disable: "Désactiver",
             lock: "Verrouiller",
             unlock: "Déverrouiller",
             done: "Fait !",
@@ -71,10 +75,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 german: "Allemand"
             },
             certificate: {
+                renewCert: "Renouveler le certificat",
+                confirmRenew: "Êtes-vous sûr de vouloir renouveler ce certificat ?",
                 revokeCert: "Révoquer le certificat",
                 confirmRevoke: "Êtes-vous sûr de vouloir révoquer ce certificat ?",
-                renewCert: "Renouveler le certificat",
                 disableCert: "Désactiver le certificat",
+                confirmDisable: "Êtes-vous sûr de vouloir désactiver ce certificat ?",
                 createMultiSan: "Créer un certificat Multi SAN",
                 CN: "Common Name",
                 SUBJ: "Objet (OU / O / L)",
@@ -107,8 +113,9 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         es: {
             searchPlaceholder: "Buscar un certificado",
-            revoke: "Revocar",
             renew: "Renovar",
+            revoke: "Revocar",
+            disable: "Desactivar",
             lock: "Bloquear",
             unlock: "Desbloquear",
             done: "¡Hecho!",
@@ -119,10 +126,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 german: "Alemán"
             },
             certificate: {
+                renewCert: "Renovar certificado",
+                confirmRenew: "¿Está seguro de que desea renovar este certificado?",
                 revokeCert: "Revocar certificado",
                 confirmRevoke: "¿Está seguro de que desea revocar este certificado?",
-                renewCert: "Renovar certificado",
-                disableCert: "Desactivar certificado",
+                disableCert: "Deshabilitar certificado",
+                confirmDisable: "¿Está seguro de que desea deshabilitar este certificado?",
                 createMultiSan: "Crear un Certificado Multi SAN",
                 CN: "Nombre Común",
                 SUBJ: "Sujeto (OU / O / L)",
@@ -155,8 +164,9 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         de: {
             searchPlaceholder: "Zertifikat suchen",
-            revoke: "Widerrufen",
             renew: "Erneuern",
+            revoke: "Widerrufen",
+            disable: "Deaktivieren",
             lock: "Sperren",
             unlock: "Entsperren",
             done: "Fertig!",
@@ -167,10 +177,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 german: "Deutsch"
             },
             certificate: {
-                revokeCert: "Zertifikat widerrufen",
-                confirmRevoke: "Sind Sie sicher, dass Sie dieses Zertifikat widerrufen wollen?",
                 renewCert: "Zertifikat erneuern",
+                confirmRenew: "Sind Sie sicher, dass Sie dieses Zertifikat erneuern möchten?",
+                revokeCert: "Zertifikat widerrufen",
+                confirmRevoke: "Sind Sie sicher, dass Sie dieses Zertifikat widerrufen möchten?",
                 disableCert: "Zertifikat deaktivieren",
+                confirmDisable: "Sind Sie sicher, dass Sie dieses Zertifikat deaktivieren möchten?",
                 createMultiSan: "Multi SAN-Zertifikat erstellen",
                 CN: "Gemeinsamer Name",
                 SUBJ: "Betreff (OU / O / L)",
@@ -406,24 +418,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     `;
                     certTableBody.appendChild(row);
 
-                    document.querySelectorAll('.renew').forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            showModal('renew', cert)
-                        })
-                    })
-
-                    document.querySelectorAll('.revoke').forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            showModal('revoke', cert)
-                        })
-                    })
-
-
-                    document.querySelectorAll('.disable').forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            showModal('disable', cert)
-                        })
-                    })
+                    ['renew', 'revoke', 'disable'].forEach(action => {
+                        document.querySelectorAll(`.${action}`).forEach(btn => {
+                            btn.addEventListener('click', () => showModal(action, cert));
+                        });
+                    });
 
                     row.addEventListener('click', function(event) {
                         if (!event.target.closest('.check-container') && !event.target.closest('.status-container')) {
@@ -600,6 +599,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button type="button" class="btn btn-primary" id="confirmAction">${texts[lang].certificate.confirm}</button>
                 `;
 
+                // Set start date to now & add 1 year and 1 day to end
                 const now = new Date();
                 const offset = now.getTimezoneOffset() * 60000;
                 document.getElementById("startDate").value = new Date(now.getTime() - offset).toISOString().slice(0, 16);
@@ -631,6 +631,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 };
 
+                // Show confirm input if passphrase entered
                 document.getElementById('passphrase').oninput = function() {
                     document.getElementById('confirmPassphrase').hidden = !this.value;
                 };                
@@ -710,6 +711,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 footerContent.style.display = 'none';
                 break;
+            case 'renew':
+                modalTitle.textContent = `${texts[lang].certificate.renewCert}`;
+                caPassphraseContainer.style.display = 'block';
+                formContent.innerHTML = `
+                    <p>${texts[lang].certificate.confirmRenew}</p>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="commonNameRenew" value="${certData.id}" placeholder="${texts[lang].certificate.CN}" readonly>
+                    </div>
+                `;
+                footerContent.innerHTML = `
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].certificate.cancel}</button>
+                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">${texts[lang].renew}</button>
+                `;
+                break;
             case 'revoke':
                 modalTitle.textContent = `${texts[lang].certificate.revokeCert}`;
                 caPassphraseContainer.style.display = 'block';
@@ -718,30 +733,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 footerContent.innerHTML = `
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].certificate.cancel}</button>
-                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">${texts[lang].certificate.confirm}</button>
-                `;
-                break;
-            case 'renew':
-                modalTitle.textContent = `${texts[lang].certificate.renewCert}`;
-                formContent.innerHTML = `
-                    <div class="mb-3">
-                        <input type="text" class="form-control" id="commonNameRenew" value="${certData.id}" placeholder="${texts[lang].certificate.CN}" readonly>
-                    </div>
-                `;
-                footerContent.innerHTML = `
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].certificate.cancel}</button>
-                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">${texts[lang].certificate.confirm}</button>
+                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">${texts[lang].revoke}</button>
                 `;
                 break;
             case 'disable':
                 modalTitle.textContent = `${texts[lang].certificate.disableCert}`;
                 caPassphraseContainer.style.display = 'block';
                 formContent.innerHTML = `
-                    <p>Êtes-vous sûr de vouloir désactiver ce certificat ?</p>
+                    <p>${texts[lang].certificate.confirmDisable}</p>
                 `;
                 footerContent.innerHTML = `
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].certificate.cancel}</button>
-                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">${texts[lang].certificate.confirm}</button>
+                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">${texts[lang].disable}</button>
                 `;
                 break;
         }
@@ -901,6 +904,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Revoke one certificate
     window.revokeCert = function(id) {
         fetch('/revoke', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: [id] })
+        })
+        .then(response => response.text())
+        .then(() => loadCertData())
+        .catch(error => console.error('Revocation error:', error));
+    };
+
+    // Disable one certificate
+    window.disableCert = function(id) {
+        fetch('/disable', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
