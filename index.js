@@ -396,10 +396,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <img src="images/rotate-right-solid.svg" class="icon rotate-icon" data-id="${cert.id}"/>
                                     </button>
                                     <button class="btn btn-action revoke">
-                                        <img src="images/ban-solid.svg" class="icon" data-id="${cert.id}"/>
+                                        <img src="images/ban-solid.svg" class="icon cross-icon" data-id="${cert.id}"/>
                                     </button>
                                     <button class="btn btn-action disable">
-                                        <img src="images/circle-minus-regular.svg" class="icon" data-id="${cert.id}"/>
+                                        <img src="images/circle-minus-regular.svg" class="icon wobble-icon" data-id="${cert.id}"/>
                                     </button>
                                 </div>
                             </div>
