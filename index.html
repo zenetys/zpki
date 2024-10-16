@@ -27,6 +27,19 @@
                 <!-- Search Bar -->
                 <input type="text" id="certSearch" class="form-control border-light shadow-sm rounded-3 me-2" placeholder="Search for a certificate">
 
+                <!-- See current CA & switch -->
+                <button class="btn btn-primary rounded-3 me-2" id="switchCurrentCA" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span>Default</span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="switchCurrentCA" id="switchMenu">
+                    <a class="dropdown-item d-flex justify-content-between active" id="default" data-source="default">Default <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span></a>
+                    <a class="dropdown-item d-flex justify-content-between disabled" id="profile1" data-source="profile1">Profile 1</a>
+                    <a class="dropdown-item d-flex justify-content-between disabled" id="profile2" data-source="profile2">Profile 2</a>
+                    <a class="dropdown-item d-flex justify-content-between disabled" id="profile3" data-source="profile3">Profile 3</a>
+                    <a class="dropdown-item d-flex justify-content-between disabled" id="profile4" data-source="profile4">Profile 4</a>
+                    <a class="dropdown-item d-flex justify-content-between disabled" id="profile5" data-source="profile5">Profile 5</a>
+                </div>
+
                 <!-- Language dropdown -->
                 <button class="btn btn-secondary rounded-3" id="settingsDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img src="images/gear-solid.svg" class="icon"/>
@@ -111,7 +124,7 @@
 
     <!-- Dynamic modal (Create Renew Revoke Remove)-->
     <div class="modal fade" id="dynamicModal" tabindex="-1" aria-labelledby="dynamicModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered float-end me-3">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                 <h5 class="modal-title" id="dynamicModalLabel">Certificate Action</h5>
