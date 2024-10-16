@@ -128,12 +128,16 @@
     padding: 2px;
 }
 .btn-primary {
-    border: 1px solid #4e82cf;
-    background: #4e82cf;
+    border: 1px solid #5264ff;
+    background: #5264ff;
 }
 .btn-primary:hover {
-    border: 1px solid #4071bb;
-    background: #4071bb;
+    border: 1px solid #4755da;
+    background: #4755da;
+}
+.btn-primary:not(:disabled):not(.disabled) {
+    border: 1px solid #5264ff;
+    background: #5264ff;
 }
 .btn-action {
     justify-content: center;
