@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             certificate: {
                 revokeCert: "Revoke certificate",
+                confirmRevoke: "Are you sure you want to revoke this certificate?",
                 renewCert: "Renew certificate",
                 disableCert: "Disable certificate",
                 createMultiSan: "Create Multi SAN Certificate",
@@ -71,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             certificate: {
                 revokeCert: "Révoquer le certificat",
+                confirmRevoke: "Êtes-vous sûr de vouloir révoquer ce certificat ?",
                 renewCert: "Renouveler le certificat",
                 disableCert: "Désactiver le certificat",
                 createMultiSan: "Créer un certificat Multi SAN",
@@ -118,6 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             certificate: {
                 revokeCert: "Revocar certificado",
+                confirmRevoke: "¿Está seguro de que desea revocar este certificado?",
                 renewCert: "Renovar certificado",
                 disableCert: "Desactivar certificado",
                 createMultiSan: "Crear un Certificado Multi SAN",
@@ -165,6 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             certificate: {
                 revokeCert: "Zertifikat widerrufen",
+                confirmRevoke: "Sind Sie sicher, dass Sie dieses Zertifikat widerrufen wollen?",
                 renewCert: "Zertifikat erneuern",
                 disableCert: "Zertifikat deaktivieren",
                 createMultiSan: "Multi SAN-Zertifikat erstellen",
@@ -373,14 +377,14 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="button-container">
                                 <button class="btn btn-ssm btn-status btn-${statusColor} rounded-pill" data-id="${cert.id}">${statusBtn}</button>
                                 <div class="action-buttons" style="display: none;">
-                                    <button class="btn btn-action">
-                                        <img src="images/rotate-right-solid.svg" class="icon rotate-icon" data-id="${cert.id}" onclick="showModal('renew', ${cert.id})"/>
+                                    <button class="btn btn-action renew">
+                                        <img src="images/rotate-right-solid.svg" class="icon rotate-icon" data-id="${cert.id}"/>
                                     </button>
-                                    <button class="btn btn-action">
-                                        <img src="images/ban-solid.svg" class="icon" data-id="${cert.id}" onclick="showModal('revoke', ${cert.id})"/>
+                                    <button class="btn btn-action revoke">
+                                        <img src="images/ban-solid.svg" class="icon" data-id="${cert.id}"/>
                                     </button>
-                                    <button class="btn btn-action">
-                                        <img src="images/circle-minus-regular.svg" class="icon" data-id="${cert.id}" onclick="showModal('remove', ${cert.id})"/>
+                                    <button class="btn btn-action disable">
+                                        <img src="images/circle-minus-regular.svg" class="icon" data-id="${cert.id}"/>
                                     </button>
                                 </div>
                             </div>
@@ -401,6 +405,25 @@ document.addEventListener('DOMContentLoaded', function() {
                         </td>
                     `;
                     certTableBody.appendChild(row);
+
+                    document.querySelectorAll('.renew').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            showModal('renew', cert)
+                        })
+                    })
+
+                    document.querySelectorAll('.revoke').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            showModal('revoke', cert)
+                        })
+                    })
+
+
+                    document.querySelectorAll('.disable').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            showModal('disable', cert)
+                        })
+                    })
 
                     row.addEventListener('click', function(event) {
                         if (!event.target.closest('.check-container') && !event.target.closest('.status-container')) {
@@ -569,7 +592,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <input type="password" class="form-control" id="passphrase" placeholder="${texts[lang].certificate.enterPass}">
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="confirmPassphrase" placeholder="${texts[lang].certificate.confirmPass}">
+                        <input type="password" class="form-control" id="confirmPassphrase" placeholder="${texts[lang].certificate.confirmPass}" hidden>
                     </div>
                 `;
                 footerContent.innerHTML = `
@@ -607,6 +630,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('sanDns').value = '';
                     }
                 };
+
+                document.getElementById('passphrase').oninput = function() {
+                    document.getElementById('confirmPassphrase').hidden = !this.value;
+                };                
 
                 // Confirm certificate creation
                 document.getElementById('confirmAction').onclick = async function() {
@@ -687,11 +714,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 modalTitle.textContent = `${texts[lang].certificate.revokeCert}`;
                 caPassphraseContainer.style.display = 'block';
                 formContent.innerHTML = `
-                    <p>Êtes-vous sûr de vouloir révoquer ce certificat ?</p>
+                    <p>${texts[lang].certificate.confirmRevoke}</p>
                 `;
                 footerContent.innerHTML = `
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">Confirm</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].certificate.cancel}</button>
+                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">${texts[lang].certificate.confirm}</button>
                 `;
                 break;
             case 'renew':
@@ -706,7 +733,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">${texts[lang].certificate.confirm}</button>
                 `;
                 break;
-            case 'remove':
+            case 'disable':
                 modalTitle.textContent = `${texts[lang].certificate.disableCert}`;
                 caPassphraseContainer.style.display = 'block';
                 formContent.innerHTML = `
