@@ -741,6 +741,47 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].certificate.cancel}</button>
                     <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">${texts[lang].renew}</button>
                 `;
+                
+                // Confirm certificate renewal
+                document.getElementById('confirmAction').onclick = async function() {
+                    const commonName = document.getElementById('commonName').value;
+                    const subject = document.getElementById('subject').value;
+                    const sanIP = Array.from(document.getElementById('addedSanIP').children).map(el => el.innerText);
+                    const sanDns = Array.from(document.getElementById('addedDnsNames').children).map(el => el.innerText);
+                    const type = document.getElementById('type').value;
+                    const startDate = document.getElementById('startDate').value;
+                    const endDate = document.getElementById('endDate').value;
+                    const passphrase = document.getElementById('passphrase').value;
+
+                    const data = {
+                        name: commonName,
+                        subject: subject,
+                        sanIP: sanIP,
+                        sanDns: sanDns,
+                        type: type,
+                        startDate: startDate,
+                        endDate: endDate,
+                        passphrase: passphrase
+                    };
+    
+                    try {
+                        const response = await fetch('/renew', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        });
+    
+                        if (response.ok) {
+                            modal.hide();
+                        } else {
+                            console.error('Renewal failed:', await response.text());
+                        }
+                    } catch (error) {
+                        console.error('Renewal error:', error);
+                    }
+                };
                 break;
             case 'revoke':
                 modalTitle.textContent = `${texts[lang].certificate.revokeCert}`;
@@ -757,6 +798,28 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].certificate.cancel}</button>
                     <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">${texts[lang].revoke}</button>
                 `;
+
+                // Confirm certificate revocation
+                document.getElementById('confirmAction').onclick = async function() {
+                    try {
+                        const response = await fetch('/revoke', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ name: certData.id })
+                        });
+                
+                        if (response.ok) {
+                            loadCertData();
+                            modal.hide();
+                        } else {
+                            console.error('Revocation failed:', await response.text());
+                        }
+                    } catch (error) {
+                        console.error('Revocation error:', error);
+                    }
+                };
                 break;
             case 'disable':
                 modalTitle.textContent = `${texts[lang].certificate.disableCert}`;
@@ -773,6 +836,28 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].certificate.cancel}</button>
                     <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">${texts[lang].disable}</button>
                 `;
+                
+                // Confirm certificate deactivation
+                document.getElementById('confirmAction').onclick = async function() {
+                    try {
+                        const response = await fetch('/dusable', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ name: certData.id })
+                        });
+                
+                        if (response.ok) {
+                            loadCertData();
+                            modal.hide();
+                        } else {
+                            console.error('Deactivation failed:', await response.text());
+                        }
+                    } catch (error) {
+                        console.error('Deactivation error:', error);
+                    }
+                };
                 break;
         }
         updateConfirm();
@@ -1024,48 +1109,6 @@ document.addEventListener('DOMContentLoaded', function() {
             sortTable(sortKey, currentOrder);
         });
     });
-
-    // Renew one certificate
-    window.renewCert = function(id) {
-        fetch('/renew', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ id: [id] })
-        })
-        .then(response => response.text())
-        .then(() => loadCertData())
-        .catch(error => console.error('Renewal error:', error));
-    };
-
-    // Revoke one certificate
-    window.revokeCert = function(id) {
-        fetch('/revoke', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ id: [id] })
-        })
-        .then(response => response.text())
-        .then(() => loadCertData())
-        .catch(error => console.error('Revocation error:', error));
-    };
-
-    // Disable one certificate
-    window.disableCert = function(id) {
-        fetch('/disable', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ id: [id] })
-        })
-        .then(response => response.text())
-        .then(() => loadCertData())
-        .catch(error => console.error('Revocation error:', error));
-    };
 
     updateInterface();
     loadCertData();
