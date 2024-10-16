@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 confirmDisable: "Are you sure you want to disable this certificate?",
                 createMultiSan: "Create Multi SAN Certificate",
                 CN: "Common Name",
-                SUBJ: "Subject (OU / O / L)",
+                SUBJ: "Subject (O / OU / CN)",
                 IP: "No IP defined",
                 DNS: "No DNS defined",
                 type: "Certificate Type",
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 confirmDisable: "Êtes-vous sûr de vouloir désactiver ce certificat ?",
                 createMultiSan: "Créer un certificat Multi SAN",
                 CN: "Common Name",
-                SUBJ: "Objet (OU / O / L)",
+                SUBJ: "Objet (O / OU / CN)",
                 IP: "Aucune IP définie",
                 DNS: "Aucun DNS défini",
                 type: "Type de Certificat",
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 confirmDisable: "¿Estás seguro de que quieres deshabilitar este certificado?",
                 createMultiSan: "Crear un Certificado Multi SAN",
                 CN: "Nombre Común",
-                SUBJ: "Sujeto (OU / O / L)",
+                SUBJ: "Sujeto (O / OU / CN)",
                 IP: "No hay IP definida",
                 DNS: "No hay DNS definido",
                 type: "Tipo de Certificado",
@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 confirmDisable: "Sind Sie sicher, dass Sie dieses Zertifikat deaktivieren möchten?",
                 createMultiSan: "Multi SAN-Zertifikat erstellen",
                 CN: "Gemeinsamer Name",
-                SUBJ: "Betreff (OU / O / L)",
+                SUBJ: "Betreff (O / OU / CN)",
                 IP: "Keine IP definiert",
                 DNS: "Kein DNS definiert",
                 type: "Zertifikatstyp",
@@ -677,16 +677,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
                 break;
             case 'view':
+                let subjectArray = (certData.subject || '')
+                    .replace(/^Subject\s*\(.*?\):\s*/, '')
+                    .split(/(?:\/|\n)/)
+                    .filter(Boolean);
+
+                let splitSubject = subjectArray.length > 0
+                    ? subjectArray.map(el => `<span>${el}</span>`).join('<br>')
+                    : `${texts[lang].certificate.undefined}`;
+
+                if (subjectArray.length === 1) {
+                    splitSubject = `<span>${subjectArray[0]}</span>`;
+                } else {
+                    splitSubject = `<br>${splitSubject}`;
+                }
+
+
                 modalTitle.textContent = `${texts[lang].certificate.viewCert}`;
                 caPassphraseContainer.style.display = 'none';
                 formContent.innerHTML = `
                     <div id="certDetails">
                         <p><strong>${texts[lang].certificate.CN}:</strong> ${certData.id ? certData.id : `${texts[lang].certificate.undefined}`}</p>
-                        <p><strong>${texts[lang].certificate.SUBJ}:</strong> ${certData.subject ? certData.subject : `${texts[lang].certificate.undefined}`}</p>
-
+                        <p><strong>${texts[lang].certificate.SUBJ}:</strong> ${splitSubject}</p>
+            
                         <p><strong>${texts[lang].certificate.serial}:</strong> ${certData.serial}</p>
                         <p><strong>${texts[lang].certificate.signature}:</strong> ${certData.hash}</p>
-
 
                         <p><strong>IP:</strong> ${certData.ip && certData.ip.length > 0 
                             ? certData.ip.map(ip => `<span>${ip}</span>`).join(', ') 
