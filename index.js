@@ -631,11 +631,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 };
 
-                // Show confirm input if passphrase entered
-                document.getElementById('passphrase').oninput = function() {
-                    document.getElementById('confirmPassphrase').hidden = !this.value;
-                };
-
                 // Confirm certificate creation
                 document.getElementById('confirmAction').onclick = async function() {
                     const commonName = document.getElementById('commonName').value;
@@ -779,12 +774,55 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 break;
         }
-    
+        updateConfirm();
+
         // Afficher le modal
         const modal = new bootstrap.Modal(document.getElementById('dynamicModal'));
         modal.show();
     }
    
+    // Update confirmation input visibility and validation
+    function updateConfirm() {
+        const passPhrase = document.getElementById('passphrase');
+        const confirmPassphrase = document.getElementById('confirmPassphrase');
+        const confirmAction = document.getElementById('confirmAction');
+
+        if(passPhrase && confirmPassphrase) {
+            passPhrase.oninput = function() {
+                confirmPassphrase.hidden = !this.value;
+                validatePassphrase(confirmAction);
+            };
+
+            confirmPassphrase.oninput = () => validatePassphrase(confirmAction);
+        }
+    }
+
+    // Validate passphrases
+    function validatePassphrase(confirmAction) {
+        const passPhrase = document.getElementById('passphrase');
+        const confirmPassphrase = document.getElementById('confirmPassphrase');
+
+        // Reset validation classes
+        [passPhrase, confirmPassphrase].forEach(input => input.classList.remove('is-invalid', 'is-valid'));
+        confirmAction.classList.remove('btn-success', 'btn-danger');
+
+        // Check passphrase validity
+        if (passPhrase.value && confirmPassphrase.value) {
+            if (passPhrase.value === confirmPassphrase.value) {
+                confirmPassphrase.classList.add('is-valid');
+                confirmAction.classList.remove('btn-primary');
+                confirmAction.classList.add('btn-success');
+                confirmAction.disabled = false;
+            } else {
+                confirmPassphrase.classList.add('is-invalid');
+                confirmAction.classList.add('btn-danger');
+                confirmAction.disabled = true;
+            }
+        } else {
+            confirmAction.classList.add('btn-primary');
+        }
+    }
+
     // Initialize tool tips
     function initializeTooltips() {
         $('[data-toggle="tooltip"]').tooltip({
@@ -814,6 +852,40 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Error fetching password:', error));
     }
 
+    // Confirm that password is good (avoid errors)
+    function checkPasswordForm() {
+        const passwordSubmit = document.getElementById('passwordSubmit');
+        passwordInput.classList.remove('is-invalid', 'is-valid');
+    
+        // Fetch password
+        fetch('/get-password')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Request failed');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const tmpPassword = data.pkiaccess;
+                if (!tmpPassword) {
+                    passwordSubmit.disabled = false;
+                    passwordSubmit.classList.remove('btn-danger');
+                    passwordSubmit.classList.add('btn-success');
+                    return;
+                }
+
+                // If a password exists, validate
+                if (passwordInput.value) {
+                    const isValid = passwordInput.value === tmpPassword;
+                    passwordInput.classList.add(isValid ? 'is-valid' : 'is-invalid');
+                    passwordSubmit.disabled = !isValid;
+                    passwordSubmit.classList.remove('btn-primary');
+                    passwordSubmit.classList.remove(isValid ? 'btn-danger' : 'btn-success');
+                    passwordSubmit.classList.add(isValid ? 'btn-success' : 'btn-danger');
+                }
+            });
+    };
+
     // Creation button clicked
     createBtn.addEventListener('click', function(e) {
         e.preventDefault();
@@ -841,17 +913,16 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         passwordModal.show();
         loadPassword();
+        checkPasswordForm();
     });
-   
+
+    // Check password while input
+    document.getElementById('passwordForm').oninput = checkPasswordForm;
+
     // Handle password form submission
     document.getElementById('passwordForm').addEventListener('submit', function (e) {
         e.preventDefault();
         const password = passwordInput.value;
-
-        if (!password) {
-            console.error('Password cannot be empty');
-            return;
-        }
 
         // Fetch password
         fetch('/get-password')
