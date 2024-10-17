@@ -622,7 +622,7 @@ function ca-update-dump-crt() {
   subject="/${subject//, /\/}"; subject="${subject// = /=}"
   issuer="/${issuer//, /\/}"; issuer="${issuer// = /=}"
   if [[ ! -e $KEYFILE ]]; then
-    keyStatus="absent"
+    keyStatus="missing"
   elif [[ ! -s $KEYFILE ]]; then
     keyStatus="empty"
   elif grep -q -- "-----BEGIN ENCRYPTED PRIVATE KEY-----" $KEYFILE; then
