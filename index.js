@@ -287,6 +287,55 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Update confirmation input visibility and validation
+    function updateConfirm() {
+        const passPhrase = document.getElementById('passphrase');
+        const confirmPassphrase = document.getElementById('confirmPassphrase');
+        const confirmAction = document.getElementById('confirmAction');
+
+        if(passPhrase && confirmPassphrase) {
+            passPhrase.oninput = function() {
+                confirmPassphrase.hidden = !this.value;
+                validatePassphrase(confirmAction);
+            };
+
+            confirmPassphrase.oninput = () => validatePassphrase(confirmAction);
+        }
+    }
+
+    // Validate passphrases
+    function validatePassphrase(confirmAction) {
+        const passPhrase = document.getElementById('passphrase');
+        const confirmPassphrase = document.getElementById('confirmPassphrase');
+
+        // Reset validation classes
+        [passPhrase, confirmPassphrase].forEach(input => input.classList.remove('is-invalid', 'is-valid'));
+        confirmAction.classList.remove('btn-success', 'btn-danger');
+
+        // Check passphrase validity
+        if (passPhrase.value && confirmPassphrase.value) {
+            if (passPhrase.value === confirmPassphrase.value) {
+                confirmPassphrase.classList.add('is-valid');
+                confirmAction.classList.remove('btn-primary');
+                confirmAction.classList.add('btn-success');
+                confirmAction.disabled = false;
+            } else {
+                confirmPassphrase.classList.add('is-invalid');
+                confirmAction.classList.add('btn-danger');
+                confirmAction.disabled = true;
+            }
+        } else {
+            confirmAction.classList.add('btn-primary');
+        }
+    }
+
+    // Initialize tool tips
+    function initializeTooltips() {
+        $('[data-toggle="tooltip"]').tooltip({
+            html: true
+        });
+    }
+
     // Adapt name, normalize
     function encodeName(name) {
         return name
@@ -427,7 +476,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <button class="btn btn-action renew">
                                         <img src="images/rotate-right-solid.svg" class="icon rotate-icon" data-id="${cert.id}"/>
                                     </button>
-                                    <button class="btn btn-action revoke">
+                                    <button class="btn btn-action revoke" ${status === 'R' ? 'disabled' : ''}>
                                         <img src="images/ban-solid.svg" class="icon cross-icon" data-id="${cert.id}"/>
                                     </button>
                                     <button class="btn btn-action disable" disabled>
@@ -469,8 +518,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (!isLocked) {
                             const btn = row.querySelector('.btn-status');
                             const actionButtons = row.querySelector('.action-buttons');
+                            const checkboxes = document.querySelectorAll('.cert-checkbox');
+                            const isAnyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
 
-                            if (status === 'D') {
+                            if (status === 'D' || isAnyChecked) {
                                 return;
                             }
 
@@ -937,55 +988,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             };
         }
-    }
-
-    // Update confirmation input visibility and validation
-    function updateConfirm() {
-        const passPhrase = document.getElementById('passphrase');
-        const confirmPassphrase = document.getElementById('confirmPassphrase');
-        const confirmAction = document.getElementById('confirmAction');
-
-        if(passPhrase && confirmPassphrase) {
-            passPhrase.oninput = function() {
-                confirmPassphrase.hidden = !this.value;
-                validatePassphrase(confirmAction);
-            };
-
-            confirmPassphrase.oninput = () => validatePassphrase(confirmAction);
-        }
-    }
-
-    // Validate passphrases
-    function validatePassphrase(confirmAction) {
-        const passPhrase = document.getElementById('passphrase');
-        const confirmPassphrase = document.getElementById('confirmPassphrase');
-
-        // Reset validation classes
-        [passPhrase, confirmPassphrase].forEach(input => input.classList.remove('is-invalid', 'is-valid'));
-        confirmAction.classList.remove('btn-success', 'btn-danger');
-
-        // Check passphrase validity
-        if (passPhrase.value && confirmPassphrase.value) {
-            if (passPhrase.value === confirmPassphrase.value) {
-                confirmPassphrase.classList.add('is-valid');
-                confirmAction.classList.remove('btn-primary');
-                confirmAction.classList.add('btn-success');
-                confirmAction.disabled = false;
-            } else {
-                confirmPassphrase.classList.add('is-invalid');
-                confirmAction.classList.add('btn-danger');
-                confirmAction.disabled = true;
-            }
-        } else {
-            confirmAction.classList.add('btn-primary');
-        }
-    }
-
-    // Initialize tool tips
-    function initializeTooltips() {
-        $('[data-toggle="tooltip"]').tooltip({
-            html: true
-        });
     }
 
     // Utility function to fetch password from the server
