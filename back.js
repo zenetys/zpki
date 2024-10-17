@@ -15,7 +15,7 @@ const session = require('express-session');
 // Set basic variables
 const app = express();
 const port = 3000;
-const srcDir = path.join(__dirname, 'src');
+let srcDir;
 
 // Centralized error handling middleware
 const handleError = (err, req, res, next) => {
@@ -26,7 +26,6 @@ const handleError = (err, req, res, next) => {
 // Setup
 app.use(rateLimit({ windowMs: 1 * 60 * 1000, max: 1000, message: { error: 'API Rate Limit Exceeded.' }}));
 app.use(cors({ methods: ['GET', 'POST'] }));
-app.use('/src', express.static(srcDir));
 app.use(express.static(__dirname));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -44,65 +43,98 @@ app.use(session({
     }
 }));
 
-// Function to find a unique certificate name
-const findUniqueCertName = (baseName) => {
-    let uniqueName = baseName;
-    let index = 1;
-    while (fs.existsSync(path.join(__dirname, 'src', 'certs', `${uniqueName}.crt`))) {
-        uniqueName = `${baseName}${index}`;
-        index++;
-    }
-    return uniqueName;
-};
-
 // Function to validate certificate name
 const validateName = (name) => {
     const regex = /^[a-zA-Z0-9-_ ]+$/;
-
-    for (const command of ['sudo', 'bash', 'sh', 'exec', 'system', 'kill', 'rm', 'mv', 'cp', 'dd', 'curl', 'wget', 'chmod', 'chown', 'ln']) {
-        if (name.toLowerCase().includes(command)) {
-            return false;
-        }
-    }
     return regex.test(name) && name.length > 0 && name.length < 64;
-};
-
-// Function to validate count parameter
-const validateCount = (count) => {
-    return Number.isInteger(count) && count > 0;
 };
 
 // Route to serve index.html
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    if (!req.session.currentProfile) {
+        const directoryPath = __dirname;
+        fs.readdir(directoryPath, { withFileTypes: true }, (err, files) => {
+            if (err) {
+                return res.status(500).json({ error: 'Unable to scan directory: ' + err });
+            }
+            const profiles = files
+                .filter(file => file.isDirectory() && file.name !== 'images' && file.name !== '.git')
+                .map(file => file.name);
+
+            if (profiles.length > 0) {
+                req.session.currentProfile = profiles[0];
+                srcDir = path.join(__dirname, req.session.currentProfile);
+            } else {
+                return res.status(404).json({ error: 'No valid profiles found.' });
+            }
+            res.sendFile(path.join(__dirname, 'index.html'));
+        });
+    } else {
+        srcDir = path.join(__dirname, req.session.currentProfile);
+        res.sendFile(path.join(__dirname, 'index.html'));
+    }
+});
+
+// Route to get all available profiles
+app.get('/profiles', (req, res) => {
+    const directoryPath = __dirname;
+    fs.readdir(directoryPath, { withFileTypes: true }, (err, files) => {
+        if (err) {
+            return res.status(500).json({ error: 'Unable to scan directory: ' + err });
+        }
+        const profiles = files
+            .filter(file => file.isDirectory() && file.name !== 'images' && file.name !== '.git')
+            .map(file => file.name);
+        res.json(profiles);
+    });
+});
+
+// Route to get current profile
+app.get('/current-profile', (req, res) => {
+    const currentProfile = req.session.currentProfile || 'Select a profile';
+    res.json({ currentProfile });
 });
 
 // Route to get the list of certificates
 app.get('/list', (req, res, next) => {
-    exec('./zpki ca-list --json', { cwd: srcDir }, (error, stdout) => {
+    if (!srcDir) {
+        return res.status(400).json({ error: 'Current profile directory is not set.' });
+    }
+
+    exec('./zpki -C ' + srcDir + ' ca-list --json', (error, stdout) => {
         if (error) return next(error);
         res.json(JSON.parse(stdout));
     });
 });
 
+// Route to switch profile
+app.post('/switch-profile', (req, res) => {
+    const { profile } = req.body;
+    const currentPath = path.join(__dirname, profile);
+
+    fs.stat(currentPath, (err, stats) => {
+        if (err || !stats.isDirectory()) {
+            return res.status(400).json({ error: 'Invalid profile' });
+        }
+
+        srcDir = currentPath;
+        req.session.currentProfile = profile;
+        return res.json({ message: `Profile switched to ${profile}` });
+    });
+});
+
 // Route to create certificates
-app.get('/create', async (req, res, next) => {
-    const certName = req.query.name;
-    const count = parseInt(req.query.count);
+app.post('/create', async (req, res, next) => {
+    const { name, passphrase } = req.body;
 
     // Validate certificate name
-    if (!validateName(certName)) {
-        return res.status(400).json({ error: `Invalid certificate name (${certName}). Only alphanumeric characters, spaces, hyphens, and underscores are allowed, and the length must be between 1 and 64 characters.` });
-    }
-
-    // Validate count
-    if (!validateCount(count)) {
-        return res.status(400).json({ error: `Invalid count value. It must be a positive integer.` });
+    if (!validateName(name)) {
+        return res.status(400).json({ error: `Invalid certificate name (${name}). Only alphanumeric characters, spaces, hyphens, and underscores are allowed, and the length must be between 1 and 64 characters.` });
     }
 
     const createCert = (uniqueCertName) => {
         return new Promise((resolve, reject) => {
-            const process = spawn('./zpki', ['-y', '-c', 'none', 'create-crt', uniqueCertName], { cwd: srcDir });
+            const process = spawn('./zpki', ['-C', srcDir, '-y', '-c', 'none', 'create-crt', uniqueCertName, 'DNS:', dns, 'IP:', ip]);
 
             let stdout = '';
             let stderr = '';
@@ -124,74 +156,12 @@ app.get('/create', async (req, res, next) => {
         });
     };
 
-    const processCerts = async () => {
-        try {
-            for (let i = 1; i <= count; i++) {
-                const uniqueCertName = findUniqueCertName(certName);
-                await createCert(uniqueCertName);
-            }
-            res.json({ response: `${count} certificates generated.` });
-        } catch (error) {
-            next(error);
-        }
-    };
-    processCerts();
-});
-
-// Route to revoke certificates
-app.post('/revoke', (req, res, next) => {
-    const { id } = req.body;
-    if (!Array.isArray(id)) {
-        return res.status(400).json({ error: 'Invalid list of certificates.' });
+    try {
+        const result = await createCert(name);
+        res.json({ message: 'Certificate created successfully', output: result });
+    } catch (error) {
+        next(error);
     }
-
-    for (const name of id) {
-        if (!validateName(name)) {
-            return res.status(400).json({ error: `Invalid certificate name (${name}). Only alphanumeric characters, spaces, hyphens, and underscores are allowed, and the length must be between 1 and 64 characters.` });
-        }
-    }
-
-    const revokeCert = (name) => {
-        return new Promise((resolve, reject) => {
-            const process = spawn('./zpki', ['-y', '-c', 'none', 'ca-revoke-crt', name], { cwd: srcDir });
-
-            let stdout = '';
-            let stderr = '';
-
-            process.stdout.on('data', (data) => {
-                stdout += data.toString();
-            });
-
-            process.stderr.on('data', (data) => {
-                stderr += data.toString();
-            });
-
-            process.on('close', (code) => {
-                if (code !== 0) {
-                    return reject(new Error(`Revocation error: ${stderr}`));
-                }
-                resolve(stdout);
-            });
-        });
-    };
-
-    const processRevocations = async () => {
-        const certData = readCertData(); // Refaire le code de récup
-        const certMap = new Map(certData.map(cert => [cert.id, cert]));
-
-        try {
-            for (const name of id) {
-                if (!certMap.has(name)) {
-                    return res.status(404).json({ error: `Certificate with ID ${name} not found.` });
-                }
-                await revokeCert(name);
-            }
-            res.json({ response: 'Certificates revoked.' });
-        } catch (error) {
-            next(error);
-        }
-    };
-    processRevocations();
 });
 
 // Route to renew certificates
@@ -203,14 +173,13 @@ app.post('/renew', (req, res, next) => {
 
     for (const name of id) {
         if (!validateName(name)) {
-            return res.status(400).json({ error: `Invalid certificate name (${name}). Only alphanumeric characters, spaces, hyphens, and underscores are allowed, and the length must be between 1 and 64 characters.` });
+            return res.status(400).json({ error: `Invalid certificate name (${name}).` });
         }
     }
 
     const renewCert = (name) => {
         return new Promise((resolve, reject) => {
-            const process = spawn('./zpki', ['-y', '-c', 'none', 'ca-update-crt', name], { cwd: srcDir });
-
+            const process = spawn('./zpki', ['-C', srcDir, '-y', '-c', 'none', 'ca-update-crt', name]);
             let stdout = '';
             let stderr = '';
 
@@ -231,23 +200,91 @@ app.post('/renew', (req, res, next) => {
         });
     };
 
-    const processRenewals = async () => {
-        const certData = readCertData(); // Refaire le code de récup
-        const certMap = new Map(certData.map(cert => [cert.id, cert]));
+    Promise.all(id.map(renewCert))
+        .then(results => res.json({ message: 'Certificates renewed successfully', outputs: results }))
+        .catch(next);
+});
 
-        try {
-            for (const name of id) {
-                if (!certMap.has(name)) {
-                    return res.status(404).json({ error: `Certificate with ID ${name} not found.` });
-                }
-                await renewCert(name);
-            }
-            res.json({ response: 'Certificates renewed.' });
-        } catch (error) {
-            next(error);
+// Route to revoke certificates
+app.post('/revoke', (req, res, next) => {
+    const { id } = req.body;
+    if (!Array.isArray(id)) {
+        return res.status(400).json({ error: 'Invalid list of certificates.' });
+    }
+
+    for (const name of id) {
+        if (!validateName(name)) {
+            return res.status(400).json({ error: `Invalid certificate name (${name}).` });
         }
+    }
+
+    const revokeCert = (name) => {
+        return new Promise((resolve, reject) => {
+            const process = spawn('./zpki', ['-C', srcDir, '-y', '-c', 'none', 'ca-revoke-crt', name]);
+            let stdout = '';
+            let stderr = '';
+
+            process.stdout.on('data', (data) => {
+                stdout += data.toString();
+            });
+
+            process.stderr.on('data', (data) => {
+                stderr += data.toString();
+            });
+
+            process.on('close', (code) => {
+                if (code !== 0) {
+                    return reject(new Error(`Revocation error: ${stderr}`));
+                }
+                resolve(stdout);
+            });
+        });
     };
-    processRenewals();
+
+    Promise.all(id.map(revokeCert))
+        .then(results => res.json({ message: 'Certificates revoked successfully', outputs: results }))
+        .catch(next);
+});
+
+// Route to disable certificates
+app.post('/disable', (req, res, next) => {
+    const { id } = req.body;
+    if (!Array.isArray(id)) {
+        return res.status(400).json({ error: 'Invalid list of certificates.' });
+    }
+
+    for (const name of id) {
+        if (!validateName(name)) {
+            return res.status(400).json({ error: `Invalid certificate name (${name}).` });
+        }
+    }
+
+    const disableCert = (name) => {
+        return new Promise((resolve, reject) => {
+            const process = spawn('./zpki', ['-C', srcDir, '-y', '-c', 'none', 'ca-disable-crt', name]);
+            let stdout = '';
+            let stderr = '';
+
+            process.stdout.on('data', (data) => {
+                stdout += data.toString();
+            });
+
+            process.stderr.on('data', (data) => {
+                stderr += data.toString();
+            });
+
+            process.on('close', (code) => {
+                if (code !== 0) {
+                    return reject(new Error(`Revocation error: ${stderr}`));
+                }
+                resolve(stdout);
+            });
+        });
+    };
+
+    Promise.all(id.map(disableCert))
+        .then(results => res.json({ message: 'Certificates disabled successfully', outputs: results }))
+        .catch(next);
 });
 
 // Route pour définir le mot de passe
@@ -255,7 +292,7 @@ app.post('/set-password', (req, res) => {
     const password = req.body.password;
     if (password) {
         req.session.pkiaccess = password;
-        return res.json({ response: 'Password saved!' })
+        return res.json({ response: 'Password saved!' });
     }
     return res.json({ response: 'Missing password.' });
 });
