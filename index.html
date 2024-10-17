@@ -179,10 +179,8 @@
             }
 
             if (dragOldIndex !== -1 && dragNewIndex !== -1 && dragNewIndex !== dragOldIndex) {
-                // Move header
                 arrayMove(headers, dragOldIndex, dragNewIndex);
-                
-                // Move table content
+
                 const rows = [...document.querySelectorAll('#certTableBody tr')];
                 rows.forEach(row => {
                     const cells = [...row.children];
