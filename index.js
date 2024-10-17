@@ -381,7 +381,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function loadCertData() {
-        fetch('/list')
+        let profile;
+        fetch('/current-profile')
+            .then(response => response.json())
+            .then(profileData => {
+                profile = profileData.currentProfile;
+                return fetch('/list');
+            })
             .then(response => response.json())
             .then(data => {
                 certTableBody.innerHTML = '';
@@ -434,11 +440,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td data-sort="serial"><span class="tooltip-container" data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>${texts[lang].certificate.signature}: ${cert.hash}</div>">${cert.serial}</span></td>
                         <td data-sort="startDate"><span class="tooltip-container" data-toggle="tooltip" data-placement="bottom" title="${cert.startDate}">${formatDate(cert.startDate)}</span></td>
                         <td data-sort="endDate"><span class="tooltip-container" data-toggle="tooltip" data-placement="bottom" title="${cert.endDate}">${formatDate(cert.endDate)}</span></td>
-                        <td>
+                        <td class="download-container">
                             <button type="button" class="btn btn-light btn-sm" data-bs-toggle="popover" data-bs-html="true" data-bs-content="
-                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='/src/certs/${replaceSpaces(cert.id)}.crt' download><img src='images/certificate-solid.svg' class='icon me-1'/>.crt</a>
-                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='/src/certs/${replaceSpaces(cert.id)}.csr' download><img src='images/lock-solid.svg' class='icon me-1'/>.csr</a>
-                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='/src/private/${replaceSpaces(cert.id)}.key' download><img src='images/key-solid.svg' class='icon me-1'/>.key</a>
+                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='${profile}/certs/${replaceSpaces(cert.id)}.crt' download><img src='images/certificate-solid.svg' class='icon me-1'/>.crt</a>
+                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='${profile}/certs/${replaceSpaces(cert.id)}.csr' download><img src='images/lock-solid.svg' class='icon me-1'/>.csr</a>
+                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='${profile}/private/${replaceSpaces(cert.id)}.key' download><img src='images/key-solid.svg' class='icon me-1'/>.key</a>
                                 <a class='btn btn-light btn-sm d-block text-start disabled'><img src='images/file-export-solid.svg' class='icon me-1'/>.pkcs12</a>
                             ">
                                 <img src="images/file-arrow-down-solid.svg" class="icon"/>
@@ -453,7 +459,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     row.querySelector('.disable').addEventListener('click', () => showModal('disable', cert));
 
                     row.addEventListener('click', function(event) {
-                        if (!event.target.closest('.check-container') && !event.target.closest('.status-container')) {
+                        if (!event.target.closest('.check-container') && !event.target.closest('.status-container') && !event.target.closest('.download-container')) {
                             showModal('view', cert);
                         }
                     });
@@ -566,9 +572,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const formContent = document.getElementById('formContent');
         const footerContent = document.getElementById('footerContent');
         const caPassphraseContainer = document.getElementById('caPassphraseContainer');
-    
+
         formContent.innerHTML = '';
-    
+
         switch (action) {
             case 'create':
                 modalTitle.textContent = texts[lang].certificate.createMultiSan;
@@ -642,7 +648,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         endDate: endDate,
                         passphrase: passphrase
                     };
-    
+
                     try {
                         const response = await fetch('/create', {
                             method: 'POST',
@@ -662,54 +668,61 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
                 break;
             case 'view':
-                let subjectArray = (certData.subject || '')
-                    .replace(/^Subject\s*\(.*?\):\s*/, '')
-                    .split(/(?:\/|\n)/)
-                    .filter(Boolean);
+                fetch('/current-profile')
+                    .then(response => response.json())
+                    .then(data => {
+                        const profile = data.currentProfile;
 
-                let splitSubject = subjectArray.length > 0
-                    ? subjectArray.map(el => `<span>${el}</span>`).join('<br>')
-                    : `${texts[lang].certificate.undefined}`;
+                        let subjectArray = (certData.subject || '')
+                            .replace(/^Subject\s*\(.*?\):\s*/, '')
+                            .split(/(?:\/|\n)/)
+                            .filter(Boolean);
 
-                if (subjectArray.length === 1) {
-                    splitSubject = `<span>${subjectArray[0]}</span>`;
-                } else {
-                    splitSubject = `<br>${splitSubject}`;
-                }
+                        let splitSubject = subjectArray.length > 0
+                            ? subjectArray.map(el => `<span>${el}</span>`).join('<br>')
+                            : `${texts[lang].certificate.undefined}`;
 
-                modalTitle.textContent = `${texts[lang].certificate.viewCert}`;
-                caPassphraseContainer.style.display = 'none';
-                formContent.innerHTML = `
-                    <div id="certDetails">
-                        <p><strong>${texts[lang].certificate.CN}:</strong> ${certData.id ? certData.id : `${texts[lang].certificate.undefined}`}</p>
-                        <p><strong>${texts[lang].certificate.SUBJ}:</strong> ${splitSubject}</p>
-            
-                        <p><strong>${texts[lang].certificate.serial}:</strong> ${certData.serial}</p>
-                        <p><strong>${texts[lang].certificate.signature}:</strong> ${certData.hash}</p>
+                        if (subjectArray.length === 1) {
+                            splitSubject = `<span>${subjectArray[0]}</span>`;
+                        } else {
+                            splitSubject = `<br>${splitSubject}`;
+                        }
 
-                        <p><strong>IP:</strong> ${certData.ip && certData.ip.length > 0 
-                            ? certData.ip.map(ip => `<span>${ip}</span>`).join(', ') 
-                            : `${texts[lang].certificate.IP}`}
-                        </p>
+                        modalTitle.textContent = `${texts[lang].certificate.viewCert}`;
+                        caPassphraseContainer.style.display = 'none';
+                        formContent.innerHTML = `
+                            <div id="certDetails">
+                                <p><strong>${texts[lang].certificate.CN}:</strong> ${certData.id ? certData.id : `${texts[lang].certificate.undefined}`}</p>
+                                <p><strong>${texts[lang].certificate.SUBJ}:</strong> ${splitSubject}</p>
+                    
+                                <p><strong>${texts[lang].certificate.serial}:</strong> ${certData.serial}</p>
+                                <p><strong>${texts[lang].certificate.signature}:</strong> ${certData.hash}</p>
 
-                        <p><strong>DNS:</strong> ${certData.dns && certData.dns.length > 0 
-                            ? certData.dns.map(dns => `<span>${dns}</span>`).join(', ') 
-                            : `${texts[lang].certificate.DNS}`}
-                        </p>
+                                <p><strong>IP:</strong> ${certData.ip && certData.ip.length > 0 
+                                    ? certData.ip.map(ip => `<span>${ip}</span>`).join(', ') 
+                                    : `${texts[lang].certificate.IP}`}
+                                </p>
 
-                        <p><strong>${texts[lang].certificate.type}:</strong> ${certData.type ? certData.type : `${texts[lang].certificate.TYPE}`}</p>
-                        <p><strong>${texts[lang].certificate.startDate}:</strong> ${certData.startDate ? certData.startDate : `${texts[lang].certificate.undefined}`}</p>
-                        <p><strong>${texts[lang].certificate.endDate}:</strong> ${certData.endDate ? certData.endDate : `${texts[lang].certificate.undefined}`}</p>
+                                <p><strong>DNS:</strong> ${certData.dns && certData.dns.length > 0 
+                                    ? certData.dns.map(dns => `<span>${dns}</span>`).join(', ') 
+                                    : `${texts[lang].certificate.DNS}`}
+                                </p>
 
-                        <p><strong>${texts[lang].certificate.downloads}:</strong>
-                            <a class="btn btn-light btn-sm" href="/src/certs/${replaceSpaces(certData.id)}.crt" download><img src="images/certificate-solid.svg" class="icon me-1"/>.crt</a>
-                            <a class="btn btn-light btn-sm" href="/src/certs/${replaceSpaces(certData.id)}.csr" download><img src="images/lock-solid.svg" class="icon me-1"/>.csr</a>
-                            <a class="btn btn-light btn-sm" href="/src/private/${replaceSpaces(certData.id)}.key" download><img src="images/key-solid.svg" class="icon me-1"/>.key</a>
-                            <a class="btn btn-light btn-sm disabled"><img src="images/file-export-solid.svg" class="icon me-1"/>.pkcs12</a>
-                        </p>
-                    </div>
-                `;
-                footerContent.style.display = 'none';
+                                <p><strong>${texts[lang].certificate.type}:</strong> ${certData.type ? certData.type : `${texts[lang].certificate.TYPE}`}</p>
+                                <p><strong>${texts[lang].certificate.startDate}:</strong> ${certData.startDate ? certData.startDate : `${texts[lang].certificate.undefined}`}</p>
+                                <p><strong>${texts[lang].certificate.endDate}:</strong> ${certData.endDate ? certData.endDate : `${texts[lang].certificate.undefined}`}</p>
+
+                                <p><strong>${texts[lang].certificate.downloads}:</strong>
+                                    <a class="btn btn-light btn-sm" href="${profile}/certs/${replaceSpaces(certData.id)}.crt" download><img src="images/certificate-solid.svg" class="icon me-1"/>.crt</a>
+                                    <a class="btn btn-light btn-sm" href="${profile}/certs/${replaceSpaces(certData.id)}.csr" download><img src="images/lock-solid.svg" class="icon me-1"/>.csr</a>
+                                    <a class="btn btn-light btn-sm" href="${profile}/private/${replaceSpaces(certData.id)}.key" download><img src="images/key-solid.svg" class="icon me-1"/>.key</a>
+                                    <a class="btn btn-light btn-sm disabled"><img src="images/file-export-solid.svg" class="icon me-1"/>.pkcs12</a>
+                                </p>
+                            </div>
+                        `;
+                        footerContent.style.display = 'none';
+                    })
+                    .catch(error => console.error('Profile loading error:', error));
                 break;
             case 'renew':
                 modalTitle.textContent = `${texts[lang].certificate.renewCert}`;
