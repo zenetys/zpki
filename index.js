@@ -690,7 +690,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const passphrase = document.getElementById('passphrase').value;
 
                     const data = {
-                        name: commonName,
+                        id: commonName,
                         subject: subject,
                         sanIP: sanIP,
                         sanDns: sanDns,
@@ -843,7 +843,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const passphrase = document.getElementById('passphrase').value;
 
                     const data = {
-                        name: commonName,
+                        id: commonName,
                         subject: subject,
                         sanIP: sanIP,
                         sanDns: sanDns,
@@ -897,7 +897,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify({ name: certData.id })
+                            body: JSON.stringify({ id: certData.id })
                         });
                 
                         if (response.ok) {
@@ -935,7 +935,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify({ name: certData.id })
+                            body: JSON.stringify({ id: certData.id })
                         });
                 
                         if (response.ok) {
