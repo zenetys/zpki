@@ -320,6 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (!cellA || !cellB) return 0;
 
+            // Sorting by status
             if (sortKey === 'status') {
                 const buttonClassA = cellA.querySelector('button')?.classList;
                 const buttonClassB = cellB.querySelector('button')?.classList;
@@ -339,11 +340,35 @@ document.addEventListener('DOMContentLoaded', function() {
                     : (statusOrder[orderB] || 0) - (statusOrder[orderA] || 0);
             }
 
+            // Sorting by date (startDate, endDate)
             if (sortKey === 'startDate' || sortKey === 'endDate') {
-                const dateA = new Date(cellA.textContent.trim());
-                const dateB = new Date(cellB.textContent.trim());
+                const parseDate = (dateStr) => {
+                    const [day, month, year] = dateStr.split('/').map(Number);
+                    return new Date(year, month - 1, day);
+                };
+
+                const dateA = parseDate(cellA.textContent.trim());
+                const dateB = parseDate(cellB.textContent.trim());
+
                 return order === 'asc' ? dateA - dateB : dateB - dateA;
             }
+
+            if (sortKey === 'id') {
+                const nameA = cellA.textContent.trim();
+                const nameB = cellB.textContent.trim();
+
+                const numericA = parseInt(nameA.replace(/\D/g, ''), 10);
+                const numericB = parseInt(nameB.replace(/\D/g, ''), 10);
+
+                if (numericA !== numericB) {
+                    return order === 'asc' ? numericA - numericB : numericB - numericA;
+                }
+                return order === 'asc'
+                    ? nameA.localeCompare(nameB)
+                    : nameB.localeCompare(nameA);
+            }
+
+            // Default sorting for other text fields
             const valueA = cellA.textContent.trim();
             const valueB = cellB.textContent.trim();
 
@@ -399,7 +424,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <button class="btn btn-action revoke">
                                         <img src="images/ban-solid.svg" class="icon cross-icon" data-id="${cert.id}"/>
                                     </button>
-                                    <button class="btn btn-action disable">
+                                    <button class="btn btn-action disable" disabled>
                                         <img src="images/circle-minus-regular.svg" class="icon wobble-icon" data-id="${cert.id}"/>
                                     </button>
                                 </div>
