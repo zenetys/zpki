@@ -31,17 +31,18 @@ document.addEventListener('DOMContentLoaded', function() {
             switchMenu.appendChild(item);
         });
     };
-    createProfileMenu();
 
-    fetch('/current-profile')
-        .then(response => response.json())
-        .then(data => {
-            const currentButton = document.getElementById('switchCurrentCA');
-            currentButton.innerHTML = data.currentProfile.charAt(0).toUpperCase() + data.currentProfile.slice(1);
-            const activeItem = document.getElementById(data.currentProfile);
-            if (activeItem) {
-                activeItem.classList.add('active');
-            }
-        })
-        .catch(error => console.error('Error fetching current profile:', error));
+    createProfileMenu().then(() => {
+        fetch('/current-profile')
+            .then(response => response.json())
+            .then(data => {
+                const currentButton = document.getElementById('switchCurrentCA');
+                currentButton.innerHTML = data.currentProfile.charAt(0).toUpperCase() + data.currentProfile.slice(1);
+                const activeItem = document.getElementById(data.currentProfile);
+                if (activeItem) {
+                    activeItem.classList.add('active');
+                }
+            })
+            .catch(error => console.error('Error fetching current profile:', error));
+    });
 });
