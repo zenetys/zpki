@@ -930,7 +930,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Confirm certificate deactivation
                 document.getElementById('confirmAction').onclick = async function() {
                     try {
-                        const response = await fetch('/dusable', {
+                        const response = await fetch('/disable', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
