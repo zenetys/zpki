@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         profiles.forEach(profile => {
             const item = document.createElement('a');
-            item.className = 'dropdown-item d-flex justify-content-between';
+            item.className = 'dropdown-item text-truncate';
             item.id = profile;
             item.textContent = profile.charAt(0).toUpperCase() + profile.slice(1);
 
