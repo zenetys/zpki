@@ -1020,8 +1020,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (!tmpPassword) {
             passwordSubmit.disabled = false;
+            passwordSubmit.classList.add('btn-primary');
             passwordSubmit.classList.remove('btn-danger');
-            passwordSubmit.classList.add('btn-success');
+            passwordSubmit.classList.remove('btn-success');
             return;
         }
 
@@ -1029,6 +1030,7 @@ document.addEventListener('DOMContentLoaded', function() {
         passwordInput.classList.toggle('is-valid', isValid);
         passwordInput.classList.toggle('is-invalid', !isValid);
         passwordSubmit.disabled = !isValid;
+        passwordSubmit.classList.remove('btn-primary');
         passwordSubmit.classList.toggle('btn-danger', !isValid);
         passwordSubmit.classList.toggle('btn-success', isValid);
     }
