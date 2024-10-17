@@ -710,6 +710,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
     
                         if (response.ok) {
+                            loadCertData();
                             modal.hide();
                         } else {
                         }
@@ -862,6 +863,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
     
                         if (response.ok) {
+                            loadCertData();
                             modal.hide();
                         } else {
                             console.error('Renewal failed:', await response.text());
