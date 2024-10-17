@@ -23,6 +23,12 @@ const handleError = (err, req, res, next) => {
     res.status(500).json({ error: err.message });
 };
 
+// Function to validate certificate name
+const validateName = (name) => {
+    const regex = /^[a-zA-Z0-9-_ ]+$/;
+    return regex.test(name) && name.length > 0 && name.length < 64;
+};
+
 // Setup
 app.use(rateLimit({ windowMs: 1 * 60 * 1000, max: 1000, message: { error: 'API Rate Limit Exceeded.' }}));
 app.use(cors({ methods: ['GET', 'POST'] }));
@@ -42,12 +48,6 @@ app.use(session({
         httpOnly: true,
     }
 }));
-
-// Function to validate certificate name
-const validateName = (name) => {
-    const regex = /^[a-zA-Z0-9-_ ]+$/;
-    return regex.test(name) && name.length > 0 && name.length < 64;
-};
 
 // Route to serve index.html
 app.get('/', (req, res) => {
