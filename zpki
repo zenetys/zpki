@@ -378,8 +378,20 @@ function create-crt() {
 
 #X-ACTION ca-update-db: Reload all certificates in the ca.idz file
 function ca-update-db() {
+  local serial keyfile
   $OPENSSL ca -config "$CA_CNFFILE" -updatedb
   rm -f ca.idz.new
+  find certs -maxdepth 1 -type f -name "*.crt" | while read -r; do
+    serial=$(openssl x509 -in $REPLY -noout -serial) || continue
+    serial=${serial#*=}
+    keyfile=${REPLY%.crt}.key
+    keyfile=${keyfile##*/}
+    if [[ ! -e private/$serial.key && -e "private/$keyfile" ]]; then
+      ln -s $keyfile private/$serial.key
+    fi
+  done
+
+  echo -n > ca.idz.new
   find certs.new -maxdepth 1 -type f -name "*.pem" | while read -r; do
     ca-update-dump-crt "$REPLY" >> ca.idz.new
   done
@@ -404,6 +416,7 @@ function ca-list() {
       subject[$1]=$5;
       issuer[$1]=$6;
       email[$1]=$7;
+      keyStatus[$1]=$8;
     }
     if (FORMAT_JSON) {
       printf("[");
@@ -419,6 +432,7 @@ function ca-list() {
       printf("%s\t", "issuer");
       printf("%s\t", "email");
       printf("%s\n", "hash");
+      printf("%s\n", "keyStatus");
       # printf("%s\t", "filename");
     }
   }
@@ -452,6 +466,7 @@ function ca-list() {
     printf(",\"subject\":\"%s\"", $6);
     if (notBefore[$4]) printf(",\"startDate\":\"%s\"", notBefore[$4]);
     printf(",\"endDate\":\"%s\"", rfc3339($2));
+    printf(",\"keyStatus\":\"%s\"", keyStatus[$4]);
     # printf(",\"filename\":\"%s\"", $5);
     printf("}");
   }
@@ -465,7 +480,8 @@ function ca-list() {
     printf("%s\t", $6);
     printf("%s\t", issuer[$4]);
     printf("%s\t", email[$4]);
-    printf("%s\n", hash[$4]);
+    printf("%s\t", hash[$4]);
+    printf("%s\n", keyStatus[$4]);
     # printf("%s\t", "filename");
   }
   {
@@ -589,20 +605,34 @@ function ca-display-crt() {
 
 #X-ACTION ca-update-dump-crt [CRTFILE]: Update and dump the content of a certificate file (.crt) file
 function ca-update-dump-crt() {
-  local CRTFILE=${1:-$CRTFILE}
+  local CRTFILE=${1:-$CRTFILE}; shift
+  local KEYFILE=${1:-$KEYFILE}; shift
   local IFS=$'\n'
-  local hash serial notBefore notAfter subject issuer email
-  [[ -z ${ARGS[0]} ]] && fatal "Function needs an argument" && return
+  local hash serial notBefore notAfter subject issuer email keyStatus
+  [[ -z $CRTFILE ]] && fatal "Function needs an argument" && return
   [[ -e $CRTFILE ]] || fatal "Cannot get $CRTFILE"
+  [[ -z $KEYFILE ]] && {
+    KEYFILE=${CRTFILE%.pem}.key
+    KEYFILE=private/${KEYFILE##*/}
+  }
   for A in hash=$(openssl x509 -in "$CRTFILE" -noout -hash -serial \
                           -startdate -enddate -email -subject -issuer); do
     eval "${A%%=*}='${A#*=}'"
   done
   subject="/${subject//, /\/}"; subject="${subject// = /=}"
   issuer="/${issuer//, /\/}"; issuer="${issuer// = /=}"
-  printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "$serial" "$hash" \
+  if [[ ! -e $KEYFILE ]]; then
+    keyStatus="absent"
+  elif [[ ! -s $KEYFILE ]]; then
+    keyStatus="empty"
+  elif grep -q -- "-----BEGIN ENCRYPTED PRIVATE KEY-----" $KEYFILE; then
+    keyStatus="encrypted"
+  else
+    keyStatus="plain"
+  fi
+  printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "$serial" "$hash" \
       $(date -Iseconds -d "$notBefore") $(date -Iseconds -d "$notAfter") \
-      "$subject" "$issuer" "$email"
+      "$subject" "$issuer" "$email" "$keyStatus"
 }
 
 #X-ACTION ca-dump-crt [CRTFILE]: Dump the content of a certificate (.crt) file
