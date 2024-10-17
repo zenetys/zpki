@@ -134,7 +134,7 @@ app.post('/create', async (req, res, next) => {
 
     const createCert = (uniqueCertName) => {
         return new Promise((resolve, reject) => {
-            const process = spawn('./zpki', ['-C', srcDir, '-y', '-c', 'none', 'create-crt', uniqueCertName, 'DNS:', dns, 'IP:', ip]);
+            const process = spawn('./zpki', ['-C', srcDir, '-y', '-c', 'none', 'create-crt', uniqueCertName]);
 
             let stdout = '';
             let stderr = '';
