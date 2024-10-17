@@ -311,6 +311,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Reset validation classes
         [passPhrase, confirmPassphrase].forEach(input => input.classList.remove('is-invalid', 'is-valid'));
         confirmAction.classList.remove('btn-success', 'btn-danger');
+        confirmPassphrase.classList.add('is-invalid');
+        confirmAction.disabled = true;
 
         // Check passphrase validity
         if (passPhrase.value && confirmPassphrase.value) {
