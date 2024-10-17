@@ -101,7 +101,7 @@ app.get('/list', (req, res, next) => {
         return res.status(400).json({ error: 'Current profile directory is not set.' });
     }
 
-    exec('./zpki -C ' + srcDir + ' ca-list --json', (error, stdout) => {
+    exec('sudo ./zpki -C ' + srcDir + ' ca-list --json', (error, stdout) => {
         if (error) return next(error);
         res.json(JSON.parse(stdout));
     });
@@ -125,39 +125,15 @@ app.post('/switch-profile', (req, res) => {
 
 // Route to create certificates
 app.post('/create', async (req, res, next) => {
-    const { name, passphrase } = req.body;
+    const { id } = req.body;
 
     // Validate certificate name
-    if (!validateName(name)) {
-        return res.status(400).json({ error: `Invalid certificate name (${name}). Only alphanumeric characters, spaces, hyphens, and underscores are allowed, and the length must be between 1 and 64 characters.` });
+    if (!validateName(id)) {
+        return res.status(400).json({ error: `Invalid certificate name (${id}). Only alphanumeric characters, spaces, hyphens, and underscores are allowed, and the length must be between 1 and 64 characters.` });
     }
 
-    const createCert = (uniqueCertName) => {
-        return new Promise((resolve, reject) => {
-            const process = spawn('./zpki', ['-C', srcDir, '-y', '-c', 'none', 'create-crt', uniqueCertName]);
-
-            let stdout = '';
-            let stderr = '';
-
-            process.stdout.on('data', (data) => {
-                stdout += data.toString();
-            });
-
-            process.stderr.on('data', (data) => {
-                stderr += data.toString();
-            });
-
-            process.on('close', (code) => {
-                if (code !== 0) {
-                    return reject(new Error(`Creation error: ${stderr}`));
-                }
-                resolve(stdout);
-            });
-        });
-    };
-
     try {
-        const result = await createCert(name);
+        const result = await execPromise(`sudo ./zpki -C "${srcDir}" -y -c none create-crt "${id}"`);
         res.json({ message: 'Certificate created successfully', output: result });
     } catch (error) {
         next(error);
@@ -165,127 +141,67 @@ app.post('/create', async (req, res, next) => {
 });
 
 // Route to renew certificates
-app.post('/renew', (req, res, next) => {
+app.post('/renew', async (req, res, next) => {
     const { id } = req.body;
-    if (!Array.isArray(id)) {
-        return res.status(400).json({ error: 'Invalid list of certificates.' });
+
+    // Validate certificate ID
+    if (!validateName(id)) {
+        return res.status(400).json({ error: `Invalid certificate ID (${id}).` });
     }
 
-    for (const name of id) {
-        if (!validateName(name)) {
-            return res.status(400).json({ error: `Invalid certificate name (${name}).` });
-        }
+    try {
+        const result = await execPromise(`sudo ./zpki -C "${srcDir}" -y -c none ca-update-crt "${id}"`);
+        res.json({ message: 'Certificate renewed successfully', output: result });
+    } catch (error) {
+        next(error);
     }
-
-    const renewCert = (name) => {
-        return new Promise((resolve, reject) => {
-            const process = spawn('./zpki', ['-C', srcDir, '-y', '-c', 'none', 'ca-update-crt', name]);
-            let stdout = '';
-            let stderr = '';
-
-            process.stdout.on('data', (data) => {
-                stdout += data.toString();
-            });
-
-            process.stderr.on('data', (data) => {
-                stderr += data.toString();
-            });
-
-            process.on('close', (code) => {
-                if (code !== 0) {
-                    return reject(new Error(`Renewal error: ${stderr}`));
-                }
-                resolve(stdout);
-            });
-        });
-    };
-
-    Promise.all(id.map(renewCert))
-        .then(results => res.json({ message: 'Certificates renewed successfully', outputs: results }))
-        .catch(next);
 });
 
 // Route to revoke certificates
-app.post('/revoke', (req, res, next) => {
+app.post('/revoke', async (req, res, next) => {
     const { id } = req.body;
-    if (!Array.isArray(id)) {
-        return res.status(400).json({ error: 'Invalid list of certificates.' });
+
+    // Validate certificate ID
+    if (!validateName(id)) {
+        return res.status(400).json({ error: `Invalid certificate ID (${id}).` });
     }
 
-    for (const name of id) {
-        if (!validateName(name)) {
-            return res.status(400).json({ error: `Invalid certificate name (${name}).` });
-        }
+    try {
+        const result = await execPromise(`sudo ./zpki -C "${srcDir}" -y -c none ca-revoke-crt "${id}"`);
+        res.json({ message: 'Certificate revoked successfully', output: result });
+    } catch (error) {
+        next(error);
     }
-
-    const revokeCert = (name) => {
-        return new Promise((resolve, reject) => {
-            const process = spawn('./zpki', ['-C', srcDir, '-y', '-c', 'none', 'ca-revoke-crt', name]);
-            let stdout = '';
-            let stderr = '';
-
-            process.stdout.on('data', (data) => {
-                stdout += data.toString();
-            });
-
-            process.stderr.on('data', (data) => {
-                stderr += data.toString();
-            });
-
-            process.on('close', (code) => {
-                if (code !== 0) {
-                    return reject(new Error(`Revocation error: ${stderr}`));
-                }
-                resolve(stdout);
-            });
-        });
-    };
-
-    Promise.all(id.map(revokeCert))
-        .then(results => res.json({ message: 'Certificates revoked successfully', outputs: results }))
-        .catch(next);
 });
 
 // Route to disable certificates
-app.post('/disable', (req, res, next) => {
+app.post('/disable', async (req, res, next) => {
     const { id } = req.body;
-    if (!Array.isArray(id)) {
-        return res.status(400).json({ error: 'Invalid list of certificates.' });
+
+    // Validate certificate ID
+    if (!validateName(id)) {
+        return res.status(400).json({ error: `Invalid certificate ID (${id}).` });
     }
 
-    for (const name of id) {
-        if (!validateName(name)) {
-            return res.status(400).json({ error: `Invalid certificate name (${name}).` });
-        }
+    try {
+        const result = await execPromise(`sudo ./zpki -C "${srcDir}" -y -c none ca-disable-crt "${id}"`);
+        res.json({ message: 'Certificate disabled successfully', output: result });
+    } catch (error) {
+        next(error);
     }
-
-    const disableCert = (name) => {
-        return new Promise((resolve, reject) => {
-            const process = spawn('./zpki', ['-C', srcDir, '-y', '-c', 'none', 'ca-disable-crt', name]);
-            let stdout = '';
-            let stderr = '';
-
-            process.stdout.on('data', (data) => {
-                stdout += data.toString();
-            });
-
-            process.stderr.on('data', (data) => {
-                stderr += data.toString();
-            });
-
-            process.on('close', (code) => {
-                if (code !== 0) {
-                    return reject(new Error(`Revocation error: ${stderr}`));
-                }
-                resolve(stdout);
-            });
-        });
-    };
-
-    Promise.all(id.map(disableCert))
-        .then(results => res.json({ message: 'Certificates disabled successfully', outputs: results }))
-        .catch(next);
 });
+
+// Execute command
+const execPromise = (command) => {
+    return new Promise((resolve, reject) => {
+        exec(command, (error, stdout, stderr) => {
+            if (error) {
+                return reject(new Error(`Error executing command: ${stderr}`));
+            }
+            resolve(stdout.trim());
+        });
+    });
+};
 
 // Route pour définir le mot de passe
 app.post('/set-password', (req, res) => {
