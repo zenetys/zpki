@@ -1042,6 +1042,9 @@ document.addEventListener('DOMContentLoaded', function() {
         checkPassword();
     });
 
+    // Reload interface on profile switch
+    document.getElementById('switchMenu').onclick = loadCertData;
+
     // Check password while input
     document.getElementById('passwordForm').oninput = checkPassword;
 
