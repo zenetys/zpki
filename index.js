@@ -390,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize tool tips
     function initializeTooltips() {
-        $('[data-toggle="tooltip"]').tooltip({
+        $('[data-bs-toggle="tooltip"]').tooltip({
             html: true
         });
     }
@@ -544,10 +544,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </div>
                             </div>
                         </td>
-                        <td data-sort="id">${cert.id}</td>
-                        <td data-sort="serial"><span class="tooltip-container" data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>${texts[lang].certificate.signature}: ${cert.hash}</div>">${cert.serial}</span></td>
-                        <td data-sort="startDate"><span class="tooltip-container" data-toggle="tooltip" data-placement="bottom" title="${cert.startDate}">${formatDate(cert.startDate)}</span></td>
-                        <td data-sort="endDate"><span class="tooltip-container" data-toggle="tooltip" data-placement="bottom" title="${cert.endDate}">${formatDate(cert.endDate)}</span></td>
+                        <td data-sort="commonName">${cert.id}</td>
+                        <td data-sort="serial"><span class="tooltip-container" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" title="<div>${texts[lang].headers.signature}: ${cert.hash}</div>">${cert.serial}</span></td>
+                        <td data-sort="startDate"><span class="tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="${cert.startDate}">${formatDate(cert.startDate)}</span></td>
+                        <td data-sort="endDate"><span class="tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="${cert.endDate}">${formatDate(cert.endDate)}</span></td>
                         <td class="download-container">
                             <button type="button" class="btn btn-light btn-sm" data-bs-toggle="popover" data-bs-html="true" data-bs-content="
                                 <a class='btn btn-light btn-sm d-block text-start mb-1' href='${profile}/certs/${replaceSpaces(cert.id)}.crt' download><img src='images/certificate-solid.svg' class='icon me-1'/>.crt</a>
