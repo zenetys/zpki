@@ -1,4 +1,4 @@
-const { exec, spawn } = require('child_process');
+const { exec } = require('child_process');
 
 const fs = require('fs');
 const crypto = require('crypto');
@@ -23,10 +23,23 @@ const handleError = (err, req, res, next) => {
     res.status(500).json({ error: err.message });
 };
 
-// Function to validate certificate name
+// Validate certificate name
 const validateName = (name) => {
     const regex = /^[a-zA-Z0-9-_ ]+$/;
     return regex.test(name) && name.length > 0 && name.length < 64;
+};
+
+// Check if current user is in sudoers
+const checkSudoers = () => {
+    return new Promise((resolve, reject) => {
+        exec('sudo -l', (error, stdout, stderr) => {
+            if (error) {
+                reject(new Error("You don't have sudo privileges."));
+            } else {
+                resolve(true);
+            }
+        });
+    });
 };
 
 // Setup
@@ -101,7 +114,8 @@ app.get('/list', (req, res, next) => {
         return res.status(400).json({ error: 'Current profile directory is not set.' });
     }
 
-    exec('sudo ./zpki -C ' + srcDir + ' ca-list --json', (error, stdout) => {
+    checkSudoers();
+    exec('sudo -n ./zpki -C ' + srcDir + ' ca-list --json', (error, stdout) => {
         if (error) return next(error);
         res.json(JSON.parse(stdout));
     });
@@ -133,7 +147,8 @@ app.post('/create', async (req, res, next) => {
     }
 
     try {
-        const result = await execPromise(`sudo ./zpki -C "${srcDir}" -y -c none create-crt "${id}"`);
+        await checkSudoers();
+        const result = await execPromise(`sudo -n ./zpki -C "${srcDir}" -y -c aes256 create-crt "${id}"`);
         res.json({ message: 'Certificate created successfully', output: result });
     } catch (error) {
         next(error);
@@ -150,7 +165,8 @@ app.post('/renew', async (req, res, next) => {
     }
 
     try {
-        const result = await execPromise(`sudo ./zpki -C "${srcDir}" -y -c none ca-update-crt "${id}"`);
+        await checkSudoers();
+        const result = await execPromise(`sudo -n ./zpki -C "${srcDir}" -y -c aes256 ca-update-crt "${id}"`);
         res.json({ message: 'Certificate renewed successfully', output: result });
     } catch (error) {
         next(error);
@@ -167,7 +183,8 @@ app.post('/revoke', async (req, res, next) => {
     }
 
     try {
-        const result = await execPromise(`sudo ./zpki -C "${srcDir}" -y -c none ca-revoke-crt "${id}"`);
+        await checkSudoers();
+        const result = await execPromise(`sudo -n ./zpki -C "${srcDir}" -y -c aes256 ca-revoke-crt "${id}"`);
         res.json({ message: 'Certificate revoked successfully', output: result });
     } catch (error) {
         next(error);
@@ -184,7 +201,8 @@ app.post('/disable', async (req, res, next) => {
     }
 
     try {
-        const result = await execPromise(`sudo ./zpki -C "${srcDir}" -y -c none ca-disable-crt "${id}"`);
+        await checkSudoers();
+        const result = await execPromise(`sudo -n ./zpki -C "${srcDir}" -y -c aes256 ca-disable-crt "${id}"`);
         res.json({ message: 'Certificate disabled successfully', output: result });
     } catch (error) {
         next(error);
