@@ -299,18 +299,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update the language
     function updateLanguage(lang) {
         // Update top page content
-        $('#certSearch').attr('placeholder', texts[lang].searchPlaceholder);
+        const currentText = $('#switchCurrentCA').html();
+        if ([texts['en'].titles.selectProfile, texts['fr'].titles.selectProfile, texts['es'].titles.selectProfile, texts['de'].titles.selectProfile].includes(currentText)) {
+            $('#switchCurrentCA').html(texts[lang].titles.selectProfile);
+        }
+        $('#certSearch').attr('placeholder', texts[lang].titles.searchBar);    
+        $('#passwordSubmit').html(`${texts[lang].actions.confirm}`);
         $('#english').html(`${texts[lang].lang.english} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
         $('#french').html(`${texts[lang].lang.french} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
         $('#spanish').html(`${texts[lang].lang.spanish} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
         $('#german').html(`${texts[lang].lang.german} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
         
         // Update table headers
-        $('th[data-sort="status"]').html(`<img src="images/chart-simple-solid.svg" class="icon me-1"/> ${texts[lang].certificate.status}`);
-        $('th[data-sort="serial"]').html(`<img src="images/hashtag-solid.svg" class="icon me-1"/> ${texts[lang].certificate.serial}`);
-        $('th[data-sort="id"]').html(`<img src="images/file-lines-solid.svg" class="icon me-1"/> ${texts[lang].certificate.CN}`);
-        $('th[data-sort="startDate"]').html(`<img src="images/calendar-day-solid.svg" class="icon me-1"/> ${texts[lang].certificate.startDate}`);
-        $('th[data-sort="endDate"]').html(`<img src="images/calendar-days-solid.svg" class="icon me-1"/> ${texts[lang].certificate.endDate}`);
+        $('th[data-sort="status"]').html(`<img src="images/chart-simple-solid.svg" class="icon me-1"/> ${texts[lang].headers.status}`);
+        $('th[data-sort="commonName"]').html(`<img src="images/file-lines-solid.svg" class="icon me-1"/> ${texts[lang].headers.commonName}`);
+        $('th[data-sort="serial"]').html(`<img src="images/hashtag-solid.svg" class="icon me-1"/> ${texts[lang].headers.serial}`);
+        $('th[data-sort="startDate"]').html(`<img src="images/calendar-day-solid.svg" class="icon me-1"/> ${texts[lang].headers.startDate}`);
+        $('th[data-sort="endDate"]').html(`<img src="images/calendar-days-solid.svg" class="icon me-1"/> ${texts[lang].headers.endDate}`);
     }
 
     // Update lock / unlock buttons
