@@ -1112,10 +1112,10 @@ document.addEventListener('DOMContentLoaded', function() {
         passwordInput.setAttribute('type', type);
         toggleIcon.src = toggleIcon.src.includes('images/eye-solid.svg') ? 'images/eye-slash-solid.svg' : 'images/eye-solid.svg';
     });
-    
+
     // Sorting columns
     document.querySelectorAll('thead th').forEach(header => {
-        header.addEventListener('click', function() {
+        header.addEventListener('dblclick', function() {
             const sortKey = this.getAttribute('data-sort');
             const currentOrder = this.classList.contains('asc') ? 'desc' : 'asc';
             this.classList.remove('asc', 'desc');
