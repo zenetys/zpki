@@ -803,6 +803,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         caPassphraseContainer.style.display = 'none';
                         formContent.innerHTML = `
                             <div id="certDetails">
+                                <p><strong>${texts[lang].modals.CA}:</strong> ${certData.issuer ? certData.issuer : `${texts[lang].undefined}`}</p>
                                 <p><strong>${texts[lang].modals.CN}:</strong> ${certData.id ? certData.id : `${texts[lang].undefined}`}</p>
                                 <p><strong>${texts[lang].modals.SUBJ}:</strong> ${splitSubject}</p>
                     
@@ -819,15 +820,26 @@ document.addEventListener('DOMContentLoaded', function() {
                                     : `${texts[lang].modals.missing.DNS}`}
                                 </p>
 
-
-                                <p><strong>${texts[lang].certificate.downloads}:</strong>
-                                    <a class="btn btn-light btn-sm" href="${profile}/certs/${replaceSpaces(certData.id)}.crt" download><img src="images/certificate-solid.svg" class="icon me-1"/>.crt</a>
-                                    <a class="btn btn-light btn-sm" href="${profile}/certs/${replaceSpaces(certData.id)}.csr" download><img src="images/lock-solid.svg" class="icon me-1"/>.csr</a>
-                                    <a class="btn btn-light btn-sm" href="${profile}/private/${replaceSpaces(certData.id)}.key" download><img src="images/key-solid.svg" class="icon me-1"/>.key</a>
-                                    <a class="btn btn-light btn-sm disabled"><img src="images/file-export-solid.svg" class="icon me-1"/>.pkcs12</a>
                                 <p><strong>${texts[lang].modals.type}:</strong> ${certData.type ? certData.type : `${texts[lang].modals.missing.type}`}</p>
                                 <p><strong>${texts[lang].headers.startDate}:</strong> ${certData.startDate ? certData.startDate : `${texts[lang].undefined}`}</p>
                                 <p><strong>${texts[lang].headers.endDate}:</strong> ${certData.endDate ? certData.endDate : `${texts[lang].undefined}`}</p>
+
+                                <p class="text-wrap">
+                                    <strong class="me-2">${texts[lang].headers.downloads}:</strong>
+                                    <span class="d-inline-block mt-1">
+                                        <a class="btn btn-light btn-sm mb-1 me-1" href="${profile}/certs/${replaceSpaces(certData.id)}.crt" download>
+                                            <img src="images/certificate-solid.svg" class="icon me-1"/>.crt
+                                        </a>
+                                        <a class="btn btn-light btn-sm mb-1 me-1" href="${profile}/certs/${replaceSpaces(certData.id)}.csr" download>
+                                            <img src="images/lock-solid.svg" class="icon me-1"/>.csr
+                                        </a>
+                                        <a class="btn btn-light btn-sm mb-1 me-1" href="${profile}/private/${replaceSpaces(certData.id)}.key" download>
+                                            <img src="images/key-solid.svg" class="icon me-1"/>.key
+                                        </a>
+                                        <a class="btn btn-light btn-sm mb-1 disabled">
+                                            <img src="images/file-export-solid.svg" class="icon me-1"/>.pkcs12
+                                        </a>
+                                    </span>
                                 </p>
                             </div>
                         `;
@@ -839,7 +851,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 modalTitle.textContent = `${texts[lang].titles.renewCert}`;
                 formContent.innerHTML = `
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="commonName" value="${certData.id}" placeholder="${texts[lang].certificate.CN}" readonly>
+                        <input type="text" class="form-control" id="certificateAuthority" value="${certData.issuer}" placeholder="${texts[lang].modals.CA}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="commonName" value="${certData.id}" placeholder="${texts[lang].modals.CN}" readonly>
                     </div>
                     <div class="mb-3">
                         <input type="text" class="form-control" id="subject" value="${certData.subject}" placeholder="${texts[lang].modals.SUBJ}">
