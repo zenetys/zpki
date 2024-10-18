@@ -505,23 +505,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     if (status === 'V') {
                         statusColor = 'success';
-                        statusText = texts[lang].certificate.statusBtn.valid;
+                        statusText = texts[lang].status.valid;
                         statusBtn = `<img src="images/circle-check-solid.svg" class="icon me-1"/> ${statusText}`;
                     } else if (status === 'E') {
                         statusColor = 'warning';
-                        statusText = texts[lang].certificate.statusBtn.expired;
+                        statusText = texts[lang].status.expired;
                         statusBtn = `<img src="images/triangle-exclamation-solid.svg" class="icon me-1"/> ${statusText}`;
                     } else if (status === 'R') {
                         statusColor = 'danger';
-                        statusText = texts[lang].certificate.statusBtn.revoked;
+                        statusText = texts[lang].status.revoked;
                         statusBtn = `<img src="images/circle-xmark-solid.svg" class="icon me-1"/> ${statusText}`;
                     } else if (status === 'D') {
                         statusColor = 'dark';
-                        statusText = texts[lang].certificate.statusBtn.disabled;
+                        statusText = texts[lang].status.disabled;
                         statusBtn = `<img src="images/circle-minus-solid.svg" class="icon me-1"/> ${statusText}`;
                     } else {
                         statusColor = 'secondary';
-                        statusText = texts[lang].certificate.statusBtn.unknown;
+                        statusText = texts[lang].status.unknown;
                         statusBtn = `<img src="images/question-solid.svg" class="icon me-1"/> ${statusText}`;
                     }
 
@@ -687,16 +687,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         switch (action) {
             case 'create':
-                modalTitle.textContent = texts[lang].certificate.createMultiSan;
+                modalTitle.textContent = texts[lang].titles.createMultiSan;
                 formContent.innerHTML = `
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="commonName" placeholder="${texts[lang].certificate.CN}" required>
+                        <input type="text" class="form-control" id="commonName" placeholder="${texts[lang].modals.CN}" required>
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="subject" placeholder="${texts[lang].certificate.SUBJ}" required>
+                        <input type="text" class="form-control" id="subject" placeholder="${texts[lang].modals.SUBJ}" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">SAN (Subject Alternative Name)</label>
+                        <label class="form-label">${texts[lang].modals.subject}</label>
                         <div id="sanContainer">
                             <div class="input-group mb-2">
                                 <input type="text" class="form-control" placeholder="IP" id="sanIp">
@@ -711,30 +711,30 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="type" class="form-label">${texts[lang].certificate.type}</label>
+                        <label for="type" class="form-label">${texts[lang].modals.type}</label>
                         <select class="form-select" id="type" name="type">
-                            <option value="server">${texts[lang].certificate.select1}</option>
-                            <option value="user">${texts[lang].certificate.select2}</option>
+                            <option value="server">${texts[lang].modals.selector.select1}</option>
+                            <option value="user">${texts[lang].modals.selector.select2}</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="startDate" class="form-label">${texts[lang].certificate.startDate}</label>
+                        <label for="startDate" class="form-label">${texts[lang].headers.startDate}</label>
                         <input type="datetime-local" class="form-control" id="startDate" value="">
                     </div>
                     <div class="mb-3">
-                        <label for="endDate" class="form-label">${texts[lang].certificate.endDate}</label>
+                        <label for="endDate" class="form-label">${texts[lang].headers.endDate}</label>
                         <input type="datetime-local" class="form-control" id="endDate" value="">
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="passphrase" placeholder="${texts[lang].certificate.enterPass}">
+                        <input type="password" class="form-control" id="passphrase" placeholder="${texts[lang].modals.enterPass}">
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="confirmPassphrase" placeholder="${texts[lang].certificate.confirmPass}" hidden>
+                        <input type="password" class="form-control" id="confirmPassphrase" placeholder="${texts[lang].modals.confirmPass}" hidden>
                     </div>
                 `;
                 footerContent.innerHTML = `
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].certificate.cancel}</button>
-                    <button type="button" class="btn btn-primary" id="confirmAction">${texts[lang].certificate.confirm}</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].actions.cancel}</button>
+                    <button type="button" class="btn btn-primary" id="confirmAction">${texts[lang].actions.confirm}</button>
                 `;
 
                 // Confirm certificate creation
@@ -791,7 +791,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                         let splitSubject = subjectArray.length > 0
                             ? subjectArray.map(el => `<span>${el}</span>`).join('<br>')
-                            : `${texts[lang].certificate.undefined}`;
+                            : `${texts[lang].undefined}`;
 
                         if (subjectArray.length === 1) {
                             splitSubject = `<span>${subjectArray[0]}</span>`;
@@ -799,35 +799,35 @@ document.addEventListener('DOMContentLoaded', function() {
                             splitSubject = `<br>${splitSubject}`;
                         }
 
-                        modalTitle.textContent = `${texts[lang].certificate.viewCert}`;
+                        modalTitle.textContent = `${texts[lang].titles.viewCert}`;
                         caPassphraseContainer.style.display = 'none';
                         formContent.innerHTML = `
                             <div id="certDetails">
-                                <p><strong>${texts[lang].certificate.CN}:</strong> ${certData.id ? certData.id : `${texts[lang].certificate.undefined}`}</p>
-                                <p><strong>${texts[lang].certificate.SUBJ}:</strong> ${splitSubject}</p>
+                                <p><strong>${texts[lang].modals.CN}:</strong> ${certData.id ? certData.id : `${texts[lang].undefined}`}</p>
+                                <p><strong>${texts[lang].modals.SUBJ}:</strong> ${splitSubject}</p>
                     
-                                <p><strong>${texts[lang].certificate.serial}:</strong> ${certData.serial}</p>
-                                <p><strong>${texts[lang].certificate.signature}:</strong> ${certData.hash}</p>
+                                <p><strong>${texts[lang].headers.serial}:</strong> ${certData.serial ? certData.serial : `${texts[lang].undefined}`}</p>
+                                <p><strong>${texts[lang].headers.signature}:</strong> ${certData.hash ? certData.hash : `${texts[lang].undefined}`}</p>
 
                                 <p><strong>IP:</strong> ${certData.ip && certData.ip.length > 0 
                                     ? certData.ip.map(ip => `<span>${ip}</span>`).join(', ') 
-                                    : `${texts[lang].certificate.IP}`}
+                                    : `${texts[lang].modals.missing.IP}`}
                                 </p>
 
                                 <p><strong>DNS:</strong> ${certData.dns && certData.dns.length > 0 
                                     ? certData.dns.map(dns => `<span>${dns}</span>`).join(', ') 
-                                    : `${texts[lang].certificate.DNS}`}
+                                    : `${texts[lang].modals.missing.DNS}`}
                                 </p>
 
-                                <p><strong>${texts[lang].certificate.type}:</strong> ${certData.type ? certData.type : `${texts[lang].certificate.TYPE}`}</p>
-                                <p><strong>${texts[lang].certificate.startDate}:</strong> ${certData.startDate ? certData.startDate : `${texts[lang].certificate.undefined}`}</p>
-                                <p><strong>${texts[lang].certificate.endDate}:</strong> ${certData.endDate ? certData.endDate : `${texts[lang].certificate.undefined}`}</p>
 
                                 <p><strong>${texts[lang].certificate.downloads}:</strong>
                                     <a class="btn btn-light btn-sm" href="${profile}/certs/${replaceSpaces(certData.id)}.crt" download><img src="images/certificate-solid.svg" class="icon me-1"/>.crt</a>
                                     <a class="btn btn-light btn-sm" href="${profile}/certs/${replaceSpaces(certData.id)}.csr" download><img src="images/lock-solid.svg" class="icon me-1"/>.csr</a>
                                     <a class="btn btn-light btn-sm" href="${profile}/private/${replaceSpaces(certData.id)}.key" download><img src="images/key-solid.svg" class="icon me-1"/>.key</a>
                                     <a class="btn btn-light btn-sm disabled"><img src="images/file-export-solid.svg" class="icon me-1"/>.pkcs12</a>
+                                <p><strong>${texts[lang].modals.type}:</strong> ${certData.type ? certData.type : `${texts[lang].modals.missing.type}`}</p>
+                                <p><strong>${texts[lang].headers.startDate}:</strong> ${certData.startDate ? certData.startDate : `${texts[lang].undefined}`}</p>
+                                <p><strong>${texts[lang].headers.endDate}:</strong> ${certData.endDate ? certData.endDate : `${texts[lang].undefined}`}</p>
                                 </p>
                             </div>
                         `;
@@ -836,13 +836,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     .catch(error => console.error('Profile loading error:', error));
                 break;
             case 'renew':
-                modalTitle.textContent = `${texts[lang].certificate.renewCert}`;
+                modalTitle.textContent = `${texts[lang].titles.renewCert}`;
                 formContent.innerHTML = `
                     <div class="mb-3">
                         <input type="text" class="form-control" id="commonName" value="${certData.id}" placeholder="${texts[lang].certificate.CN}" readonly>
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="subject" value="${certData.subject}" placeholder="${texts[lang].certificate.SUBJ}">
+                        <input type="text" class="form-control" id="subject" value="${certData.subject}" placeholder="${texts[lang].modals.SUBJ}">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">SAN (Subject Alternative Name)</label>
@@ -850,44 +850,44 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="input-group mb-2">
                                 <input type="text" class="form-control" placeholder="IP" id="sanIp" value="${certData.ip && certData.ip.length > 0 
                                     ? certData.ip.map(ip => `<span>${ip}</span>`).join(', ') 
-                                    : `${texts[lang].certificate.IP}`}">
+                                    : `${texts[lang].modals.missing.IP}`}">
                                 <button class="btn btn border" type="button" id="addIpButton">+</button>
                             </div>
                             <div id="addedSanIP" class="mt-2"></div>
                             <div class="input-group mb-2">
                                 <input type="text" class="form-control" placeholder="DNS" id="sanDns" value="${certData.dns && certData.dns.length > 0 
                                     ? certData.dns.map(dns => `<span>${dns}</span>`).join(', ') 
-                                    : `${texts[lang].certificate.DNS}`}">
+                                    : `${texts[lang].modals.missing.DNS}`}">
                                 <button class="btn btn border" type="button" id="addDnsButton">+</button>
                             </div>
                             <div id="addedDnsNames" class="mt-2"></div>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="type" class="form-label">${texts[lang].certificate.type}</label>
+                        <label for="type" class="form-label">${texts[lang].modals.type}</label>
                         <select class="form-select" id="type" name="type">
-                            <option value="server">${texts[lang].certificate.select1}</option>
-                            <option value="user">${texts[lang].certificate.select2}</option>
+                            <option value="server">${texts[lang].modals.selector.select1}</option>
+                            <option value="user">${texts[lang].modals.selector.select2}</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="startDate" class="form-label">${texts[lang].certificate.startDate}</label>
+                        <label for="startDate" class="form-label">${texts[lang].headers.startDate}</label>
                         <input type="datetime-local" class="form-control" id="startDate" value="">
                     </div>
                     <div class="mb-3">
-                        <label for="endDate" class="form-label">${texts[lang].certificate.endDate}</label>
+                        <label for="endDate" class="form-label">${texts[lang].headers.endDate}</label>
                         <input type="datetime-local" class="form-control" id="endDate" value="">
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="passphrase" placeholder="${texts[lang].certificate.enterPass}">
+                        <input type="password" class="form-control" id="passphrase" placeholder="${texts[lang].modals.enterPass}">
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="confirmPassphrase" placeholder="${texts[lang].certificate.confirmPass}" hidden>
+                        <input type="password" class="form-control" id="confirmPassphrase" placeholder="${texts[lang].modals.confirmPass}" hidden>
                     </div>
                 `;
                 footerContent.innerHTML = `
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].certificate.cancel}</button>
-                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">${texts[lang].renew}</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].actions.cancel}</button>
+                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">${texts[lang].actions.renew}</button>
                 `;
                 
                 // Confirm certificate renewal
@@ -933,19 +933,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
                 break;
             case 'revoke':
-                modalTitle.textContent = `${texts[lang].certificate.revokeCert}`;
+                modalTitle.textContent = `${texts[lang].titles.revokeCert}`;
                 formContent.innerHTML = `
-                    <p>${texts[lang].certificate.confirmRevoke}</p>
+                    <p>${texts[lang].confirmations.confirmRevoke}</p>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="passphrase" placeholder="${texts[lang].certificate.enterPass}">
+                        <input type="password" class="form-control" id="passphrase" placeholder="${texts[lang].modals.enterPass}">
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="confirmPassphrase" placeholder="${texts[lang].certificate.confirmPass}" hidden>
+                        <input type="password" class="form-control" id="confirmPassphrase" placeholder="${texts[lang].modals.confirmPass}" hidden>
                     </div>
                 `;
                 footerContent.innerHTML = `
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].certificate.cancel}</button>
-                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">${texts[lang].revoke}</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].actions.cancel}</button>
+                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">${texts[lang].actions.revoke}</button>
                 `;
 
                 // Confirm certificate revocation
@@ -971,19 +971,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
                 break;
             case 'disable':
-                modalTitle.textContent = `${texts[lang].certificate.disableCert}`;
+                modalTitle.textContent = `${texts[lang].titles.disableCert}`;
                 formContent.innerHTML = `
-                    <p>${texts[lang].certificate.confirmDisable}</p>
+                    <p>${texts[lang].confirmations.confirmDisable}</p>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="passphrase" placeholder="${texts[lang].certificate.enterPass}">
+                        <input type="password" class="form-control" id="passphrase" placeholder="${texts[lang].modals.enterPass}">
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="confirmPassphrase" placeholder="${texts[lang].certificate.confirmPass}" hidden>
+                        <input type="password" class="form-control" id="confirmPassphrase" placeholder="${texts[lang].modals.confirmPass}" hidden>
                     </div>
                 `;
                 footerContent.innerHTML = `
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].certificate.cancel}</button>
-                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">${texts[lang].disable}</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].actions.cancel}</button>
+                    <button type="button" class="btn btn-primary" id="confirmAction" data-bs-dismiss="modal">${texts[lang].actions.disable}</button>
                 `;
                 
                 // Confirm certificate deactivation
@@ -1062,7 +1062,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function loadPassword() {
         const fetchedPassword = await fetchPassword();
         passwordInput.value = fetchedPassword;
-        passwordModalTitle.textContent = fetchedPassword ? "Enter your Passphrase" : "Define a passphrase";
+        passwordModalTitle.textContent = fetchedPassword ? `${texts[lang].titles.enterPass}` : `${texts[lang].titles.definePass}`;
 
         if (!fetchedPassword) {
             isLocked = true;
