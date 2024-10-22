@@ -261,6 +261,12 @@ function create-cnf() {
   return 0
 }
 
+function password-ready() {
+  if [[ -n $CIPHER && -z $PASSWORD && $HAS_TTY == 0 ]]; then
+    fatal "Need password or stdin with cipher enabled"
+  fi
+}
+
 #X-ACTION create-key [CN|SUBJ]: Create a key file
 function create-key() {
   local KEYFILE=${1:-$KEYFILE}
@@ -268,6 +274,8 @@ function create-key() {
   [[ $FORCE ]] && FORCE_CREATE_KEY=1 && unset FORCE
   is-exists -$FORCE_CREATE_KEY "$KEYFILE" && return 0
   yesno "Create key '$KEYFILE' ?" || return
+
+  password-ready || return
 
   PARAMS=(
     -out "$KEYFILE"
@@ -288,6 +296,9 @@ function create-csr() {
   is-exists -$FORCE_CREATE_CSR "$CSRFILE" && return 0
   yesno "Create certificate request '$CSRFILE' ?" || return
   create-key "$KEYFILE" || return
+
+  password-ready || return
+
   PARAMS=(
     -batch
     -new
@@ -311,6 +322,9 @@ function create-self() {
   yesno "Create self-signed certificate '$SUBJECT' ($CRTFILE) ?" || return
   create-cnf "$CNFFILE" || return
   create-key "$KEYFILE" || return
+
+  password-ready || return
+
   PARAMS=(
     -batch
     -new -x509
@@ -366,6 +380,9 @@ function ca-create-crt() {
   is-exists -$FORCE_CREATE_CRT "$CRTFILE" && return 0
   yesno "Create certificate '$SUBJECT' ($CRTFILE) ?" || return
   create-csr "$CSRFILE" || return
+
+  PASSWORD=$CA_PASSWORD password-ready || return
+
   PARAMS=(
     -config "$CA_CNFFILE"
     -batch
@@ -569,6 +586,8 @@ function ca-disable-crt() {
   SERIAL=${SERIAL#serial=}
   yesno "Disable certificate (couldn't be restored) '$SUBJECT' ($CRTFILE)" || return
 
+  PASSWORD=$CA_PASSWORD password-ready || return
+
   if grep -q -E "^D(\s\w+\s\w+\s$SERIAL\s)" ca.idx; then
     info "'$SUBJECT' already disabled"
   elif ! grep -q -E "^R(\s\w+\s\w+\s$SERIAL\s)" ca.idx; then 
@@ -707,6 +726,8 @@ function ca-dump-pkcs12() {
 
   export EXPORT_PASSWORD
 
+  PASSWORD=$EXPORT_PASSWORD password-ready || return
+
   [[ -e $KEYFILE ]] || fatal "Cannot get $KEYFILE"
   [[ -e $CRTFILE ]] || fatal "Cannot get $CRTFILE"
   args=(
@@ -806,6 +827,9 @@ declare -f "$ACTION" > /dev/null || fatal "Undefined action '$ACTION'"
 
 [[ $PASSWORD ]] && export PASSWORD
 [[ $CA_PASSWORD ]] && export CA_PASSWORD
+
+# get tty info
+tty > /dev/null 2>&1 && HAS_TTY=1 || HAS_TTY=0
 
 if [[ $BASEDIR ]]; then
   if [[ ! -d $BASEDIR ]]; then
