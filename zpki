@@ -754,7 +754,7 @@ function version() {
 declare OPENSSL=${ZPKI_OPENSSL:-openssl_debug}
 declare BASEDIR=""
 declare VERBOSE=1
-declare XDEBUG=0
+declare XDEBUG=${XDEBUG:-0}
 declare FORMAT=TSV
 declare UTF8=1
 
