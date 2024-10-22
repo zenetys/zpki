@@ -719,12 +719,6 @@ function ca-dump-key() {
 function ca-dump-pkcs12() {
   local args
   [[ -z ${ARGS[0]} ]] && fatal "Function needs an argument : FILE" && return
-  if [[ -z $EXPORT_PASSWORD ]]; then
-    EXPORT_PASSWORD=$(openssl rand -base64 18)
-    echo "Export password is: $EXPORT_PASSWORD" >&2
-  fi
-
-  export EXPORT_PASSWORD
 
   PASSWORD=$EXPORT_PASSWORD password-ready || return
 
