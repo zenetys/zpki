@@ -550,6 +550,39 @@ function ca-revoke-crt() {
   is-error "Cannot revoke certificate '$SUBJECT'" || return
 }
 
+#X-ACTION ca-disable-crt [CN|SUBJ|CRTFILE]: Definitly disable a certificate
+function ca-disable-crt() {
+  local CRTFILE=${1:-$CRTFILE}
+  [[ -z ${ARGS[0]} ]] && fatal "Function needs an argument" && return
+  SUBJECT=$(openssl x509 -in $CRTFILE -subject -noout)
+  [[ ${SUBJECT:0:8} == "subject=" ]] && SUBJECT=${SUBJECT:8} ||
+    fatal "Cannot get subject in CRT '$CRTFILE'"
+  SUBJECT=/${SUBJECT//, /\/}
+  SUBJECT=${SUBJECT// = /=}
+  COMMON_NAME=${SUBJECT##*/CN=}
+  COMMON_NAME=${COMMON_NAME%%,*}
+  SERIAL=$(openssl x509 -in "$CRTFILE" -noout -serial)
+  SERIAL=${SERIAL#serial=}
+  yesno "Disable certificate (couldn't be restored) '$SUBJECT' ($CRTFILE)" || return
+
+  if grep -q -E "^D(\s\w+\s\w+\s$SERIAL\s)" ca.idx; then
+    info "'$SUBJECT' already disabled"
+  elif ! grep -q -E "^R(\s\w+\s\w+\s$SERIAL\s)" ca.idx; then 
+    PARAMS=(
+      -config "$CA_CNFFILE"
+      -batch
+      -revoke "$CRTFILE"
+      -gencrl
+      ${CA_PASSWORD:+-passin env:CA_PASSWORD}
+    )
+    $OPENSSL ca "${PARAMS[@]}"
+    is-error "Cannot revoke certificate '$SUBJECT'" || return
+  fi
+  chmod -w "$CRTFILE"
+  sed -i -re "s/^R(\s\w+\s\w+\s$SERIAL\s)/D\1/" ca.idx || return
+  info "'$SUBJECT' disabled"
+}
+
 function x509-to-json() {
   gawk '
   function parseLine(line) {
