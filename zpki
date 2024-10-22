@@ -351,11 +351,15 @@ function create-ca() {
 }
 
 function create-cert() {
-  create-crt "$@"
+  ca-create-crt "$@"
 }
 
-#X-ACTION create-crt [CN|SUBJ] <ALTNAMES>: Create a certificate
 function create-crt() {
+  ca-create-crt "$@"
+}
+
+#X-ACTION ca-create-crt [CN|SUBJ] <ALTNAMES>: Create a certificate
+function ca-create-crt() {
   local CRTFILE=${1:-$CRTFILE}
   [[ $SUBJECT ]] || fatal "Cannot create certificate with empty subject"
   [[ $FORCE ]] && FORCE_CREATE_CRT=1 && unset FORCE
