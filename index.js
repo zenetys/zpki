@@ -1154,7 +1154,19 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('switchMenu').addEventListener('click', function() {
         const toast = new bootstrap.Toast(document.getElementById('profileToast'));
         toast.hide();
-        loadCertData();
+
+        fetch('/current-profile')
+            .then(response => response.json())
+            .then(profileData => {
+                const profile = profileData.currentProfile;
+                if (profile === 'Select a profile') {
+                    toast.show();
+                    return;
+                }
+                return fetch('/list');
+            })
+            .then(() => loadCertData())
+            .catch(error => console.error('Error on profile switch:', error));
     });
 
     // Check password while input
