@@ -504,6 +504,11 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(profileData => {
                 profile = profileData.currentProfile;
+                if (profile === 'Select a profile') {
+                    const toast = new bootstrap.Toast(document.getElementById('profileToast'));
+                    toast.show();
+                    return;
+                }
                 return fetch('/list');
             })
             .then(response => response.json())
