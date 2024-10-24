@@ -553,7 +553,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(profileData => {
                 profile = profileData.currentProfile;
                 if (profile === 'Select a profile') {
-                    const toast = new bootstrap.Toast(document.getElementById('profileToast'));
+                    const toast = new bootstrap.Toast(document.getElementById('profileAlert'));
                     toast.show();
                     return;
                 }
@@ -1200,7 +1200,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Reload interface on profile switch
     document.getElementById('switchMenu').addEventListener('click', function() {
-        const toast = new bootstrap.Toast(document.getElementById('profileToast'));
+        const toast = new bootstrap.Toast(document.getElementById('profileAlert'));
         toast.hide();
 
         fetch('/current-profile')
