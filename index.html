@@ -25,7 +25,19 @@
                 </button>
 
                 <!-- Search Bar -->
-                <input type="text" id="certSearch" class="form-control border-light shadow-sm rounded-3 me-2" placeholder="Search for a certificate">
+                <div class="position-relative d-flex w-100">
+                    <input type="text" id="certSearch" class="form-control border-light shadow-sm rounded-3 me-2" placeholder="Search for a certificate">
+
+                    <!-- Status buttons (quick access) -->
+                    <div class="button-container position-absolute" style="top: 50%; right: 20px; transform: translateY(-50%);">
+                        <span class="tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Future update">
+                            <button class="btn btn-ssm btn-success rounded-pill" id="tagValid" style="width: 70px;" disabled><img src="images/circle-check-solid.svg" class="icon"></button>
+                            <button class="btn btn-ssm btn-warning rounded-pill" id="tagExpired" style="width: 70px;" disabled><img src="images/triangle-exclamation-solid.svg" class="icon"></button>
+                            <button class="btn btn-ssm btn-danger rounded-pill" id="tagRevoked" style="width: 70px;" disabled><img src="images/circle-xmark-solid.svg" class="icon"></button>
+                            <button class="btn btn-ssm btn-dark rounded-pill" id="tagDisabled" style="width: 70px;" disabled><img src="images/circle-minus-solid.svg" class="icon"></button>
+                        </span>
+                    </div>
+                </div>
 
                 <!-- See current CA & switch -->
                 <button class="btn btn-primary rounded-3 me-2 text-truncate" id="switchCurrentCA" style="min-width: 200px;" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
