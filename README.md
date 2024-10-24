@@ -31,7 +31,7 @@ Options:
      └─ Create a self-signed certificate
  create-ca [CN|SUBJ]
      └─ Create a Certificate Authority (CA) and its storage
- create-crt [CN|SUBJ] <ALTNAMES>
+ ca-create-crt [CN|SUBJ] <ALTNAMES>
      └─ Create a certificate
  ca-update-db
      └─ Reload all certificates in the ca.idz file
@@ -43,6 +43,8 @@ Options:
      └─ Update a certificate
  ca-revoke-crt [CN|SUBJ|CRTFILE]
      └─ Revoke a certificate
+ ca-disable-crt [CN|SUBJ|CRTFILE]
+     └─ Definitly disable a certificate
  ca-display-crt [CRTFILE]
      └─ Display an entire certificate file (.crt)
  ca-update-dump-crt [CRTFILE]
