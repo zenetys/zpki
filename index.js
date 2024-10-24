@@ -1106,24 +1106,34 @@ document.addEventListener('DOMContentLoaded', function() {
             addIpButton.onclick = function() {
                 const ipValue = document.getElementById('sanIp').value;
                 if (ipValue) {
-                    const ipList = document.getElementById('addedSanIP');
-                    ipList.innerHTML += `<div class="alert alert-secondary fade show p-2 d-flex justify-content-between align-items-center">
-                        ${ipValue}
-                        <button class="btn btn-sm btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>`;
-                    document.getElementById('sanIp').value = '';
+                    if (isValidIPv4(ipValue) || isValidIPv6(ipValue)) {
+                        const ipList = document.getElementById('addedSanIP');
+                        ipList.innerHTML += `<div class="alert alert-secondary fade show p-2 d-flex justify-content-between align-items-center">
+                            ${ipValue}
+                            <button class="btn btn-sm btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>`;
+                        document.getElementById('sanIp').value = '';
+                    } else {
+                        const toast = new bootstrap.Toast(document.getElementById('incorrectAlert'));
+                        toast.show();
+                    }
                 }
             };
 
             addDnsButton.onclick = function() {
                 const dnsValue = document.getElementById('sanDns').value;
                 if (dnsValue) {
-                    const dnsList = document.getElementById('addedDnsNames');
-                    dnsList.innerHTML += `<div class="alert alert-secondary fade show p-2 d-flex justify-content-between align-items-center">
-                        ${dnsValue}
-                        <button class="btn btn-sm btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>`;
-                    document.getElementById('sanDns').value = '';
+                    if (isValidDNS(dnsValue)) {
+                        const dnsList = document.getElementById('addedDnsNames');
+                        dnsList.innerHTML += `<div class="alert alert-secondary fade show p-2 d-flex justify-content-between align-items-center">
+                            ${dnsValue}
+                            <button class="btn btn-sm btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>`;
+                        document.getElementById('sanDns').value = '';
+                    } else {
+                        const toast = new bootstrap.Toast(document.getElementById('incorrectAlert'));
+                        toast.show();
+                    }
                 }
             };
         }
