@@ -1151,7 +1151,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Reload interface on profile switch
-    document.getElementById('switchMenu').onclick = loadCertData;
+    document.getElementById('switchMenu').addEventListener('click', function() {
+        const toast = new bootstrap.Toast(document.getElementById('profileToast'));
+        toast.hide();
+        loadCertData();
+    });
 
     // Check password while input
     document.getElementById('passwordForm').oninput = checkPassword;
