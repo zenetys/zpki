@@ -435,6 +435,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Verify if is a valid IPv4 format
+    function isValidIPv4(ip) {
+        const ipv4Pattern = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+        return ipv4Pattern.test(ip);
+    }
+
+    // Verify if is a valid IPv6 format
+    function isValidIPv6(ip) {
+        const ipv6Pattern = /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,7}:|(?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,5}(?::[0-9a-fA-F]{1,4}){1,2}|(?:[0-9a-fA-F]{1,4}:){1,4}(?::[0-9a-fA-F]{1,4}){1,3}|(?:[0-9a-fA-F]{1,4}:){1,3}(?::[0-9a-fA-F]{1,4}){1,4}|(?:[0-9a-fA-F]{1,4}:){1,2}(?::[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:(?::[0-9a-fA-F]{1,4}){1,6}|:((?::[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(?::[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(1[0-9]{2}|[1-9]?[0-9]))\.){3}(25[0-5]|(1[0-9]{2}|[1-9]?[0-9]))|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(1[0-9]{2}|[1-9]?[0-9]))\.){3}(25[0-5]|(1[0-9]{2}|[1-9]?[0-9]))$/;
+        return ipv6Pattern.test(ip);
+    }
+
+    // Verify if is a valid domain format
+    function isValidDNS(dns) {
+        const dnsPattern = /^(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.[A-Za-z]{2,})+$/;
+        return dnsPattern.test(dns);
+    }
+
     // Adapt name, normalize
     function encodeName(name) {
         return name
