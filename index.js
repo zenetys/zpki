@@ -36,6 +36,8 @@ document.addEventListener('DOMContentLoaded', function() {
             titles: {
                 sessionExpired: "Session expired",
                 sessionDescription: "The session has expired, please select a profile.",
+                incorrectFormat: "Incorrect format",
+                incorrectDescription: "Use a correct format in the SAN input.",
                 searchBar: "Search for a certificate",
                 selectProfile: "Select a profile",
                 definePass: "Define a Passphrase",
@@ -63,6 +65,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     DNS: "No DNS defined",
                     type: "No type defined",
                 },
+            },
+            inputs: {
+                wrongPass: "Incorrect passphrase.",
+                wrongPassLength: "Passphrase must be at least 4 characters long.",
+                rightPass: "Looks good !",
             },
             confirmations: {
                 confirmRevoke: "Are you sure you want to revoke this certificate?",
@@ -103,6 +110,8 @@ document.addEventListener('DOMContentLoaded', function() {
             titles: {
                 sessionExpired: "Session expirée",
                 sessionDescription: "La session a expiré, veuillez sélectionner un profil.",
+                incorrectFormat: "Format incorrect",
+                incorrectDescription: "Utilisez un format correct dans le champ SAN.",
                 searchBar: "Rechercher un certificat",
                 selectProfile: "Sélectionner",
                 definePass: "Définir une Passphrase",
@@ -130,6 +139,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     DNS: "Pas de DNS défini",
                     type: "Pas de type défini",
                 },
+            },
+            inputs: {
+                wrongPass: "Passphrase incorrecte.",
+                wrongPassLength: "La passphrase doit contenir au moins 4 caractères.",
+                rightPass: "C'est bon !",
             },
             confirmations: {
                 confirmRevoke: "Êtes-vous sûr de vouloir révoquer ce certificat ?",
@@ -170,6 +184,8 @@ document.addEventListener('DOMContentLoaded', function() {
             titles: {
                 sessionExpired: "Sesión expirada",
                 sessionDescription: "La sesión ha expirado, por favor seleccione un perfil.",
+                incorrectFormat: "Formato incorrecto",
+                incorrectDescription: "Utilice un formato correcto en la entrada SAN.",
                 searchBar: "Buscar un certificado",
                 selectProfile: "Seleccionar",
                 definePass: "Definir una frase de paso",
@@ -198,6 +214,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     type: "No se ha definido tipo",
                 },
             },
+            inputs: {
+                wrongPass: "Frase de acceso incorrecta.",
+                wrongPassLength: "La frase de acceso debe tener al menos 4 caracteres.",
+                rightPass: "¡Todo bien!",
+            },            
             confirmations: {
                 confirmRevoke: "¿Estás seguro de que quieres revocar este certificado?",
                 confirmDisable: "¿Estás seguro de que quieres deshabilitar este certificado?",
@@ -237,6 +258,8 @@ document.addEventListener('DOMContentLoaded', function() {
             titles: {
                 sessionExpired: "Sitzung abgelaufen",
                 sessionDescription: "Die Sitzung ist abgelaufen, bitte wählen Sie ein Profil.",
+                incorrectFormat: "Ungültiges Format",
+                incorrectDescription: "Verwenden Sie ein korrektes Format im SAN-Feld.",
                 searchBar: "Suche nach einem Zertifikat",
                 selectProfile: "Profil auswählen",
                 definePass: "Passwortphrase festlegen",
@@ -265,6 +288,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     type: "Kein Typ definiert",
                 },
             },
+            inputs: {
+                wrongPass: "Falsches Passwort.",
+                wrongPassLength: "Die Passphrase muss mindestens 4 Zeichen lang sein.",
+                rightPass: "Sieht gut aus!",
+            },            
             confirmations: {
                 confirmRevoke: "Sind Sie sicher, dass Sie dieses Zertifikat widerrufen möchten?",
                 confirmDisable: "Sind Sie sicher, dass Sie dieses Zertifikat deaktivieren möchten?",
@@ -313,7 +341,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         $('#sessionExpired').html(`<img src="images/circle-info-solid.svg" class="icon mt-0 me-2"> ${texts[lang].titles.sessionExpired}`);
         $('#sessionDescription').html(`${texts[lang].titles.sessionDescription}`);
-        $('#certSearch').attr('placeholder', texts[lang].titles.searchBar);    
+        $('#incorrectFormat').html(`<img src="images/circle-info-solid.svg" class="icon mt-0 me-2"> ${texts[lang].titles.incorrectFormat}`);
+        $('#incorrectDescription').html(`${texts[lang].titles.incorrectDescription}`);
+        $('#certSearch').attr('placeholder', texts[lang].titles.searchBar);
         $('#passwordSubmit').html(`${texts[lang].actions.confirm}`);
         $('#english').html(`${texts[lang].lang.english} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
         $('#french').html(`${texts[lang].lang.french} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
