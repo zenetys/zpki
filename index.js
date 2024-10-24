@@ -34,6 +34,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 downloads: "Downloads",
             },
             titles: {
+                sessionExpired: "Session expired",
+                sessionDescription: "The session has expired, please select a profile.",
                 searchBar: "Search for a certificate",
                 selectProfile: "Select a profile",
                 definePass: "Define a Passphrase",
@@ -99,6 +101,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 downloads: "Téléchargements",
             },
             titles: {
+                sessionExpired: "Session expirée",
+                sessionDescription: "La session a expiré, veuillez sélectionner un profil.",
                 searchBar: "Rechercher un certificat",
                 selectProfile: "Sélectionner",
                 definePass: "Définir une Passphrase",
@@ -164,6 +168,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 downloads: "Descargas",
             },
             titles: {
+                sessionExpired: "Sesión expirada",
+                sessionDescription: "La sesión ha expirado, por favor seleccione un perfil.",
                 searchBar: "Buscar un certificado",
                 selectProfile: "Seleccionar",
                 definePass: "Definir una frase de paso",
@@ -229,6 +235,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 downloads: "Downloads",
             },
             titles: {
+                sessionExpired: "Sitzung abgelaufen",
+                sessionDescription: "Die Sitzung ist abgelaufen, bitte wählen Sie ein Profil.",
                 searchBar: "Suche nach einem Zertifikat",
                 selectProfile: "Profil auswählen",
                 definePass: "Passwortphrase festlegen",
@@ -303,6 +311,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if ([texts['en'].titles.selectProfile, texts['fr'].titles.selectProfile, texts['es'].titles.selectProfile, texts['de'].titles.selectProfile].includes(currentText)) {
             $('#switchCurrentCA').html(texts[lang].titles.selectProfile);
         }
+        $('#sessionExpired').html(`<img src="images/circle-info-solid.svg" class="icon mt-0 me-2"> ${texts[lang].titles.sessionExpired}`);
+        $('#sessionDescription').html(`${texts[lang].titles.sessionDescription}`);
         $('#certSearch').attr('placeholder', texts[lang].titles.searchBar);    
         $('#passwordSubmit').html(`${texts[lang].actions.confirm}`);
         $('#english').html(`${texts[lang].lang.english} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
