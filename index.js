@@ -553,7 +553,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <button class="btn btn-action revoke" ${status === 'R' ? 'disabled' : ''}>
                                         <img src="images/ban-solid.svg" class="icon cross-icon" data-id="${cert.id}"/>
                                     </button>
-                                    <button class="btn btn-action disable" disabled>
+                                    <button class="btn btn-action disable">
                                         <img src="images/circle-minus-regular.svg" class="icon wobble-icon" data-id="${cert.id}"/>
                                     </button>
                                 </div>
