@@ -120,7 +120,7 @@
     font-weight: 500;
     transition: 0.2s;
 }
-.btn:active {
+.btn:active:not(.btn-status) {
     scale: 0.9;
 }
 .btn-ssm {
