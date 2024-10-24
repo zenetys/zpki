@@ -6,15 +6,16 @@
 # Version: 1.0
 
 # Filename usage to determine action
+# zpki create-cnf
 # zpki create-ca "CA-SUBJ"
 # zpki create-key "SUBJ"
 # zpki create-csr "SUBJ"
-# zpki create-crt "SUBJ"
 # zpki create-self "SUBJ"
-# zpki create-cnf
 # zpki ca-sign-csr "CSRFILE"
+# zpki ca-create-crt "SUBJ"
 # zpki ca-update-crt "CRTFILE"
 # zpki ca-revoke-crt "CRTFILE"
+# zpki ca-disable-crt "CRTFILE"
 # zpki ca-display-crt "CRTFILE"
 # zpki ca-dump-crt "CRTFILE"
 # zpki ca-dump-csr "CSRFILE"
