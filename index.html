@@ -94,6 +94,17 @@
         </table>
     </div>
 
+    <!-- Alert to select profile -->
+    <div class="toast bg-light border-light" id="profileToast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false" style="position: fixed; top: 10px; left: 10px; width: 500px; z-index: 1050;">
+        <div class="toast-header" id="sessionExpired">
+            <img src="images/circle-info-solid.svg" class="icon mt-0 me-2">
+            <strong class="me-auto">Session expired</strong>
+        </div>
+        <div class="toast-body" id="sessionDescription">
+            The session has expired, please select a profile.
+        </div>
+    </div>    
+
     <!-- Modal for unlocking -->
     <div class="modal fade" id="passwordModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog float me-3">
