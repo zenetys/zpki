@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const passwordModalTitle = document.getElementById('passwordModalTitle');
     const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
     const passwordInput = document.getElementById('password');
+    const rightPassword = document.getElementById('rightPassword');
+    const wrongPassword = document.getElementById('wrongPassword');
     const texts = {
         en: {
             actions: {
@@ -1164,22 +1166,34 @@ document.addEventListener('DOMContentLoaded', function() {
         const tmpPassword = await fetchPassword();
         const passwordSubmit = document.getElementById('passwordSubmit');
         passwordInput.classList.remove('is-invalid', 'is-valid');
-
-        if (!tmpPassword) {
-            passwordSubmit.disabled = false;
-            passwordSubmit.classList.add('btn-primary');
-            passwordSubmit.classList.remove('btn-danger');
-            passwordSubmit.classList.remove('btn-success');
+        wrongPassword.style.display = 'none';
+    
+        if (passwordInput.value.length < 4) {
+            passwordInput.classList.add('is-invalid');
+            wrongPassword.textContent = `${texts[lang].inputs.wrongPassLength}`;
+            wrongPassword.style.display = 'block';
+            passwordSubmit.className = 'btn btn-danger float-end mt-3';
+            passwordSubmit.disabled = true;
             return;
         }
-
-        const isValid = passwordInput.value === tmpPassword;
-        passwordInput.classList.toggle('is-valid', isValid);
-        passwordInput.classList.toggle('is-invalid', !isValid);
-        passwordSubmit.disabled = !isValid;
-        passwordSubmit.classList.remove('btn-primary');
-        passwordSubmit.classList.toggle('btn-danger', !isValid);
-        passwordSubmit.classList.toggle('btn-success', isValid);
+    
+        if (tmpPassword) {
+            const isValid = passwordInput.value === tmpPassword;
+            passwordInput.classList.toggle('is-valid', isValid);
+            passwordInput.classList.toggle('is-invalid', !isValid);
+            passwordSubmit.disabled = !isValid;
+            passwordSubmit.className = `btn ${isValid ? 'btn-success' : 'btn-danger'} float-end mt-3`;
+            
+            if (!isValid) {
+                wrongPassword.textContent = `${texts[lang].inputs.wrongPass}`;
+                wrongPassword.style.display = 'block';
+            } else {
+                rightPassword.textContent = `${texts[lang].inputs.rightPass}`;
+            }
+        } else {
+            passwordSubmit.disabled = false;
+            passwordSubmit.className = 'btn btn-primary float-end mt-3';
+        }
     }
 
     // Handle button clicks and input events
@@ -1235,9 +1249,16 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         const password = passwordInput.value;
 
+        if (password.length < 4) {
+            passwordInput.classList.add('is-invalid');
+            wrongPassword.textContent = `${texts[lang].inputs.wrongPassLength}`;
+            wrongPassword.style.display = 'block';
+            passwordSubmit.disabled = true;
+            return;
+        }
+
         const tmpPassword = await fetchPassword();
         if (!tmpPassword) {
-            // Set new password
             const response = await fetch('/set-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
