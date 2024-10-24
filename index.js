@@ -1059,9 +1059,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const ipValue = document.getElementById('sanIp').value;
                 if (ipValue) {
                     const ipList = document.getElementById('addedSanIP');
-                    ipList.innerHTML += `<div class="alert alert-secondary p-2 d-flex justify-content-between align-items-center">
+                    ipList.innerHTML += `<div class="alert alert-secondary fade show p-2 d-flex justify-content-between align-items-center">
                         ${ipValue}
-                        <button class="btn btn-sm btn-close" onclick="this.parentElement.remove();"></button>
+                        <button class="btn btn-sm btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>`;
                     document.getElementById('sanIp').value = '';
                 }
@@ -1071,9 +1071,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const dnsValue = document.getElementById('sanDns').value;
                 if (dnsValue) {
                     const dnsList = document.getElementById('addedDnsNames');
-                    dnsList.innerHTML += `<div class="alert alert-secondary p-2 d-flex justify-content-between align-items-center">
+                    dnsList.innerHTML += `<div class="alert alert-secondary fade show p-2 d-flex justify-content-between align-items-center">
                         ${dnsValue}
-                        <button class="btn btn-sm btn-close" onclick="this.parentElement.remove();"></button>
+                        <button class="btn btn-sm btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>`;
                     document.getElementById('sanDns').value = '';
                 }
