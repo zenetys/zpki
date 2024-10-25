@@ -115,7 +115,7 @@ app.get('/list', (req, res, next) => {
     }
 
     checkSudoers();
-    exec('sudo -n ./zpki -C ' + srcDir + ' ca-list --json', (error, stdout) => {
+    exec('sudo -n $PWD/zpki -C ' + srcDir + ' ca-list --json', (error, stdout) => {
         if (error) return next(error);
         res.json(JSON.parse(stdout));
     });
@@ -148,7 +148,7 @@ app.post('/create', async (req, res, next) => {
 
     try {
         await checkSudoers();
-        const result = await execPromise(`sudo -n ./zpki -C "${srcDir}" -y -c none create-crt "${id}"`);
+        const result = await execPromise(`sudo -n $PWD/zpki -C "${srcDir}" -y -c none create-crt "${id}"`);
         res.json({ message: 'Certificate created successfully', output: result });
     } catch (error) {
         next(error);
@@ -166,7 +166,7 @@ app.post('/renew', async (req, res, next) => {
 
     try {
         await checkSudoers();
-        const result = await execPromise(`sudo -n ./zpki -C "${srcDir}" -y -c none ca-update-crt "${id}"`);
+        const result = await execPromise(`sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-update-crt "${id}"`);
         res.json({ message: 'Certificate renewed successfully', output: result });
     } catch (error) {
         next(error);
@@ -184,7 +184,7 @@ app.post('/revoke', async (req, res, next) => {
 
     try {
         await checkSudoers();
-        const result = await execPromise(`sudo -n ./zpki -C "${srcDir}" -y -c none ca-revoke-crt "${id}"`);
+        const result = await execPromise(`sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-revoke-crt "${id}"`);
         res.json({ message: 'Certificate revoked successfully', output: result });
     } catch (error) {
         next(error);
@@ -202,7 +202,7 @@ app.post('/disable', async (req, res, next) => {
 
     try {
         await checkSudoers();
-        const result = await execPromise(`sudo -n ./zpki -C "${srcDir}" -y -c none ca-disable-crt "${id}"`);
+        const result = await execPromise(`sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-disable-crt "${id}"`);
         res.json({ message: 'Certificate disabled successfully', output: result });
     } catch (error) {
         next(error);
