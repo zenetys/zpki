@@ -117,11 +117,33 @@
         </div>
     </div>
 
+    <!-- Alert if already used CN -->
+    <div class="toast bg-light border-light" id="CNAlert" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; width: 550px; z-index: 9999;">
+        <div class="toast-header" id="incorrectCN">
+            <img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2">
+            <strong class="me-auto">Incorrect CN</strong>
+        </div>
+        <div class="toast-body" id="incorrectCNDescription">
+            This certificate name is already used, choose another name.
+        </div>
+    </div>
+
+    <!-- Alert if incorrect passphrase -->
+    <div class="toast bg-light border-light" id="passphraseAlert" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; width: 550px; z-index: 9999;">
+        <div class="toast-header" id="incorrectPassphrase">
+            <img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2">
+            <strong class="me-auto">Incorrect passphrase</strong>
+        </div>
+        <div class="toast-body" id="incorrectPassphraseDescription">
+            Use the right certificate authority passphrase to continue.
+        </div>
+    </div>
+
     <!-- Alert if incorrect DNS / IP format -->
     <div class="toast bg-light border-light" id="incorrectAlert" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; width: 400px; z-index: 9999;">
         <div class="toast-header" id="incorrectFormat">
             <img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2">
-            <strong class="me-auto">Wrong Format</strong>
+            <strong class="me-auto">Incorrect Format</strong>
         </div>
         <div class="toast-body" id="incorrectDescription">
             Use a correct format in the SAN input.
