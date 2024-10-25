@@ -566,8 +566,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(profileData => {
                 profile = profileData.currentProfile;
                 if (profile === 'Select a profile') {
-                    const toast = new bootstrap.Toast(document.getElementById('profileAlert'));
-                    toast.show();
+                    showAlert('profileAlert');
                     return;
                 }
                 return fetch('/list');
@@ -857,6 +856,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             loadCertData();
                             modal.hide();
                         } else {
+                            showAlert('passphraseAlert');
                         }
                     } catch (error) {
                         console.error('Error:', error);
@@ -1025,7 +1025,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             loadCertData();
                             modal.hide();
                         } else {
-                            console.error('Renewal failed:', await response.text());
+                            showAlert('passphraseAlert');
                         }
                     } catch (error) {
                         console.error('Renewal error:', error);
@@ -1063,7 +1063,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             loadCertData();
                             modal.hide();
                         } else {
-                            console.error('Revocation failed:', await response.text());
+                            showAlert('passphraseAlert');
                         }
                     } catch (error) {
                         console.error('Revocation error:', error);
@@ -1101,7 +1101,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             loadCertData();
                             modal.hide();
                         } else {
-                            console.error('Deactivation failed:', await response.text());
+                            showAlert('passphraseAlert');
                         }
                     } catch (error) {
                         console.error('Deactivation error:', error);
@@ -1136,8 +1136,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>`;
                         document.getElementById('sanIp').value = '';
                     } else {
-                        const toast = new bootstrap.Toast(document.getElementById('incorrectAlert'));
-                        toast.show();
+                        showAlert('incorrectAlert');
                     }
                 }
             };
@@ -1153,8 +1152,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>`;
                         document.getElementById('sanDns').value = '';
                     } else {
-                        const toast = new bootstrap.Toast(document.getElementById('incorrectAlert'));
-                        toast.show();
+                        showAlert('incorrectAlert');
                     }
                 }
             };
@@ -1244,15 +1242,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Reload interface on profile switch
     document.getElementById('switchMenu').addEventListener('click', function() {
-        const toast = new bootstrap.Toast(document.getElementById('profileAlert'));
-        toast.hide();
+        hideAlert('profileAlert');
 
         fetch('/current-profile')
             .then(response => response.json())
             .then(profileData => {
                 const profile = profileData.currentProfile;
                 if (profile === 'Select a profile') {
-                    toast.show();
+                    showAlert('profileAlert');
                     return;
                 }
                 return fetch('/list');
