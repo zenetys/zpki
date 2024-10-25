@@ -437,6 +437,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Show all different alerts
+    function showAlert(alert) {
+        const showAlert = new bootstrap.Toast(document.getElementById(alert));
+        showAlert.show();
+    }
+
+    function hideAlert(alert) {
+        const hideAlert = new bootstrap.Toast(document.getElementById(alert));
+        hideAlert.hide();
+    }
+
     // Verify if is a valid IPv4 format
     function isValidIPv4(ip) {
         const ipv4Pattern = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
