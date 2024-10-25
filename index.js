@@ -628,7 +628,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <a class='btn btn-light btn-sm d-block text-start mb-1' href='${profile}/certs/${replaceSpaces(cert.id)}.crt' download><img src='images/certificate-solid.svg' class='icon me-1'/>.crt</a>
                                 <a class='btn btn-light btn-sm d-block text-start mb-1' href='${profile}/certs/${replaceSpaces(cert.id)}.csr' download><img src='images/lock-solid.svg' class='icon me-1'/>.csr</a>
                                 <a class='btn btn-light btn-sm d-block text-start mb-1' href='${profile}/private/${replaceSpaces(cert.id)}.key' download><img src='images/key-solid.svg' class='icon me-1'/>.key</a>
-                                <a class='btn btn-light btn-sm d-block text-start disabled'><img src='images/file-export-solid.svg' class='icon me-1'/>.pkcs12</a>
+                                <a class='btn btn-light btn-sm d-block text-start exportP12 ${cert.keyStatus === 'encrypted' ? '' : 'disabled'}'><img src='images/file-export-solid.svg' class='icon me-1'/>.pkcs12</a>
                             ">
                                 <img src="images/file-arrow-down-solid.svg" class="icon"/>
                             </button>
@@ -921,7 +921,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <a class="btn btn-light btn-sm mb-1 me-1" href="${profile}/private/${replaceSpaces(certData.id)}.key" download>
                                             <img src="images/key-solid.svg" class="icon me-1"/>.key
                                         </a>
-                                        <a class="btn btn-light btn-sm mb-1 disabled">
+                                        <a class="btn btn-light btn-sm mb-1 exportP12 ${certData.keyStatus === 'encrypted' ? '' : 'disabled'}">
                                             <img src="images/file-export-solid.svg" class="icon me-1"/>.pkcs12
                                         </a>
                                     </span>
