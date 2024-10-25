@@ -774,10 +774,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 modalTitle.textContent = texts[lang].titles.createMultiSan;
                 formContent.innerHTML = `
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="commonName" placeholder="${texts[lang].modals.CN}" required>
+                        <div class="input-group">
+                            <span class="input-group-text">/CN=</span>
+                            <input type="text" class="form-control" id="commonName" placeholder="${texts[lang].modals.CN}" required>
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="subject" placeholder="${texts[lang].modals.SUBJ}" required>
+                        <div class="input-group">
+                            <span class="input-group-text">/O=</span>
+                            <input type="text" class="form-control" id="org" placeholder="${texts[lang].modals.SUBJ}" aria-label="Organisation">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text">/OU=</span>
+                            <input type="text" class="form-control" id="orgunit" placeholder="${texts[lang].modals.SUBJ}" aria-label="Organisation Unit">
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">${texts[lang].modals.subject}</label>
