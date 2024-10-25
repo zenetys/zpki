@@ -139,7 +139,7 @@ app.post('/switch-profile', (req, res) => {
 
 // Route to create certificates
 app.post('/create', async (req, res, next) => {
-    const { id } = req.body;
+    const { commonName, subject, passphrase } = req.body;
 
     // Validate certificate name
     if (!validateName(id)) {
@@ -157,7 +157,7 @@ app.post('/create', async (req, res, next) => {
 
 // Route to renew certificates
 app.post('/renew', async (req, res, next) => {
-    const { id } = req.body;
+    const { commonName, passphrase } = req.body;
 
     // Validate certificate ID
     if (!validateName(id)) {
@@ -175,7 +175,7 @@ app.post('/renew', async (req, res, next) => {
 
 // Route to revoke certificates
 app.post('/revoke', async (req, res, next) => {
-    const { id } = req.body;
+    const { commonName, passphrase } = req.body;
 
     // Validate certificate ID
     if (!validateName(id)) {
@@ -193,7 +193,7 @@ app.post('/revoke', async (req, res, next) => {
 
 // Route to disable certificates
 app.post('/disable', async (req, res, next) => {
-    const { id } = req.body;
+    const { commonName, passphrase } = req.body;
 
     // Validate certificate ID
     if (!validateName(id)) {
