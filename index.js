@@ -416,8 +416,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Check passphrase validity
         if (passPhrase.value && confirmPassphrase.value) {
             if (passPhrase.value === confirmPassphrase.value) {
+                confirmPassphrase.classList.remove('is-invalid');
                 confirmPassphrase.classList.add('is-valid');
-                confirmAction.classList.remove('btn-primary');
                 confirmAction.classList.add('btn-success');
                 confirmAction.disabled = false;
             } else {
@@ -426,7 +426,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 confirmAction.disabled = true;
             }
         } else {
-            confirmAction.classList.add('btn-primary');
+            confirmAction.classList.add('btn-danger');
         }
     }
 
