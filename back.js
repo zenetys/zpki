@@ -142,14 +142,14 @@ app.post('/create', async (req, res, next) => {
     const { commonName, subject, passphrase } = req.body;
 
     // Validate certificate name
-    if (!validateName(id)) {
-        return res.status(400).json({ error: `Invalid certificate name (${id}). Only alphanumeric characters, spaces, hyphens, and underscores are allowed, and the length must be between 1 and 64 characters.` });
+    if (!validateName(commonName)) {
+        return res.status(400).json({ error: `Invalid certificate name (${commonName}). Only alphanumeric characters, spaces, hyphens, and underscores are allowed, and the length must be between 1 and 64 characters.` });
     }
 
     try {
         await checkSudoers();
-        const result = await execPromise(`sudo -n $PWD/zpki -C "${srcDir}" -y -c none create-crt "${id}"`);
-        res.json({ message: 'Certificate created successfully', output: result });
+        const result = await execPromise(`CA_PASSWORD=${passphrase} sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-create-crt "${subject === '' ? commonName : subject}"`);
+        res.json({ message: 'Certificate created successfully' });
     } catch (error) {
         res.status(400).json({ error: error });
     }
@@ -160,14 +160,14 @@ app.post('/renew', async (req, res, next) => {
     const { commonName, passphrase } = req.body;
 
     // Validate certificate ID
-    if (!validateName(id)) {
-        return res.status(400).json({ error: `Invalid certificate ID (${id}).` });
+    if (!validateName(commonName)) {
+        return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
     }
 
     try {
         await checkSudoers();
-        const result = await execPromise(`sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-update-crt "${id}"`);
-        res.json({ message: 'Certificate renewed successfully', output: result });
+        const result = await execPromise(`CA_PASSWORD=${passphrase} sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-update-crt "${commonName}"`);
+        res.json({ message: 'Certificate renewed successfully' });
     } catch (error) {
         res.status(400).json({ error: error });
     }
@@ -178,14 +178,14 @@ app.post('/revoke', async (req, res, next) => {
     const { commonName, passphrase } = req.body;
 
     // Validate certificate ID
-    if (!validateName(id)) {
-        return res.status(400).json({ error: `Invalid certificate ID (${id}).` });
+    if (!validateName(commonName)) {
+        return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
     }
 
     try {
         await checkSudoers();
-        const result = await execPromise(`sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-revoke-crt "${id}"`);
-        res.json({ message: 'Certificate revoked successfully', output: result });
+        const result = await execPromise(`CA_PASSWORD=${passphrase} sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-revoke-crt "${commonName}"`);
+        res.json({ message: 'Certificate revoked successfully' });
     } catch (error) {
         res.status(400).json({ error: error });
     }
@@ -196,14 +196,14 @@ app.post('/disable', async (req, res, next) => {
     const { commonName, passphrase } = req.body;
 
     // Validate certificate ID
-    if (!validateName(id)) {
-        return res.status(400).json({ error: `Invalid certificate ID (${id}).` });
+    if (!validateName(commonName)) {
+        return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
     }
 
     try {
         await checkSudoers();
-        const result = await execPromise(`sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-disable-crt "${id}"`);
-        res.json({ message: 'Certificate disabled successfully', output: result });
+        const result = await execPromise(`CA_PASSWORD=${passphrase} sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-disable-crt "${commonName}"`);
+        res.json({ message: 'Certificate disabled successfully' });
     } catch (error) {
         res.status(400).json({ error: error });
     }
