@@ -703,11 +703,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 });
 
-                // Popovers
-                var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-                var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-                    return new bootstrap.Popover(popoverTriggerEl);
+                // Tooltips
+                var tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+                var tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+                // Hide tooltips on mouse out
+                document.addEventListener('mouseout', function() {
+                    tooltipList.forEach(tooltip => {
+                        tooltip.hide();
+                    });
                 });
+
+                // Popovers
+                var popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+                var popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 
                 // Set popovers for downloads
                 popoverTriggerList.forEach((triggerEl) => {
