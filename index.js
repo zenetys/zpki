@@ -799,13 +799,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="mb-3">
                         <div class="input-group">
                             <span class="input-group-text">/O=</span>
-                            <input type="text" class="form-control" id="org" placeholder="${texts[lang].modals.SUBJ}" aria-label="Organisation">
+                            <input type="text" class="form-control" id="org" placeholder="${texts[lang].modals.ORG}" aria-label="Organisation">
                         </div>
                     </div>
                     <div class="mb-3">
                         <div class="input-group">
                             <span class="input-group-text">/OU=</span>
-                            <input type="text" class="form-control" id="orgunit" placeholder="${texts[lang].modals.SUBJ}" aria-label="Organisation Unit">
+                            <input type="text" class="form-control" id="orgunit" placeholder="${texts[lang].modals.ORGUNIT}" aria-label="Organisation Unit">
                         </div>
                     </div>
                     <div class="mb-3">
@@ -847,7 +847,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 footerContent.innerHTML = `
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].actions.cancel}</button>
-                    <button type="button" class="btn btn-primary" id="confirmAction">${texts[lang].actions.confirm}</button>
+                    <button type="button" class="btn btn-danger" id="confirmAction" disabled>${texts[lang].actions.confirm}</button>
                 `;
 
                 // Confirm certificate creation
@@ -995,13 +995,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 modalTitle.textContent = `${texts[lang].titles.renewCert}`;
                 formContent.innerHTML = `
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="certificateAuthority" value="${certData.issuer}" placeholder="${texts[lang].modals.CA}" readonly>
+                        <div class="input-group">
+                            <span class="input-group-text">CA</span>
+                            <input type="text" class="form-control" id="certificateAuthority" value="${certData.issuer}" placeholder="${texts[lang].modals.CA}" readonly>
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="commonName" value="${certData.id}" placeholder="${texts[lang].modals.CN}" readonly>
+                        <div class="input-group">
+                            <span class="input-group-text">/CN=</span>
+                            <input type="text" class="form-control" id="commonName" placeholder="${texts[lang].modals.CN}" value="${cnValue}" readonly>
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="subject" value="${certData.subject}" placeholder="${texts[lang].modals.SUBJ}">
+                        <div class="input-group">
+                            <span class="input-group-text">/O=</span>
+                            <input type="text" class="form-control" id="org" placeholder="${texts[lang].modals.ORG}" aria-label="Organisation" value="${oValue}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text">/OU=</span>
+                            <input type="text" class="form-control" id="orgunit" placeholder="${texts[lang].modals.ORGUNIT}" aria-label="Organisation Unit" value="${ouValue}">
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">SAN (Subject Alternative Name)</label>
