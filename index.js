@@ -1301,6 +1301,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Check if common name exists
+    async function checkCommonName(commonName) {
+        try {
+            const response = await fetch('/list');
+            const cert = await response.json();
+            return cert.some(cert => cert.id === commonName);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des certificats:', error);
+            return false;
+        }
+    }
+
     // Handle button clicks and input events
     createBtn.addEventListener('click', (e) => {
         e.preventDefault();
