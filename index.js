@@ -873,7 +873,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if ((org && orgUnit) || org || orgUnit) subject += `/CN=${commonName}`;
 
                     const data = {
-                        id: commonName,
+                        commonName: commonName,
                         subject: subject,
                         sanIP: sanIP,
                         sanDns: sanDns,
@@ -1072,7 +1072,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if ((org && orgUnit) || org || orgUnit) subject += `/CN=${commonName}`;
 
                     const data = {
-                        id: commonName,
+                        commonName: commonName,
                         subject: subject,
                         sanIP: sanIP,
                         sanDns: sanDns,
