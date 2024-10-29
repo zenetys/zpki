@@ -1366,14 +1366,6 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         const password = passwordInput.value;
 
-        if (password.length < 4) {
-            passwordInput.classList.add('is-invalid');
-            wrongPassword.textContent = `${texts[lang].inputs.wrongPassLength}`;
-            wrongPassword.style.display = 'block';
-            passwordSubmit.disabled = true;
-            return;
-        }
-
         const tmpPassword = await fetchPassword();
         if (!tmpPassword) {
             const response = await fetch('/set-password', {
@@ -1388,8 +1380,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateInterface();
                 passwordModal.hide();
                 passwordInput.classList.add('is-valid');
-            } else {
-                console.error('Error saving password:', response.statusText);
             }
         } else if (password === tmpPassword) {
             isLocked = !isLocked;
@@ -1399,7 +1389,6 @@ document.addEventListener('DOMContentLoaded', function() {
             passwordInput.classList.add('is-valid');
         } else {
             passwordInput.classList.add('is-invalid');
-            console.error('Password is incorrect');
         }
     });
 
