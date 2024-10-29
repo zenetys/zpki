@@ -853,13 +853,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Confirm certificate creation
                 document.getElementById('confirmAction').onclick = async function() {
                     const commonName = document.getElementById('commonName').value;
-                    const subject = document.getElementById('subject').value;
+                    const org = document.getElementById('org').value.trim();
+                    const orgUnit = document.getElementById('orgunit').value.trim();
                     const sanIP = Array.from(document.getElementById('addedSanIP').children).map(el => el.innerText);
                     const sanDns = Array.from(document.getElementById('addedDnsNames').children).map(el => el.innerText);
                     const type = document.getElementById('type').value;
                     const startDate = document.getElementById('startDate').value;
                     const endDate = document.getElementById('endDate').value;
                     const passphrase = document.getElementById('passphrase').value;
+
+                    if (checkCommonName(commonName) === true) {
+                        showAlert('CNAlert');
+                        return;
+                    }
+
+                    let subject = '';
+                    if (org) subject += `/O=${org}`;
+                    if (orgUnit) subject += `/OU=${orgUnit}`;
+                    if ((org && orgUnit) || org || orgUnit) subject += `/CN=${commonName}`;
 
                     const data = {
                         id: commonName,
@@ -962,6 +973,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     .catch(error => console.error('Profile loading error:', error));
                 break;
             case 'renew':
+                let subjectArray = (certData.subject || '')
+                    .replace(/^Subject\s*\(.*?\):\s*/, '')
+                    .split(/(?:\/|\n)/)
+                    .filter(Boolean);
+
+                let cnValue = '';
+                let oValue = '';
+                let ouValue = '';
+
+                subjectArray.forEach(part => {
+                    if (part.startsWith('CN=')) {
+                        cnValue = part.replace('CN=', '');
+                    } else if (part.startsWith('O=')) {
+                        oValue = part.replace('O=', '');
+                    } else if (part.startsWith('OU=')) {
+                        ouValue = part.replace('OU=', '');
+                    }
+                });
+
                 modalTitle.textContent = `${texts[lang].titles.renewCert}`;
                 formContent.innerHTML = `
                     <div class="mb-3">
@@ -1022,13 +1052,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Confirm certificate renewal
                 document.getElementById('confirmAction').onclick = async function() {
                     const commonName = document.getElementById('commonName').value;
-                    const subject = document.getElementById('subject').value;
+                    const org = document.getElementById('org').value.trim();
+                    const orgUnit = document.getElementById('orgunit').value.trim();
                     const sanIP = Array.from(document.getElementById('addedSanIP').children).map(el => el.innerText);
                     const sanDns = Array.from(document.getElementById('addedDnsNames').children).map(el => el.innerText);
                     const type = document.getElementById('type').value;
                     const startDate = document.getElementById('startDate').value;
                     const endDate = document.getElementById('endDate').value;
                     const passphrase = document.getElementById('passphrase').value;
+
+                    if (checkCommonName(commonName) === true) {
+                        showAlert('CNAlert');
+                        return;
+                    }
+
+                    let subject = '';
+                    if (org) subject += `/O=${org}`;
+                    if (orgUnit) subject += `/OU=${orgUnit}`;
+                    if ((org && orgUnit) || org || orgUnit) subject += `/CN=${commonName}`;
 
                     const data = {
                         id: commonName,
