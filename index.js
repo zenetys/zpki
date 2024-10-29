@@ -420,18 +420,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Validate passphrases
     function validatePassphrase(confirmAction) {
+        let commonName = document.getElementById('commonName');
         const passPhrase = document.getElementById('passphrase');
         const confirmPassphrase = document.getElementById('confirmPassphrase');
 
-        // Reset validation classes
         [passPhrase, confirmPassphrase].forEach(input => input.classList.remove('is-invalid', 'is-valid'));
         confirmAction.classList.remove('btn-success', 'btn-danger');
         confirmPassphrase.classList.add('is-invalid');
         confirmAction.disabled = true;
 
-        // Check passphrase validity
-        if (passPhrase.value && confirmPassphrase.value) {
-            if (passPhrase.value === confirmPassphrase.value) {
+        if (!commonName) commonName = { value: '' };
+
+        if ((passPhrase.value && confirmPassphrase.value)) {
+            if ((passPhrase.value === confirmPassphrase.value) || commonName.value !== '') {
                 confirmPassphrase.classList.remove('is-invalid');
                 confirmPassphrase.classList.add('is-valid');
                 confirmAction.classList.add('btn-success');
