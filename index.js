@@ -1143,7 +1143,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify({ id: certData.id })
+                            body: JSON.stringify({ commonName: certData.id, passphrase: passphrase })
                         });
                 
                         if (response.ok) {
@@ -1181,7 +1181,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify({ id: certData.id })
+                            body: JSON.stringify({ commonName: certData.id, passphrase: passphrase })
                         });
                 
                         if (response.ok) {
