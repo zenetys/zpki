@@ -1024,14 +1024,14 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="input-group mb-2">
                                 <input type="text" class="form-control" placeholder="IP" id="sanIp" value="${certData.ip && certData.ip.length > 0 
                                     ? certData.ip.map(ip => `<span>${ip}</span>`).join(', ') 
-                                    : `${texts[lang].modals.missing.IP}`}">
+                                    : ''}">
                                 <button class="btn btn border" type="button" id="addIpButton">+</button>
                             </div>
                             <div id="addedSanIP" class="mt-2"></div>
                             <div class="input-group mb-2">
                                 <input type="text" class="form-control" placeholder="DNS" id="sanDns" value="${certData.dns && certData.dns.length > 0 
                                     ? certData.dns.map(dns => `<span>${dns}</span>`).join(', ') 
-                                    : `${texts[lang].modals.missing.DNS}`}">
+                                    : ''}">
                                 <button class="btn btn border" type="button" id="addDnsButton">+</button>
                             </div>
                             <div id="addedDnsNames" class="mt-2"></div>
