@@ -53,6 +53,8 @@ document.addEventListener('DOMContentLoaded', function() {
             modals: {
                 CA: "Certificate Authority",
                 CN: "Common Name",
+                ORG: "Organization Name",
+                ORGUNIT: "Organization Unit Name",
                 SUBJ: "Subject (O / OU / CN)",
                 subject: "SAN (Subject Alternative Name)",
                 type: "Certificate Type",
@@ -127,6 +129,8 @@ document.addEventListener('DOMContentLoaded', function() {
             modals: {
                 CA: "Autorité de certification",
                 CN: "Nom Commun",
+                ORG: "Nom de l'Organisation",
+                ORGUNIT: "Nom de l'Unité Organisationnelle",
                 SUBJ: "Sujet (O / OU / CN)",
                 subject: "SAN (Nom Alternatif du Sujet)",
                 type: "Type de certificat",
@@ -201,6 +205,8 @@ document.addEventListener('DOMContentLoaded', function() {
             modals: {
                 CA: "Autoridad de Certificación",
                 CN: "Nombre Común",
+                ORG: "Nombre de la Organización",
+                ORGUNIT: "Nombre de la Unidad Organizacional",
                 SUBJ: "Sujeto (O / OU / CN)",
                 subject: "SAN (Nombre Alternativo del Sujeto)",
                 type: "Tipo de certificado",
@@ -275,6 +281,8 @@ document.addEventListener('DOMContentLoaded', function() {
             modals: {
                 CA: "Zertifizierungsstelle",
                 CN: "Allgemeiner Name",
+                ORG: "Name der Organisation",
+                ORGUNIT: "Name der Organisationseinheit",
                 SUBJ: "Betreff (O / OU / CN)",
                 subject: "SAN (Alternative Name des Betreffs)",
                 type: "Zertifikatstyp",
