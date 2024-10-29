@@ -396,17 +396,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update confirmation input visibility and validation
     function updateConfirm() {
+        let commonName = document.getElementById('commonName');
         const passPhrase = document.getElementById('passphrase');
         const confirmPassphrase = document.getElementById('confirmPassphrase');
         const confirmAction = document.getElementById('confirmAction');
 
-        if(passPhrase && confirmPassphrase) {
+        if (passPhrase && confirmPassphrase) {
             passPhrase.oninput = function() {
                 confirmPassphrase.hidden = !this.value;
                 validatePassphrase(confirmAction);
             };
 
             confirmPassphrase.oninput = () => validatePassphrase(confirmAction);
+        }
+        
+        if (!commonName) {
+            commonName = { value: '' };
+        }
+        else {
+            commonName.oninput = () => validatePassphrase(confirmAction);
         }
     }
 
