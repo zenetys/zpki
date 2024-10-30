@@ -826,7 +826,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Confirm certificate creation
                 document.getElementById('confirmAction').onclick = async function() {
-                    const commonName = document.getElementById('commonName').value;
+                    let commonName = document.getElementById('commonName').value;
                     const org = document.getElementById('org').value.trim();
                     const orgUnit = document.getElementById('orgunit').value.trim();
                     const sanIP = Array.from(document.getElementById('addedSanIP').children).map(el => el.innerText);
