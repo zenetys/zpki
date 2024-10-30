@@ -133,7 +133,8 @@ app.post('/switch-profile', (req, res) => {
 
         srcDir = currentPath;
         req.session.currentProfile = profile;
-        return res.json({ message: `Profile switched to ${profile}` });
+        req.session.pkiaccess = '';
+        return res.json({ response: `Profile switched to ${profile}` });
     });
 });
 
