@@ -1236,7 +1236,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function fetchPassword() {
         const response = await fetch('/get-password');
         if (!response.ok) throw new Error('Request failed');
-        return (await response.json()).pkiaccess || '';
+        return (await response.json()).pkiaccess;
     }
 
     // Load password and update interface
@@ -1245,21 +1245,24 @@ document.addEventListener('DOMContentLoaded', function() {
         passwordInput.value = fetchedPassword;
         passwordModalTitle.textContent = `${texts[lang].titles.enterPass}`;
 
-        if (!fetchedPassword) {
+        if (fetchedPassword === '' || fetchedPassword === 'none') {
             isLocked = true;
             localStorage.setItem('isLocked', JSON.stringify(isLocked));
             updateInterface();
+        } else {
+            isLocked = false;
         }
     }
 
     // Check if the input password is valid
     async function checkPassword() {
-        const tmpPassword = await fetchPassword();
         const passwordSubmit = document.getElementById('passwordSubmit');
+        const tmpPassword = await fetchPassword();
+
         passwordInput.classList.remove('is-invalid', 'is-valid');
         wrongPassword.style.display = 'none';
-    
-        if (passwordInput.value.length < 4) {
+
+        if (passwordInput.value.length < 4 && passwordInput.value.length > 0) {
             passwordInput.classList.add('is-invalid');
             wrongPassword.textContent = `${texts[lang].inputs.wrongPassLength}`;
             wrongPassword.style.display = 'block';
@@ -1267,14 +1270,14 @@ document.addEventListener('DOMContentLoaded', function() {
             passwordSubmit.disabled = true;
             return;
         }
-    
+
         if (tmpPassword) {
             const isValid = passwordInput.value === tmpPassword;
             passwordInput.classList.toggle('is-valid', isValid);
             passwordInput.classList.toggle('is-invalid', !isValid);
             passwordSubmit.disabled = !isValid;
             passwordSubmit.className = `btn ${isValid ? 'btn-success' : 'btn-danger'} float-end mt-3`;
-            
+
             if (!isValid) {
                 wrongPassword.textContent = `${texts[lang].inputs.wrongPass}`;
                 wrongPassword.style.display = 'block';
@@ -1350,9 +1353,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle password form submission
     document.getElementById('passwordForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const password = passwordInput.value;
-
+        const passwordSubmit = document.getElementById('passwordSubmit');
+        const password = passwordInput.value.trim() || 'none';
         const tmpPassword = await fetchPassword();
+
+        passwordSubmit.disabled = true;
+
         if (!tmpPassword) {
             const response = await fetch('/set-password', {
                 method: 'POST',
@@ -1366,6 +1372,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateInterface();
                 passwordModal.hide();
                 passwordInput.classList.add('is-valid');
+            } else {
+                passwordInput.classList.add('is-invalid');
+                passwordSubmit.disabled = false;
+                wrongPassword.textContent = `${texts[lang].inputs.wrongPass}`;
+                wrongPassword.style.display = 'block';
+                showAlert('passphraseAlert');
             }
         } else if (password === tmpPassword) {
             isLocked = !isLocked;
@@ -1374,6 +1386,7 @@ document.addEventListener('DOMContentLoaded', function() {
             passwordModal.hide();
             passwordInput.classList.add('is-valid');
         } else {
+            passwordSubmit.disabled = false;
             passwordInput.classList.add('is-invalid');
         }
     });
