@@ -250,18 +250,26 @@ const execPromise = (command) => {
     });
 };
 
-// Route pour définir le mot de passe
-app.post('/set-password', (req, res) => {
-    const password = req.body.password;
-    if (password) {
-        req.session.pkiaccess = password;
-        return res.json({ response: 'Password saved!' });
+// Route to define session passphrase
+app.post('/set-password', async (req, res, next) => {
+    const { password } = req.body;
+
+    if (!srcDir) {
+        return res.status(400).json({ error: 'Current profile directory is not set.' });
     }
-    return res.json({ response: 'Missing password.' });
+
+    try {
+        await checkSudoers();
+        await execPromise(`CA_PASSWORD=${password} sudo -n $PWD/zpki -C "${srcDir}" ca-test-password`);
+        req.session.pkiaccess = password;
+        return res.json({ response: 'Passphrase saved!' });
+    } catch (error) {
+        res.status(400).json({ error: 'Incorrect passphrase' });
+    }
 });
 
-// Route pour vérifier l'accès et récupérer le mot de passe
-app.get('/get-password', (req, res) => {
+// Route to get session passphrase
+app.get('/get-password', (req, res) => { 
     if (req.session.pkiaccess) {
         res.json({ pkiaccess: req.session.pkiaccess });
     } else {
