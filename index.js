@@ -834,6 +834,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const type = document.getElementById('type').value;
                     const startDate = document.getElementById('startDate').value;
                     const endDate = document.getElementById('endDate').value;
+                    const confirmAction = document.getElementById('confirmAction');
 
                     confirmAction.disabled = true;
 
@@ -1078,6 +1079,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Confirm certificate revocation
                 document.getElementById('confirmAction').onclick = async function() {
+                    let commonName = document.getElementById('commonName').value;
+                    const confirmAction = document.getElementById('confirmAction');
+
                     confirmAction.disabled = true;
 
                     try {
@@ -1114,6 +1118,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Confirm certificate deactivation
                 document.getElementById('confirmAction').onclick = async function() {
+                    const commonName = document.getElementById('commonName').value;
+                    const confirmAction = document.getElementById('confirmAction');
                     confirmAction.disabled = true;
                     try {
                         const response = await fetch('/disable', {
