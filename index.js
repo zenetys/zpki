@@ -1065,7 +1065,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 footerContent.innerHTML = `
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].actions.cancel}</button>
-                    <button type="button" class="btn btn-danger" id="confirmAction" data-bs-dismiss="modal" disabled>${texts[lang].actions.renew}</button>
+                    <button type="button" class="btn btn-primary" id="confirmAction">${texts[lang].actions.renew}</button>
                 `;
                 
                 // Confirm certificate renewal
@@ -1134,7 +1134,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 footerContent.innerHTML = `
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].actions.cancel}</button>
-                    <button type="button" class="btn btn-danger" id="confirmAction" data-bs-dismiss="modal" disabled>${texts[lang].actions.revoke}</button>
+                    <button type="button" class="btn btn-primary" id="confirmAction">${texts[lang].actions.revoke}</button>
                 `;
 
                 // Confirm certificate revocation
@@ -1174,7 +1174,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 footerContent.innerHTML = `
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].actions.cancel}</button>
-                    <button type="button" class="btn btn-danger" id="confirmAction" data-bs-dismiss="modal" disabled>${texts[lang].actions.disable}</button>
+                    <button type="button" class="btn btn-primary" id="confirmAction">${texts[lang].actions.disable}</button>
                 `;
                 
                 // Confirm certificate deactivation
