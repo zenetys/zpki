@@ -835,8 +835,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     const startDate = document.getElementById('startDate').value;
                     const endDate = document.getElementById('endDate').value;
 
-                    if (checkCommonName(commonName) === true) {
+                    confirmAction.disabled = true;
+
+                    if (await checkCommonName(commonName) === true) {
                         showAlert('CNAlert');
+                        confirmAction.disabled = false;
                         return;
                     }
 
@@ -1021,11 +1024,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     const type = document.getElementById('type').value;
                     const startDate = document.getElementById('startDate').value;
                     const endDate = document.getElementById('endDate').value;
+                    const confirmAction = document.getElementById('confirmAction');
 
-                    if (checkCommonName(commonName) === true) {
-                        showAlert('CNAlert');
-                        return;
-                    }
+                    confirmAction.disabled = true;
 
                     let subject = '';
                     if (org) subject += `/O=${org}`;
@@ -1077,6 +1078,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Confirm certificate revocation
                 document.getElementById('confirmAction').onclick = async function() {
+                    confirmAction.disabled = true;
 
                     try {
                         const response = await fetch('/revoke', {
@@ -1112,6 +1114,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Confirm certificate deactivation
                 document.getElementById('confirmAction').onclick = async function() {
+                    confirmAction.disabled = true;
                     try {
                         const response = await fetch('/disable', {
                             method: 'POST',
