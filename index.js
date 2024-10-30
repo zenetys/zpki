@@ -1101,19 +1101,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     confirmAction.disabled = true;
 
                     try {
-                        const response = await fetch('/revoke', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ commonName: certData.id, passphrase: passphrase })
+                        const getPassword = await fetch('/get-password', {
+                            method: 'GET',
+                            headers: { 'Content-Type': 'application/json' }
                         });
-                
-                        if (response.ok) {
-                            loadCertData();
-                            modal.hide();
+                        if (getPassword.ok) {
+                            const password = await getPassword.json();
+                            const response = await fetch('/revoke', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ commonName: commonName, password: password.pkiaccess })
+                            });
+                    
+                            if (response.ok) {
+                                loadCertData();
+                                modal.hide();
+                            } else {
+                                showAlert('passphraseAlert');
+                                confirmAction.disabled = false;
+                            }
                         } else {
-                            showAlert('passphraseAlert');
+                            console.error('Passphrase fetching error:', getPassword.statusText);
                         }
                     } catch (error) {
                         console.error('Revocation error:', error);
