@@ -140,7 +140,15 @@ app.post('/switch-profile', (req, res) => {
 
 // Route to create certificates
 app.post('/create', async (req, res, next) => {
-    const { commonName, subject, passphrase } = req.body;
+    const { commonName, subject, password } = req.body;
+
+    if (!srcDir) {
+        return res.status(400).json({ error: 'Current profile directory is not set.' });
+    }
+
+    if (!commonName) {
+        return res.status(400).json({ error: 'Common Name argument is empty.' });
+    }
 
     // Validate certificate name
     if (!validateName(commonName)) {
@@ -158,7 +166,15 @@ app.post('/create', async (req, res, next) => {
 
 // Route to renew certificates
 app.post('/renew', async (req, res, next) => {
-    const { commonName, passphrase } = req.body;
+    const { commonName, password } = req.body;
+
+    if (!srcDir) {
+        return res.status(400).json({ error: 'Current profile directory is not set.' });
+    }
+
+    if (!commonName) {
+        return res.status(400).json({ error: 'Common Name argument is empty.' });
+    }
 
     // Validate certificate ID
     if (!validateName(commonName)) {
@@ -176,7 +192,15 @@ app.post('/renew', async (req, res, next) => {
 
 // Route to revoke certificates
 app.post('/revoke', async (req, res, next) => {
-    const { commonName, passphrase } = req.body;
+    const { commonName, password } = req.body;
+
+    if (!srcDir) {
+        return res.status(400).json({ error: 'Current profile directory is not set.' });
+    }
+
+    if (!commonName) {
+        return res.status(400).json({ error: 'Common Name argument is empty.' });
+    }
 
     // Validate certificate ID
     if (!validateName(commonName)) {
@@ -194,7 +218,15 @@ app.post('/revoke', async (req, res, next) => {
 
 // Route to disable certificates
 app.post('/disable', async (req, res, next) => {
-    const { commonName, passphrase } = req.body;
+    const { commonName, password } = req.body;
+
+    if (!srcDir) {
+        return res.status(400).json({ error: 'Current profile directory is not set.' });
+    }
+
+    if (!commonName) {
+        return res.status(400).json({ error: 'Common Name argument is empty.' });
+    }
 
     // Validate certificate ID
     if (!validateName(commonName)) {
