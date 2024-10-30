@@ -425,8 +425,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const confirmPassphrase = document.getElementById('confirmPassphrase');
 
         [passPhrase, confirmPassphrase].forEach(input => input.classList.remove('is-invalid', 'is-valid'));
-        confirmAction.classList.remove('btn-success', 'btn-danger');
         confirmPassphrase.classList.add('is-invalid');
+        confirmAction.classList.remove('btn-success', 'btn-danger', 'btn-primary');
         confirmAction.disabled = true;
 
         if (!commonName) commonName = { value: '' };
@@ -442,8 +442,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 confirmAction.classList.add('btn-danger');
                 confirmAction.disabled = true;
             }
-        } else {
+        } else if (passPhrase.value) {
             confirmAction.classList.add('btn-danger');
+            confirmAction.disabled = true;
+        } else {
+            confirmAction.classList.add('btn-primary');
+            confirmAction.disabled = false;
         }
     }
 
