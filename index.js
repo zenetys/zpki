@@ -818,12 +818,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         <label for="endDate" class="form-label">${texts[lang].headers.endDate}</label>
                         <input type="datetime-local" class="form-control" id="endDate" value="">
                     </div>
-                    <div class="mb-3">
-                        <input type="password" class="form-control" id="passphrase" placeholder="${texts[lang].modals.enterPass}">
-                    </div>
-                    <div class="mb-3">
-                        <input type="password" class="form-control" id="confirmPassphrase" placeholder="${texts[lang].modals.confirmPass}" hidden>
-                    </div>
                 `;
                 footerContent.innerHTML = `
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].actions.cancel}</button>
@@ -1011,12 +1005,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         <label for="endDate" class="form-label">${texts[lang].headers.endDate}</label>
                         <input type="datetime-local" class="form-control" id="endDate" value="">
                     </div>
-                    <div class="mb-3">
-                        <input type="password" class="form-control" id="passphrase" placeholder="${texts[lang].modals.enterPass}">
-                    </div>
-                    <div class="mb-3">
-                        <input type="password" class="form-control" id="confirmPassphrase" placeholder="${texts[lang].modals.confirmPass}" hidden>
-                    </div>
                 `;
                 footerContent.innerHTML = `
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].actions.cancel}</button>
@@ -1080,10 +1068,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 formContent.innerHTML = `
                     <p>${texts[lang].confirmations.confirmRevoke}</p>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="passphrase" placeholder="${texts[lang].modals.enterPass}">
-                    </div>
-                    <div class="mb-3">
-                        <input type="password" class="form-control" id="confirmPassphrase" placeholder="${texts[lang].modals.confirmPass}" hidden>
                     </div>
                 `;
                 footerContent.innerHTML = `
@@ -1119,10 +1103,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 formContent.innerHTML = `
                     <p>${texts[lang].confirmations.confirmDisable}</p>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="passphrase" placeholder="${texts[lang].modals.enterPass}">
-                    </div>
-                    <div class="mb-3">
-                        <input type="password" class="form-control" id="confirmPassphrase" placeholder="${texts[lang].modals.confirmPass}" hidden>
                     </div>
                 `;
                 footerContent.innerHTML = `
