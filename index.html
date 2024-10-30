@@ -161,37 +161,31 @@
                 <div class="modal-body">
                     <form id="passwordForm" method="POST" action="/set-password">
                         <div class="input-group has-validation mb-3">
-                            <input type="password" id="password" class="form-control" name="password" required>
-                            <button class="btn border rounded-end" id="togglePassword">
-                                <img src="images/eye-solid.svg" id="togglePasswordIcon" width="20px" height="20px" alt="Toggle password visibility">
+                            <input type="password" id="password" class="form-control" name="password" placeholder="CA Passphrase (can be empty)">
+                            <button type="button" class="btn border rounded-end" id="togglePassword">
+                                <img src="images/eye-solid.svg" id="togglePasswordIcon" width="20" height="20" alt="Toggle password visibility">
                             </button>
                             <div class="valid-feedback" id="rightPassword"></div>
                             <div class="invalid-feedback" id="wrongPassword"></div>
                         </div>
-                        <button type="submit" class="btn btn-primary float-end mt-3" id="passwordSubmit">Submit</button>
+                        <button type="submit" class="btn btn-primary float-end mt-3" id="passwordSubmit">Confirm</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Dynamic modal (Create Renew Revoke Remove)-->
+    <!-- Dynamic modal (Create View Renew Revoke Remove) -->
     <div class="modal fade" id="dynamicModal" tabindex="-1" aria-labelledby="dynamicModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title" id="dynamicModalLabel">Certificate Action</h5>
-                <button class="btn-close" data-bs-dismiss="modal" aria-label="Close" tabindex="-1"></button>
+                    <h5 class="modal-title" id="dynamicModalLabel">Certificate Action</h5>
+                    <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="dynamicForm">
-                        <div id="formContent">
-                        <!-- Modal content (dynamic) -->
-                        </div>
-                        <div class="mb-3" id="caPassphraseContainer" style="display: none;">
-                            <label for="caPassphrase" class="form-label"></label>
-                            <input type="password" class="form-control" id="caPassphrase" placeholder="CA Passphrase (can be empty)">
-                        </div>
+                        <div id="formContent"></div>
                     </form>
                 </div>
                 <div class="modal-footer" id="footerContent"></div>
