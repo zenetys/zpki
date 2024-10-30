@@ -1086,6 +1086,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 formContent.innerHTML = `
                     <p>${texts[lang].confirmations.confirmRevoke}</p>
                     <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text">/CN=</span>
+                            <input type="text" class="form-control" id="commonName" placeholder="${texts[lang].modals.CN}" value="${cnValue}" readonly>
+                        </div>
                     </div>
                 `;
                 footerContent.innerHTML = `
@@ -1133,6 +1137,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 formContent.innerHTML = `
                     <p>${texts[lang].confirmations.confirmDisable}</p>
                     <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text">/CN=</span>
+                            <input type="text" class="form-control" id="commonName" placeholder="${texts[lang].modals.CN}" value="${cnValue}" readonly>
+                        </div>
                     </div>
                 `;
                 footerContent.innerHTML = `
