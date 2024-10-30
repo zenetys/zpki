@@ -388,60 +388,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update confirmation input visibility and validation
     function updateConfirm() {
-        let commonName = document.getElementById('commonName');
-        const passPhrase = document.getElementById('passphrase');
-        const confirmPassphrase = document.getElementById('confirmPassphrase');
+        const commonName = document.getElementById('commonName');
         const confirmAction = document.getElementById('confirmAction');
-
-        if (passPhrase && confirmPassphrase) {
-            passPhrase.oninput = function() {
-                confirmPassphrase.hidden = !this.value;
-                validatePassphrase(confirmAction);
+    
+        if (commonName) {
+            commonName.oninput = () => {
+                confirmAction.classList.remove('btn-success', 'btn-danger');
+                confirmAction.disabled = !commonName.value;
+    
+                if (!commonName.value) {
+                    confirmAction.classList.add('btn-danger');
+                } else {
+                    confirmAction.classList.add('btn-primary');
+                }
             };
-
-            confirmPassphrase.oninput = () => validatePassphrase(confirmAction);
         }
-        
-        if (!commonName) {
-            commonName = { value: '' };
-        }
-        else {
-            commonName.oninput = () => validatePassphrase(confirmAction);
-        }
-    }
-
-    // Validate passphrases
-    function validatePassphrase(confirmAction) {
-        let commonName = document.getElementById('commonName');
-        const passPhrase = document.getElementById('passphrase');
-        const confirmPassphrase = document.getElementById('confirmPassphrase');
-
-        [passPhrase, confirmPassphrase].forEach(input => input.classList.remove('is-invalid', 'is-valid'));
-        confirmPassphrase.classList.add('is-invalid');
-        confirmAction.classList.remove('btn-success', 'btn-danger', 'btn-primary');
-        confirmAction.disabled = true;
-
-        if (!commonName) commonName = { value: '' };
-
-        if ((passPhrase.value && confirmPassphrase.value)) {
-            if ((passPhrase.value === confirmPassphrase.value) || commonName.value !== '') {
-                confirmPassphrase.classList.remove('is-invalid');
-                confirmPassphrase.classList.add('is-valid');
-                confirmAction.classList.add('btn-success');
-                confirmAction.disabled = false;
-            } else {
-                confirmPassphrase.classList.add('is-invalid');
-                confirmAction.classList.add('btn-danger');
-                confirmAction.disabled = true;
-            }
-        } else if (passPhrase.value) {
-            confirmAction.classList.add('btn-danger');
-            confirmAction.disabled = true;
-        } else {
-            confirmAction.classList.add('btn-primary');
-            confirmAction.disabled = false;
-        }
-    }
+    }    
 
     // Initialize tool tips
     function initializeTooltips() {
