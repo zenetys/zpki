@@ -1306,7 +1306,6 @@ document.addEventListener('DOMContentLoaded', function() {
     createBtn.addEventListener('click', (e) => {
         e.preventDefault();
         showModal('create');
-        document.getElementById('confirmAction').disabled = true;
     });
 
     // Filter certificates by name
