@@ -1243,7 +1243,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function loadPassword() {
         const fetchedPassword = await fetchPassword();
         passwordInput.value = fetchedPassword;
-        passwordModalTitle.textContent = fetchedPassword ? `${texts[lang].titles.enterPass}` : `${texts[lang].titles.definePass}`;
+        passwordModalTitle.textContent = `${texts[lang].titles.enterPass}`;
 
         if (!fetchedPassword) {
             isLocked = true;
