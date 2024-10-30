@@ -42,7 +42,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 incorrectDescription: "Use a correct format in the SAN input.",
                 searchBar: "Search for a certificate",
                 selectProfile: "Select a profile",
-                definePass: "Define a Passphrase",
                 enterPass: "Enter your Passphrase",
                 createMultiSan: "Create Multi SAN Certificate",
                 viewCert: "Certificate details",
@@ -63,7 +62,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     select2: "User",
                 },
                 enterPass: "Enter your passphrase (can be empty)",
-                confirmPass: "Confirm your passphrase",
                 missing: {
                     IP: "No IP defined",
                     DNS: "No DNS defined",
@@ -118,7 +116,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 incorrectDescription: "Utilisez un format correct dans le champ SAN.",
                 searchBar: "Rechercher un certificat",
                 selectProfile: "Sélectionner",
-                definePass: "Définir une Passphrase",
                 enterPass: "Entrer votre Passphrase",
                 createMultiSan: "Créer un certificat Multi SAN",
                 viewCert: "Informations du certificat",
@@ -139,7 +136,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     select2: "Utilisateur",
                 },
                 enterPass: "Entrez votre passphrase (peut être vide)",
-                confirmPass: "Confirmez votre passphrase",
                 missing: {
                     IP: "Pas d'IP définie",
                     DNS: "Pas de DNS défini",
@@ -194,7 +190,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 incorrectDescription: "Utilice un formato correcto en la entrada SAN.",
                 searchBar: "Buscar un certificado",
                 selectProfile: "Seleccionar",
-                definePass: "Definir una frase de paso",
                 enterPass: "Ingresar tu frase de paso",
                 createMultiSan: "Crear Certificado Multi SAN",
                 viewCert: "Información del certificado",
@@ -215,7 +210,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     select2: "Usuario",
                 },
                 enterPass: "Ingrese su frase de paso (puede estar vacía)",
-                confirmPass: "Confirme su frase de paso",
                 missing: {
                     IP: "No se ha definido IP",
                     DNS: "No se ha definido DNS",
@@ -270,7 +264,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 incorrectDescription: "Verwenden Sie ein korrektes Format im SAN-Feld.",
                 searchBar: "Suche nach einem Zertifikat",
                 selectProfile: "Profil auswählen",
-                definePass: "Passwortphrase festlegen",
                 enterPass: "Geben Sie Ihre Passwortphrase ein",
                 createMultiSan: "Multi-SAN-Zertifikat erstellen",
                 viewCert: "Informationen zum Zertifikat",
@@ -291,7 +284,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     select2: "Benutzer",
                 },
                 enterPass: "Geben Sie Ihre Passwortphrase ein (kann leer sein)",
-                confirmPass: "Bestätigen Sie Ihre Passwortphrase",
                 missing: {
                     IP: "Keine IP definiert",
                     DNS: "Kein DNS definiert",
