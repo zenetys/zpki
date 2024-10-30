@@ -740,7 +740,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const modalTitle = document.getElementById('dynamicModalLabel');
         const formContent = document.getElementById('formContent');
         const footerContent = document.getElementById('footerContent');
-        const caPassphraseContainer = document.getElementById('caPassphraseContainer');
 
         formContent.innerHTML = '';
 
@@ -841,7 +840,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     const type = document.getElementById('type').value;
                     const startDate = document.getElementById('startDate').value;
                     const endDate = document.getElementById('endDate').value;
-                    const passphrase = document.getElementById('passphrase').value;
 
                     if (checkCommonName(commonName) === true) {
                         showAlert('CNAlert');
@@ -906,7 +904,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
 
                         modalTitle.textContent = `${texts[lang].titles.viewCert}`;
-                        caPassphraseContainer.style.display = 'none';
                         formContent.innerHTML = `
                             <div id="certDetails">
                                 <p><strong>${texts[lang].modals.CA}:</strong> ${certData.issuer ? certData.issuer : `${texts[lang].undefined}`}</p>
@@ -1036,7 +1033,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     const type = document.getElementById('type').value;
                     const startDate = document.getElementById('startDate').value;
                     const endDate = document.getElementById('endDate').value;
-                    const passphrase = document.getElementById('passphrase').value;
 
                     if (checkCommonName(commonName) === true) {
                         showAlert('CNAlert');
@@ -1097,7 +1093,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Confirm certificate revocation
                 document.getElementById('confirmAction').onclick = async function() {
-                    const passphrase = document.getElementById('passphrase').value;
 
                     try {
                         const response = await fetch('/revoke', {
