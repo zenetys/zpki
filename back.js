@@ -150,15 +150,14 @@ app.post('/create', async (req, res, next) => {
         return res.status(400).json({ error: 'Common Name argument is empty.' });
     }
 
-    // Validate certificate name
     if (!validateName(commonName)) {
         return res.status(400).json({ error: `Invalid certificate name (${commonName}). Only alphanumeric characters, spaces, hyphens, and underscores are allowed, and the length must be between 1 and 64 characters.` });
     }
 
     try {
         await checkSudoers();
-        const result = await execPromise(`CA_PASSWORD=${passphrase} sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-create-crt "${subject === '' ? commonName : subject}"`);
-        res.json({ message: 'Certificate created successfully' });
+        await execPromise(`CA_PASSWORD=${password} sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-create-crt "${subject === '' ? commonName : subject}"`);
+        res.json({ response: 'Certificate created successfully' });
     } catch (error) {
         res.status(400).json({ error: error });
     }
@@ -176,15 +175,14 @@ app.post('/renew', async (req, res, next) => {
         return res.status(400).json({ error: 'Common Name argument is empty.' });
     }
 
-    // Validate certificate ID
     if (!validateName(commonName)) {
         return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
     }
 
     try {
         await checkSudoers();
-        const result = await execPromise(`CA_PASSWORD=${passphrase} sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-update-crt "${commonName}"`);
-        res.json({ message: 'Certificate renewed successfully' });
+        await execPromise(`CA_PASSWORD=${password} sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-update-crt "${commonName}"`);
+        res.json({ response: 'Certificate renewed successfully' });
     } catch (error) {
         res.status(400).json({ error: error });
     }
@@ -202,15 +200,14 @@ app.post('/revoke', async (req, res, next) => {
         return res.status(400).json({ error: 'Common Name argument is empty.' });
     }
 
-    // Validate certificate ID
     if (!validateName(commonName)) {
         return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
     }
 
     try {
         await checkSudoers();
-        const result = await execPromise(`CA_PASSWORD=${passphrase} sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-revoke-crt "${commonName}"`);
-        res.json({ message: 'Certificate revoked successfully' });
+        await execPromise(`CA_PASSWORD=${password} sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-revoke-crt "${commonName}"`);
+        res.json({ response: 'Certificate revoked successfully' });
     } catch (error) {
         res.status(400).json({ error: error });
     }
@@ -228,15 +225,14 @@ app.post('/disable', async (req, res, next) => {
         return res.status(400).json({ error: 'Common Name argument is empty.' });
     }
 
-    // Validate certificate ID
     if (!validateName(commonName)) {
         return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
     }
 
     try {
         await checkSudoers();
-        const result = await execPromise(`CA_PASSWORD=${passphrase} sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-disable-crt "${commonName}"`);
-        res.json({ message: 'Certificate disabled successfully' });
+        await execPromise(`CA_PASSWORD=${password} sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-disable-crt "${commonName}"`);
+        res.json({ response: 'Certificate disabled successfully' });
     } catch (error) {
         res.status(400).json({ error: error });
     }
@@ -247,7 +243,7 @@ const execPromise = (command) => {
     return new Promise((resolve, reject) => {
         exec(command, (error, stdout, stderr) => {
             if (error) {
-                return reject(new Error(`Error executing command: ${stderr}`));
+                return reject(new Error(`Executing command: ${stderr}`));
             }
             resolve(stdout.trim());
         });
