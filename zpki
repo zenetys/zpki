@@ -741,6 +741,19 @@ function ca-dump-pkcs12() {
   openssl pkcs12 "${args[@]}"
 }
 
+#X-ACTION ca-test-password: Test if CA passphrase is correct
+function ca-test-password() {
+  PASSWORD=$CA_PASSWORD password-ready || return
+
+  PARAMS=(
+    -in  "$CA_KEYFILE"
+    -noout
+    ${CA_PASSWORD:+-passin env:CA_PASSWORD}
+  )
+  $OPENSSL rsa "${PARAMS[@]}"
+  is-error "Incorrect password" || return
+}
+
 function usage() {
   local IFS=$'\t'
   exec >&2
