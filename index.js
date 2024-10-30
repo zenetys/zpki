@@ -744,6 +744,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
         formContent.innerHTML = '';
 
+        try {
+            if (certData.subject !== '') {
+                var subjectArray = (certData.subject || '')
+                    .replace(/^Subject\s*\(.*?\):\s*/, '')
+                    .split(/(?:\/|\n)/)
+                    .filter(Boolean);
+
+                var cnValue = '';
+                var oValue = '';
+                var ouValue = '';
+
+                subjectArray.forEach(part => {
+                    if (part.startsWith('CN=')) {
+                        cnValue = part.replace('CN=', '');
+                    } else if (part.startsWith('O=')) {
+                        oValue = part.replace('O=', '');
+                    } else if (part.startsWith('OU=')) {
+                        ouValue = part.replace('OU=', '');
+                    }
+                });
+            }
+        } catch {};
+
         switch (action) {
             case 'create':
                 modalTitle.textContent = texts[lang].titles.createMultiSan;
@@ -931,25 +954,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     .catch(error => console.error('Profile loading error:', error));
                 break;
             case 'renew':
-                let subjectArray = (certData.subject || '')
-                    .replace(/^Subject\s*\(.*?\):\s*/, '')
-                    .split(/(?:\/|\n)/)
-                    .filter(Boolean);
-
-                let cnValue = '';
-                let oValue = '';
-                let ouValue = '';
-
-                subjectArray.forEach(part => {
-                    if (part.startsWith('CN=')) {
-                        cnValue = part.replace('CN=', '');
-                    } else if (part.startsWith('O=')) {
-                        oValue = part.replace('O=', '');
-                    } else if (part.startsWith('OU=')) {
-                        ouValue = part.replace('OU=', '');
-                    }
-                });
-
                 modalTitle.textContent = `${texts[lang].titles.renewCert}`;
                 formContent.innerHTML = `
                     <div class="mb-3">
