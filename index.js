@@ -1405,10 +1405,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const sortKey = this.getAttribute('data-sort');
             const currentOrder = this.classList.contains('asc') ? 'desc' : 'asc';
             this.classList.remove('asc', 'desc');
-            this.classList.add(currentOrder);
+            this.classList.add(currentOrder || 'asc');
             sortTable(sortKey, currentOrder);
         });
-    });
+    });    
 
     updateInterface();
     loadCertData();
