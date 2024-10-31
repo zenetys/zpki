@@ -106,14 +106,25 @@
         </table>
     </div>
 
-    <!-- Alert to select profile -->
-    <div class="toast bg-light border-light" id="profileAlert" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false" style="position: fixed; top: 10px; left: 10px; width: 500px; z-index: 9999;">
-        <div class="toast-header" id="sessionExpired">
-            <img src="images/circle-info-solid.svg" class="icon mt-0 me-2">
-            <strong class="me-auto">Session expired</strong>
+    <!-- Alert for general errors -->
+    <div class="toast bg-light border-light" id="basicAlert" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; width: 500px; z-index: 9999;">
+        <div class="toast-header" id="errorFound">
+            <img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2">
+            <strong class="me-auto">Error</strong>
         </div>
-        <div class="toast-body" id="sessionDescription">
-            The session has expired, please select a profile.
+        <div class="toast-body" id="errorDescription">
+            An error has occurred, check the logs for details.
+        </div>
+    </div>
+
+    <!-- Alert on missing certificates -->
+    <div class="toast bg-light border-light" id="listAlert" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; width: 400px; z-index: 9999;">
+        <div class="toast-header" id="missingCertificate">
+            <img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2">
+            <strong class="me-auto">Missing certificates</strong>
+        </div>
+        <div class="toast-body" id="missingDescription">
+            No certificate found, please create one.
         </div>
     </div>
 
@@ -147,6 +158,17 @@
         </div>
         <div class="toast-body" id="incorrectDescription">
             Use a correct format in the SAN input.
+        </div>
+    </div>
+
+    <!-- Alert to select profile -->
+    <div class="toast bg-light border-light" id="profileAlert" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false" style="position: fixed; top: 10px; left: 10px; width: 500px; z-index: 9999;">
+        <div class="toast-header" id="sessionExpired">
+            <img src="images/circle-info-solid.svg" class="icon mt-0 me-2">
+            <strong class="me-auto">Session expired</strong>
+        </div>
+        <div class="toast-body" id="sessionDescription">
+            The session has expired, please select a profile.
         </div>
     </div>
 
