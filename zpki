@@ -432,6 +432,8 @@ function ca-list() {
   local CA_IDXFILE=ca.idx
   local CA_IDZFILE=ca.idz
 
+  [[ ! -s $CA_IDXFILE || ! -s $CA_IDZFILE ]] && { fatal "No certficate found"; return; }
+
   gawk -v "FORMAT_$FORMAT=1" -v IDZFILE=ca.idz < $CA_IDXFILE '
   BEGIN {
     FS="\t";
