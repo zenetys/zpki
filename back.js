@@ -116,7 +116,7 @@ app.get('/list', (req, res, next) => {
 
     checkSudoers();
     exec('sudo -n $PWD/zpki -C ' + srcDir + ' ca-list --json', (error, stdout) => {
-        if (error) return res.status(400).json({ error: error });
+        if (error) return res.status(400).json({ error: 'No certificate found, please create one.' });
         res.json(JSON.parse(stdout));
     });
 });
