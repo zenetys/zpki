@@ -534,19 +534,34 @@ document.addEventListener('DOMContentLoaded', function() {
         rows.forEach(row => certTableBody.appendChild(row));
     }
 
+    // Function to load data & update table
     function loadCertData() {
         let profile;
         fetch('/current-profile')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    showAlert('basicAlert');
+                    return Promise.reject();
+                }
+                return response.json();
+            })
             .then(profileData => {
                 profile = profileData.currentProfile;
                 if (profile === 'Select a profile') {
                     showAlert('profileAlert');
-                    return;
+                    certTableBody.innerHTML = '';
+                    return Promise.reject();
                 }
                 return fetch('/list');
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    showAlert('listAlert');
+                    certTableBody.innerHTML = '';
+                    return Promise.reject();
+                }
+                return response.json();
+            })
             .then(data => {
                 certTableBody.innerHTML = '';
                 data.forEach(cert => {
@@ -732,7 +747,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateInterface();
                 loadPassword();
             })
-            .catch(error => console.error('Certificate loading error:', error));
+            .catch(() => {});
     }
 
     // Function to manage all modals
@@ -880,11 +895,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 showAlert('passphraseAlert');
                                 confirmAction.disabled = false;
                             }
-                        } else {
-                            console.error('Passphrase fetching error:', getPassword.statusText);
                         }
                     } catch (error) {
-                        console.error('Error:', error);
+                        console.error('Creation error:', error);
                     }
                 };
                 break;
@@ -1073,8 +1086,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                 showAlert('passphraseAlert');
                                 confirmAction.disabled = false;
                             }
-                        } else {
-                            console.error('Passphrase fetching error:', getPassword.statusText);
                         }
                     } catch (error) {
                         console.error('Renewal error:', error);
