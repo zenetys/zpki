@@ -1353,7 +1353,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 return fetch('/list');
             })
-            .then(() => loadCertData())
+            .then(() => {
+                isLocked = !isLocked;
+                localStorage.setItem('isLocked', JSON.stringify(isLocked));
+                updateInterface();
+                loadCertData();
+            })
             .catch(error => console.error('Error on profile switch:', error));
     });
 
@@ -1377,7 +1382,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             if (response.ok) {
-                isLocked = false;
+                isLocked = !isLocked;
                 localStorage.setItem('isLocked', JSON.stringify(isLocked));
                 updateInterface();
                 passwordModal.hide();
