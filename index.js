@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', function() {
             undefined: "Unbekannt",
         },
     };    
-    isLocked = lockState !== null ? lockState : true;
+    let isLocked = lockState !== null ? lockState : true;
 
     // Set default language from localStorage or use English as default
     let lang = localStorage.getItem('language') || 'en';
@@ -330,7 +330,6 @@ document.addEventListener('DOMContentLoaded', function() {
         lang = $(this).data('lang');
         localStorage.setItem('language', lang);
         updateLanguage(lang);
-        updateInterface()
         loadCertData();
     });
 
@@ -750,7 +749,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 initializeTooltips();
                 updateInterface();
-                loadPassword();
             })
             .catch(() => {});
     }
@@ -1263,11 +1261,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (fetchedPassword === '') {
             isLocked = true;
-            localStorage.setItem('isLocked', JSON.stringify(isLocked));
-            updateInterface();
-        } else {
-            isLocked = false;
         }
+        saveLock(isLocked);
     }
 
     // Check if the input password is valid
@@ -1340,7 +1335,6 @@ document.addEventListener('DOMContentLoaded', function() {
     lockInterface.addEventListener('click', (e) => {
         e.preventDefault();
         passwordModal.show();
-        loadPassword();
         checkPassword();
     });
 
@@ -1358,12 +1352,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 return fetch('/list');
             })
-            .then(() => {
-                isLocked = !isLocked;
-                localStorage.setItem('isLocked', JSON.stringify(isLocked));
-                updateInterface();
-                loadCertData();
-            })
+            .then(() => loadPassword())
+            .then(() => loadCertData())
             .catch(error => console.error('Error on profile switch:', error));
     });
 
@@ -1387,12 +1377,11 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             if (response.ok) {
-                isLocked = !isLocked;
-                localStorage.setItem('isLocked', JSON.stringify(isLocked));
-                updateInterface();
+                isLocked = false;
                 passwordModal.hide();
                 passwordInput.classList.add('is-valid');
             } else {
+                isLocked = true;
                 passwordInput.classList.add('is-invalid');
                 passwordSubmit.disabled = false;
                 wrongPassword.textContent = `${texts[lang].inputs.wrongPass}`;
@@ -1401,14 +1390,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } else if (password === tmpPassword) {
             isLocked = !isLocked;
-            localStorage.setItem('isLocked', JSON.stringify(isLocked));
-            updateInterface();
             passwordModal.hide();
             passwordInput.classList.add('is-valid');
         } else {
+            isLocked = true;
             passwordSubmit.disabled = false;
             passwordInput.classList.add('is-invalid');
         }
+        saveLock(isLocked);
+        updateInterface();
     });
 
     // Toggle eye on password modal
@@ -1431,7 +1421,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });    
 
-    updateInterface();
-    loadCertData();
     loadPassword();
+    loadCertData();
 });
