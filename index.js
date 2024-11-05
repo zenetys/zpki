@@ -1261,7 +1261,7 @@ document.addEventListener('DOMContentLoaded', function() {
         passwordInput.value = fetchedPassword;
         passwordModalTitle.textContent = `${texts[lang].titles.enterPass}`;
 
-        if (fetchedPassword === '' || fetchedPassword === 'none') {
+        if (fetchedPassword === '') {
             isLocked = true;
             localStorage.setItem('isLocked', JSON.stringify(isLocked));
             updateInterface();
