@@ -412,6 +412,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Save lock state in local storage
+    function saveLock(isLocked) {
+        localStorage.setItem('isLocked', JSON.stringify(isLocked));
+    }
+
     // Show all different alerts
     function showAlert(alert) {
         const showAlert = new bootstrap.Toast(document.getElementById(alert));
