@@ -43,9 +43,9 @@ const checkSudoers = () => {
 };
 
 // Setup
-app.use(rateLimit({ windowMs: 1 * 60 * 1000, max: 1000, message: { error: 'API Rate Limit Exceeded.' }}));
 app.use(cors({ methods: ['GET', 'POST'] }));
 app.use(express.static(__dirname));
+app.use(rateLimit({ windowMs: 1 * 60 * 1000, max: 1000, message: { error: 'API Rate Limit Exceeded.' }}));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
