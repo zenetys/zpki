@@ -62,27 +62,9 @@ app.use(session({
     }
 }));
 
-// Route to serve index.html
+// Route to serve main page & select a default profile
 app.get('/', (req, res) => {
-    if (!req.session.currentProfile) {
-        const directoryPath = __dirname;
-        fs.readdir(directoryPath, { withFileTypes: true }, (err, files) => {
-            if (err) {
-                return res.status(500).json({ error: 'Unable to scan directory: ' + err });
-            }
-            const profiles = files
-                .filter(file => file.isDirectory() && file.name !== 'images' && file.name !== '.git')
-                .map(file => file.name);
-
-            if (profiles.length > 0) {
-                req.session.currentProfile = profiles[0];
-                srcDir = path.join(__dirname, req.session.currentProfile);
-            } else {
-                return res.status(404).json({ error: 'No valid profiles found.' });
-            }
-            res.sendFile(path.join(__dirname, 'index.html'));
-        });
-    } else {
+    if (req.session.currentProfile) {
         srcDir = path.join(__dirname, req.session.currentProfile);
         res.sendFile(path.join(__dirname, 'index.html'));
     }
@@ -103,8 +85,21 @@ app.get('/profiles', (req, res) => {
 
 // Route to get current profile
 app.get('/current-profile', (req, res) => {
-    const currentProfile = req.session.currentProfile || 'Select a profile';
-    res.json({ currentProfile });
+    const currentProfile = req.session.currentProfile;
+    if (!currentProfile) {
+        fs.readdir(__dirname, { withFileTypes: true }, (err, files) => { 
+            if (err) {
+                return res.status(500).json({ error: 'Unable to scan directory: ' + err });
+            } else {
+                const currentProfile = path.join(__dirname, files.filter(file => file.isDirectory() && file.name !== '.git' && file.name !== 'images' && file.name !== 'node_modules').map(file => file.name)[0]).split('/').pop()
+                res.json({ currentProfile });
+            }
+        });
+    } else if (currentProfile) {
+        res.json({ currentProfile });
+    } else {
+        return 'Select a profile';
+    }
 });
 
 // Route to get the list of certificates
