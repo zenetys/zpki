@@ -15,12 +15,12 @@
         <form id="certForm">
             <div class="form-group">
                 <!-- Lock interface button -->
-                <button class="btn btn-secondary rounded-3 float-end me-2" id="lockInterface">
+                <button class="btn btn-danger rounded-3 float-end me-2" id="lockInterface">
                     <img src="images/lock-white-solid.svg" class="icon"/>
                 </button>
 
                 <!-- Create a certificate -->
-                <button class="btn btn-secondary rounded-3 me-2" id="createBtn">
+                <button class="btn btn-secondary rounded-3 me-2 disabled" id="createBtn">
                     <img src="images/plus-solid.svg" class="icon"/>
                 </button>
 
@@ -114,6 +114,17 @@
         </div>
         <div class="toast-body" id="errorDescription">
             An error has occurred, check the logs for details.
+        </div>
+    </div>
+
+    <!-- Alert if too many requests -->
+    <div class="toast bg-light border-light" id="requestsAlert" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; width: 700px; z-index: 9999;">
+        <div class="toast-header" id="requestsLimit">
+            <img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2">
+            <strong class="me-auto">Too many requests</strong>
+        </div>
+        <div class="toast-body" id="requestsDescription">
+            You have made too many requests, wait a minute before trying again.
         </div>
     </div>
 
