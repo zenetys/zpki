@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
 
-@keyframes crossAnimation {
+/* Wobble animation (disable icon) */
+@keyframes wobble {
     0% { transform: rotate(0deg); }
     25% { transform: rotate(15deg); }
     50% { transform: rotate(-15deg); }
@@ -8,6 +9,7 @@
     100% { transform: rotate(0deg); }
 }
 
+/* Global styles */
 * {
     font-family: 'Poppins', sans-serif;
     scroll-behavior: smooth;
@@ -19,6 +21,7 @@
     padding: 0;
 }
 
+/* Sticky page top */
 #certForm {
     position: sticky;
     top: 0;
@@ -29,15 +32,18 @@
     z-index: 99;
 }
 
+/* Page display */
 .form-group {
     display: flex;
     align-items: center;
 }
 
+/* Modal borders */
 .modal-content {
     border-radius: 30px;
 }
 
+/* Dropdowns */
 .dropdown-toggle {
     white-space: nowrap; 
 }
@@ -68,6 +74,7 @@
     color: inherit;
 }
 
+/* Checkboxes */
 .cert-checkbox {
     width: 20px;
     height: 20px;
@@ -95,6 +102,7 @@
     border: 2px solid #343a40;
 }
 
+/* Icons */
 .icon {
     width: 1em;
     height: 1em;
@@ -103,10 +111,7 @@
     transition: 0.5s ease;
 }
 
-td.highlight {
-    color: #e94848;
-}
-
+/* Buttons */
 .button-container .btn-status {
     min-width: 120px;
 }
@@ -162,9 +167,10 @@ td.highlight {
     rotate: 180deg;
 }
 .btn-action:hover .wobble-icon {
-    animation: crossAnimation 0.5s ease-in-out forwards;
+    animation: wobble 0.5s ease-in-out forwards;
 }
 
+/* Tooltips */
 .tooltip-container {
     position: relative;
     display: inline-block;
@@ -228,6 +234,12 @@ th.resizable:hover {
     border-radius: 10px;
 }
 
+/* Highlight search */
+td.highlight {
+    color: #e94848;
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
     display: none;
 }
