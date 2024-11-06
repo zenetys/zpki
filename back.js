@@ -91,8 +91,8 @@ app.get('/current-profile', (req, res) => {
             if (err) {
                 return res.status(500).json({ error: 'Unable to scan directory: ' + err });
             } else {
-                const currentProfile = path.join(__dirname, files.filter(file => file.isDirectory() && file.name !== '.git' && file.name !== 'images' && file.name !== 'node_modules').map(file => file.name)[0]).split('/').pop()
-                res.json({ currentProfile });
+                srcDir = path.join(__dirname, files.filter(file => file.isDirectory() && file.name !== '.git' && file.name !== 'images' && file.name !== 'node_modules').map(file => file.name)[0]).split('/').pop()
+                res.json({ currentProfile: srcDir });
             }
         });
     } else if (currentProfile) {
