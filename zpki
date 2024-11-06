@@ -899,7 +899,7 @@ else
 fi
 
 if [[ $ACTION == create-cnf ]]; then
-  create-cnf ${CNFFILE:-CA_CNFFILE}
+  create-cnf ${CNFFILE:-$CA_CNFFILE}
   exit $?
 elif [[ $ACTION == create-ca ]]; then
   SUBJECT=${SUBJECT:-"/CN=Certificate Authority"}
