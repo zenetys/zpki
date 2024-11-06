@@ -1319,12 +1319,23 @@ document.addEventListener('DOMContentLoaded', function() {
     certSearchInput.addEventListener('input', function() {
         const searchText = encodeName(this.value).toLowerCase();
         const rows = certTableBody.querySelectorAll('tr');
+        let matchFound = false;
         rows.forEach(row => {
-            const match = Array.from(row.querySelectorAll('td')).some(cell => 
-                encodeName(cell.textContent).toLowerCase().includes(searchText)
-            );
-            row.style.display = match ? '' : 'none';
+            const cells = row.querySelectorAll('td');
+            let match = false;
+    
+            cells.forEach(cell => {
+                cell.classList.remove('highlight');
+                const cellText = encodeName(cell.textContent).toLowerCase();
+                if (cellText.includes(searchText) && searchText) {
+                    cell.classList.add('highlight');
+                    match = true;
+                }
+            });
+            row.style.display = searchText === '' || match ? '' : 'none';
+            matchFound = matchFound || match;
         });
+        if (!matchFound && searchText) showAlert('searchAlert');
     });
 
     // Open modal & load password
