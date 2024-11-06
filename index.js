@@ -468,9 +468,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function sortTable(sortKey, order) {
         const rows = Array.from(certTableBody.querySelectorAll('tr'));
 
-        if (!sortKey || sortKey === 'selectBox' || sortKey === 'downloads') {
-            return;
-        }
+        if (!sortKey || sortKey === 'selectBox' || sortKey === 'downloads') return;
 
         rows.sort((a, b) => {
             const cellA = a.querySelector(`td[data-sort="${sortKey}"]`);
@@ -649,9 +647,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             const checkboxes = document.querySelectorAll('.cert-checkbox');
                             const isAnyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
 
-                            if (status === 'D' || isAnyChecked) {
-                                return;
-                            }
+                            if (status === 'D' || isAnyChecked) return;
 
                             btn.style.display = 'none';
                             actionButtons.style.display = 'flex';
@@ -701,9 +697,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked || checkbox.disabled);
                     
                     checkboxes.forEach(checkbox => {
-                        if (!checkbox.disabled) {
-                            checkbox.checked = !allChecked;
-                        }
+                        if (!checkbox.disabled) checkbox.checked = !allChecked;
                     });
                 });
 
@@ -1249,12 +1243,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Utility function to fetch password from the server
     async function fetchPassword() {
         const response = await fetch('/get-password');
-        if (!response.ok) throw new Error('Request failed');
+        if (response.status === 429) showAlert('requestsAlert');
+        else if (!response.ok) throw new Error('Request failed');
         return (await response.json()).pkiaccess;
     }
 
     // Load password and update interface
     async function loadPassword() {
+
         const fetchedPassword = await fetchPassword();
         passwordInput.value = fetchedPassword;
         passwordModalTitle.textContent = `${texts[lang].titles.enterPass}`;
@@ -1419,7 +1415,7 @@ document.addEventListener('DOMContentLoaded', function() {
             this.classList.add(currentOrder || 'asc');
             sortTable(sortKey, currentOrder);
         });
-    });    
+    });
 
     loadPassword();
     loadCertData();
