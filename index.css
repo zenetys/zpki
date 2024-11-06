@@ -103,6 +103,10 @@
     transition: 0.5s ease;
 }
 
+td.highlight {
+    color: #e94848;
+}
+
 .button-container .btn-status {
     min-width: 120px;
 }
