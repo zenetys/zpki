@@ -57,79 +57,140 @@ Options:
      └─ Dump the content of a private key (.key) file
  ca-dump-pkcs12 [KEYFILE]
      └─ Dump the content of certificate in the pkcs12 format
+ ca-test-password
+     └─ Test if CA passphrase is correct
 
 For Subject Alternative Names (SANs), add address type: DNS:<FQDN>, IP:ADDR
 ```
 
 
-### Example
+### Examples
 
-#### Setting Up a CA
+#### Create a Certificate Authority (CA) without passphrase
 ```
-$ mkdir /tmp/test-pki
-$ cd /tmp/test-pki
-$ zpki -y -c none create-ca "EXAMPLE CA"
+$ zpki -C ca-no-passphrase -y -c none create-ca "EXAMPLE CA"
+```
+```
 : openssl genrsa -out ca.key 4096
-: openssl req -batch -new -x509 -days 366 -out ca.crt -key ca.key -subj '/CN=EXAMPLE CA' -config ca.cnf -extensions ca_ext
+ca.cnf: already exists, bypass
+ca.key: already exists, bypass
+: openssl req -batch -new -x509 -days 366 -utf8 -out ca.crt -key ca.key -subj '/CN=EXAMPLE CA' -config ca.cnf -extensions ca_ext
 ```
 
-#### Creating Certificates
+#### Create a Certificate Authority (CA) with passphrase
 ```
-$ zpki -y -c none create-crt "Certificate Example 1"
-: openssl genrsa -out private/Certificate_Example_1.key 4096
-: openssl req -batch -new -utf8 -out certs/Certificate_Example_1.csr -key private/Certificate_Example_1.key -subj '/CN=Certificate Example 1'
-: openssl ca -config ca.cnf -batch -in certs/Certificate_Example_1.csr -out certs/Certificate_Example_1.crt -days 366 -extensions x509v3_ext
-: openssl ca -config ca.cnf -updatedb
-
-$ zpki -y -c none create-crt "Certificate Example 2"
-: openssl genrsa -out private/Certificate_Example_2.key 4096
-: openssl req -batch -new -utf8 -out certs/Certificate_Example_2.csr -key private/Certificate_Example_2.key -subj '/CN=Certificate Example 2'
-: openssl ca -config ca.cnf -batch -in certs/Certificate_Example_2.csr -out certs/Certificate_Example_2.crt -days 366 -extensions x509v3_ext
-: openssl ca -config ca.cnf -updatedb
+$ zpki -C ca-with-passphrase -y create-ca "EXAMPLE CA PASSPHRASE"
 ```
-
-#### Revoking a Certificate
 ```
-$ zpki -y -c none ca-revoke-crt "Certificate Example 1"
-: openssl ca -config ca.cnf -batch -revoke certs/Certificate_Example_1.crt -gencrl
+: openssl genrsa -out ca.key -aes256 4096
+Enter PEM pass phrase: *********
+Verifying - Enter PEM pass phrase: *********
+ca.cnf: already exists, bypass
+ca.key: already exists, bypass
+: openssl req -batch -new -x509 -days 366 -utf8 -out ca.crt -key ca.key -subj '/CN=EXAMPLE CA PASSPHRASE' -config ca.cnf -extensions ca_ext
+Enter pass phrase for ca.key: *********
 ```
 
-#### Renewing a Certificate
+#### Create Certificates
 ```
-$ zpki -y -c none ca-update-crt "Certificate Example 2"
-: openssl ca -config ca.cnf -batch -revoke certs/Certificate_Example_2.crt -gencrl certs/Certificate_Example_2.csr: already exists, bypass
-: openssl ca -config ca.cnf -batch -in certs/Certificate_Example_2.csr -out certs/Certificate_Example_2.crt -days 366 -extensions x509v3_ext
-: openssl ca -config ca.cnf -updatedb
+$ zpki -C ca-no-passphrase -y -c none ca-create-crt "Certificate Example"
+```
+```
+: openssl genrsa -out private/Certificate_Example.key 4096
+: openssl req -batch -new -utf8 -out certs/Certificate_Example.csr -key private/Certificate_Example.key -subj '/CN=Certificate Example'
+: openssl ca -config ca.cnf -batch -in certs/Certificate_Example.csr -out certs/Certificate_Example.crt -days 366 -extensions x509v3_ext
+: openssl ca -updatedb -config ca.cnf -batch
 ```
 
-#### Listing Certificates
 ```
-$ zpki ca-list --json | jq
+$ zpki -C ca-with-passphrase -y -c none ca-create-crt "Certificate Example Passphrase"
+```
+```
+: openssl genrsa -out private/Certificate_Example_Passphrase.key 4096
+: openssl req -batch -new -utf8 -out certs/Certificate_Example_Passphrase.csr -key private/Certificate_Example_Passphrase.key -subj '/CN=Certificate Example Passphrase'
+: openssl ca -config ca.cnf -batch -in certs/Certificate_Example_Passphrase.csr -out certs/Certificate_Example_Passphrase.crt -days 366 -extensions x509v3_ext
+Enter pass phrase for ./ca.key: *********
+: openssl ca -updatedb -config ca.cnf -batch
+Enter pass phrase for ./ca.key: *********
+```
+
+#### Renew a Certificate
+```
+$ zpki -C ca-no-passphrase -y ca-update-crt "Certificate Example"
+```
+```
+: openssl ca -config ca.cnf -batch -revoke certs/Certificate_Example.crt -gencrl
+certs/Certificate_Example.csr: already exists, bypass
+: openssl ca -config ca.cnf -batch -in certs/Certificate_Example.csr -out certs/Certificate_Example.crt -days 366 -extensions x509v3_ext
+: openssl ca -updatedb -config ca.cnf -batch
+```
+
+```
+$ zpki -C ca-with-passphrase -y ca-update-crt "Certificate Example Passphrase"
+```
+```
+: openssl ca -config ca.cnf -batch -revoke certs/Certificate_Example_Passphrase.crt -gencrl
+Enter pass phrase for ./ca.key: *********
+certs/Certificate_Example_Passphrase.csr: already exists, bypass
+: openssl ca -config ca.cnf -batch -in certs/Certificate_Example_Passphrase.csr -out certs/Certificate_Example_Passphrase.crt -days 366 -extensions x509v3_ext
+Enter pass phrase for ./ca.key: *********
+: openssl ca -updatedb -config ca.cnf -batch
+Enter pass phrase for ./ca.key: *********
+```
+
+#### Revoke a Certificate
+```
+$ zpki -C ca-no-passphrase -y ca-revoke-crt "Certificate Example"
+```
+```
+: openssl ca -config ca.cnf -batch -revoke certs/Certificate_Example.crt -gencrl
+```
+
+```
+$ zpki -C ca-with-passphrase -y ca-revoke-crt "Certificate Example"
+```
+```
+: openssl ca -config ca.cnf -batch -revoke certs/Certificate_Example_Passphrase.crt -gencrl
+Enter pass phrase for ./ca.key: *********
+```
+
+#### Disable a Certificate
+```
+$ zpki -C ca-no-passphrase -y ca-disable-crt "Certificate Example"
+```
+```
+: openssl ca -config ca.cnf -batch -revoke certs/Certificate_Example.crt -gencrl
+INFO: '/CN=Certificate Example' disabled
+```
+
+```
+$ zpki -C ca-with-passphrase -y ca-disable-crt "Certificate Example Passphrase"
+```
+```
+: openssl ca -config ca.cnf -batch -revoke certs/Certificate_Example_Passphrase.crt -gencrl
+Enter pass phrase for ./ca.key: *********
+INFO: '/CN=Certificate Example Passphrase' disabled
+```
+
+#### List the certificates of a CA
+```
+$ zpki -C ca-no-passphrase ca-list --json | jq
+```
+```
 [
   {
-    "status": "V",
-    "expiration": "2025-10-05T18:36:31+02+00",
-    "serial": "905DF0B1A0E4",
-    "id": "Certificate Example 1",
-    "hash": "68efa5ed",
-    "issuer": "/CN=EXAMPLE CA",
-    "cn": "Certificate Example 1",
-    "subject": "/CN=Certificate Example 1",
-    "startDate": "2024-10-04T20:36:31+02:00",
-    "endDate": "2025-10-05T18:36:31+02+00"
-  },
-  {
-    "status": "V",
-    "expiration": "2025-10-05T18:36:35+02+00",
-    "serial": "905DF0B1A0E5",
-    "id": "Certificate Example 2",
-    "hash": "358813ab",
-    "issuer": "/CN=EXAMPLE CA",
-    "cn": "Certificate Example 2",
-    "subject": "/CN=Certificate Example 2",
-    "startDate": "2024-10-04T20:36:35+02:00",
-    "endDate": "2025-10-05T18:36:35+02+00"
+    "status": "D",
+    "expiration": "2025-11-07T09:40:41+01:00",
+    "revocation": "2024-11-06T09:41:07+01:00",
+    "serial": "10EE6C717433",
+    "id": "Certificate Example",
+    "hash": "a443978b",
+    "issuer": "/CN=Certificate Example",
+    "cn": "Certificate Example",
+    "subject": "/CN=Certificate Example",
+    "startDate": "2024-11-06T10:40:41+01:00",
+    "endDate": "2025-11-07T09:40:41+01:00",
+    "keyStatus": "plain"
   }
 ]
 ```
-
