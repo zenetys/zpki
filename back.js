@@ -90,13 +90,12 @@ app.get('/', (req, res) => {
 
 // Route to get all available profiles
 app.get('/profiles', (req, res) => {
-    const directoryPath = __dirname;
-    fs.readdir(directoryPath, { withFileTypes: true }, (err, files) => {
+    fs.readdir(__dirname, { withFileTypes: true }, (err, files) => {
         if (err) {
             return res.status(500).json({ error: 'Unable to scan directory: ' + err });
         }
         const profiles = files
-            .filter(file => file.isDirectory() && file.name !== 'images' && file.name !== '.git')
+            .filter(file => file.isDirectory() && file.name !== '.git' && file.name !== 'images' && file.name !== 'node_modules')
             .map(file => file.name);
         res.json(profiles);
     });
