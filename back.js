@@ -282,6 +282,7 @@ app.post('/set-password', async (req, res, next) => {
     const { ca_password } = req.body;
 
     if (!srcDir) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!ca_password) return res.status(400).json({ error: 'Passphrase argument is empty.' });
 
     try {
         await checkSudoers();
