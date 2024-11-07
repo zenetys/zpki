@@ -162,6 +162,28 @@
         </div>
     </div>
 
+    <!-- Alert if already selected IP-->
+    <div class="toast bg-light border-light" id="IPAlert" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; width: 550px; z-index: 9999;">
+        <div class="toast-header" id="incorrectIP">
+            <img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/>
+            <strong class="me-auto">Incorrect IP</strong>
+        </div>
+        <div class="toast-body" id="incorrectIPDescription">
+            This IP adress is already selected, select another one.
+        </div>
+    </div>
+
+    <!-- Alert if already selected DNS-->
+    <div class="toast bg-light border-light" id="DNSAlert" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; width: 500px; z-index: 9999;">
+        <div class="toast-header" id="incorrectDNS">
+            <img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/>
+            <strong class="me-auto">Incorrect DNS</strong>
+        </div>
+        <div class="toast-body" id="incorrectDNSDescription">
+            This DNS is already selected, select another one.
+        </div>
+    </div>
+
     <!-- Alert if incorrect passphrase -->
     <div class="toast bg-light border-light" id="passphraseAlert" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; width: 550px; z-index: 9999;">
         <div class="toast-header" id="incorrectPassphrase">
