@@ -525,6 +525,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => {
                 if (!response.ok) {
                     showAlert('basicAlert');
+                    certTableBody.innerHTML = '';
                     return Promise.reject();
                 }
                 return response.json();
