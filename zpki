@@ -405,7 +405,7 @@ function ca-create-crt() {
   )
   $OPENSSL ca "${PARAMS[@]}"
   is-error "Cannot sign request '$CSRFILE' to '$CRTFILE'" || return
-  ca-update-db "$CRTFILE" >> ca.idz
+  ca-update-db "$CRTFILE"
 }
 
 #X-ACTION ca-update-db: Reload all certificates in the ca.idz file
