@@ -410,6 +410,7 @@ function ca-create-crt() {
 
 #X-ACTION ca-update-db: Reload all certificates in the ca.idz file
 function ca-update-db() {
+  local crtfile=$1; shift
   local serial keyfile
   PARAMS=(
     -updatedb
@@ -418,8 +419,13 @@ function ca-update-db() {
     ${CA_PASSWORD:+-passin env:CA_PASSWORD}
   )
   $OPENSSL ca "${PARAMS[@]}"
-  rm -f ca.idz.new
-  find certs -maxdepth 1 -type f -name "*.crt" | while read -r; do
+
+  local IFS=$'\n'
+  if [[ -n $crtfile ]]; then
+    echo "$crtfile"
+  else
+    find certs -maxdepth 1 -type f -name "*.crt"
+  fi |while read -r; do
     serial=$(openssl x509 -in $REPLY -noout -serial) || continue
     serial=${serial#*=}
     keyfile=${REPLY%.crt}.key
@@ -429,10 +435,16 @@ function ca-update-db() {
     fi
   done
 
-  echo -n > ca.idz.new
-  find certs.new -maxdepth 1 -type f -name "*.pem" | while read -r; do
-    ca-update-dump-crt "$REPLY" >> ca.idz.new
-  done
+  if [[ -n $crtfile ]]; then
+    cp -a ca.idz ca.idz.new
+    echo "$crtfile"
+  else
+    > ca.idz.new
+    find certs.new -maxdepth 1 -type f -name "*.pem" |
+      sed -re 's,/,/0x,' |sort -t / -k 2g |sed -re 's,/0x,/,'
+  fi |while read -r; do
+    ca-update-dump-crt "$REPLY"
+  done >> ca.idz.new
   echo "Updated ca.idz file"
   mv -f ca.idz.new ca.idz
 }
