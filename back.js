@@ -187,8 +187,8 @@ app.post('/create', async (req, res, next) => {
             -C "${srcDir}" \
             -y ${password === '' ? '-c none' : ''} \
             ca-create-crt "${subject === '' ? commonName : subject}" \
-            ${(sanIP || []).map(ip => `IP:${ip}`).join(' ')} \
-            ${(sanDNS || []).map(dns => `DNS:${dns}`).join(' ')}
+            ${sanIP && sanIP.length > 0 ? sanIP.map(ip => `IP:${ip}`).join(' ') : ''} \
+            ${sanDNS && sanDNS.length > 0 ? sanDNS.map(dns => `DNS:${dns}`).join(' ') : ''}
         `);
         res.json({ response: 'Certificate created successfully!' });
     } catch (error) {
