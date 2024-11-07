@@ -699,6 +699,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const footerContent = document.getElementById('footerContent');
 
         formContent.innerHTML = '';
+        footerContent.innerHTML = '';
+        footerContent.style.display = '';
 
         try {
             if (certData.subject !== '') {
