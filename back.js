@@ -108,12 +108,18 @@ app.get('/current-profile', (req, res) => {
 // Route to get the list of certificates
 app.get('/list', (req, res, next) => {
     if (!srcDir) return res.status(400).json({ error: 'Current profile directory is not set.' });
-    }
 
-    checkSudoers();
-    exec('sudo -n $PWD/zpki -C ' + srcDir + ' ca-list --json', (error, stdout) => {
-        if (error) return res.status(400).json({ error: 'No certificate found, please create one.' });
-        res.json(JSON.parse(stdout));
+    try {
+        checkSudoers();
+        exec('sudo -n $PWD/zpki -C ' + srcDir + ' ca-list --json', (error, stdout) => {
+            if (error) return res.status(400).json({ error: 'No certificate found, please create one.' });
+            res.json(JSON.parse(stdout));
+        });
+    } catch (error) {
+        res.status(400).json({ error: 'Error while listing certificates.' });
+    }
+});
+
     });
 });
 
