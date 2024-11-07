@@ -878,7 +878,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 // type: type + '_ext',
                                 startDate: startDate,
                                 endDate: endDate,
-                                password: password.pkiaccess
+                                ca_password: password.pkiaccess
                             };
 
                             const response = await fetch('/create', {
@@ -1069,7 +1069,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 type: type,
                                 startDate: startDate,
                                 endDate: endDate,
-                                password: password.pkiaccess
+                                ca_password: password.pkiaccess
                             };
 
                             const response = await fetch('/renew', {
@@ -1124,7 +1124,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             const response = await fetch('/revoke', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ commonName: commonName, password: password.pkiaccess })
+                                body: JSON.stringify({ commonName: commonName, ca_password: password.pkiaccess })
                             });
                     
                             if (response.ok) {
@@ -1173,7 +1173,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             const response = await fetch('/disable', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ commonName: commonName, password: password.pkiaccess })
+                                body: JSON.stringify({ commonName: commonName, ca_password: password.pkiaccess })
                             });
                     
                             if (response.ok) {
@@ -1373,7 +1373,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('passwordForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const passwordSubmit = document.getElementById('passwordSubmit');
-        const password = passwordInput.value.trim() || 'none';
+        const ca_password = passwordInput.value.trim() || 'none';
         const tmpPassword = await fetchPassword();
 
         passwordSubmit.disabled = true;
@@ -1382,7 +1382,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const response = await fetch('/set-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password }),
+                body: JSON.stringify({ ca_password }),
             });
 
             if (response.ok) {
@@ -1397,7 +1397,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 wrongPassword.style.display = 'block';
                 showAlert('passphraseAlert');
             }
-        } else if (password === tmpPassword) {
+        } else if (ca_password === tmpPassword) {
             isLocked = !isLocked;
             passwordModal.hide();
             passwordInput.classList.add('is-valid');
