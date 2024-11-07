@@ -140,6 +140,8 @@ app.post('/switch-profile', (req, res) => {
 // Route to create certificates
 app.post('/create', async (req, res, next) => {
     const { commonName, subject, sanIP, sanDNS, ca_password } = req.body;
+    const type = 'server_ext'; // Will be used above in the future
+    const password = ''; // Will be used above in the future
 
     if (!srcDir) {
         return res.status(400).json({ error: 'Current profile directory is not set.' });
@@ -155,7 +157,17 @@ app.post('/create', async (req, res, next) => {
 
     try {
         await checkSudoers();
-        await execPromise(`CA_PASSWORD=${password} sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-create-crt "${subject === '' ? commonName : subject}"`);
+        await execPromise(`
+            CA_PASSWORD=${ca_password} \
+            PASSWORD=${password === '' ? '' : password} \
+            EXT=${type} \
+            sudo -n $PWD/zpki \
+            -C "${srcDir}" \
+            -y ${password === '' ? '-c none' : ''} \
+            ca-create-crt "${subject === '' ? commonName : subject}" \
+            ${(sanIP || []).map(ip => `IP:${ip}`).join(' ')} \
+            ${(sanDNS || []).map(dns => `DNS:${dns}`).join(' ')}
+        `);
         res.json({ response: 'Certificate created successfully' });
     } catch (error) {
         res.status(400).json({ error: error });
@@ -180,7 +192,13 @@ app.post('/renew', async (req, res, next) => {
 
     try {
         await checkSudoers();
-        await execPromise(`CA_PASSWORD=${password} sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-update-crt "${commonName}"`);
+        await execPromise(`
+            CA_PASSWORD=${ca_password} \
+            sudo -n $PWD/zpki \
+            -C "${srcDir}" \
+            -y -c none \
+            ca-update-crt "${commonName}"
+        `);
         res.json({ response: 'Certificate renewed successfully' });
     } catch (error) {
         res.status(400).json({ error: error });
@@ -205,7 +223,13 @@ app.post('/revoke', async (req, res, next) => {
 
     try {
         await checkSudoers();
-        await execPromise(`CA_PASSWORD=${password} sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-revoke-crt "${commonName}"`);
+        await execPromise(`
+            CA_PASSWORD=${ca_password} \
+            sudo -n $PWD/zpki \
+            -C "${srcDir}" \
+            -y -c none \
+            ca-revoke-crt "${commonName}"
+        `);
         res.json({ response: 'Certificate revoked successfully' });
     } catch (error) {
         res.status(400).json({ error: error });
@@ -230,7 +254,13 @@ app.post('/disable', async (req, res, next) => {
 
     try {
         await checkSudoers();
-        await execPromise(`CA_PASSWORD=${password} sudo -n $PWD/zpki -C "${srcDir}" -y -c none ca-disable-crt "${commonName}"`);
+        await execPromise(`
+            CA_PASSWORD=${ca_password} \
+            sudo -n $PWD/zpki \
+            -C "${srcDir}" \
+            -y -c none \
+            ca-disable-crt "${commonName}"
+        `);
         res.json({ response: 'Certificate disabled successfully' });
     } catch (error) {
         res.status(400).json({ error: error });
@@ -259,8 +289,13 @@ app.post('/set-password', async (req, res, next) => {
 
     try {
         await checkSudoers();
-        await execPromise(`CA_PASSWORD=${password} sudo -n $PWD/zpki -C "${srcDir}" ca-test-password`);
-        req.session.pkiaccess = password;
+        await execPromise(`
+            CA_PASSWORD=${ca_password} \
+            sudo -n $PWD/zpki \
+            -C "${srcDir}" \
+            ca-test-password
+        `);
+        req.session.pkiaccess = ca_password;
         return res.json({ response: 'Passphrase saved!' });
     } catch (error) {
         res.status(400).json({ error: 'Incorrect passphrase' });
