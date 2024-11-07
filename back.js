@@ -139,7 +139,7 @@ app.post('/switch-profile', (req, res) => {
 
 // Route to create certificates
 app.post('/create', async (req, res, next) => {
-    const { commonName, subject, password } = req.body;
+    const { commonName, subject, sanIP, sanDNS, ca_password } = req.body;
 
     if (!srcDir) {
         return res.status(400).json({ error: 'Current profile directory is not set.' });
@@ -164,7 +164,7 @@ app.post('/create', async (req, res, next) => {
 
 // Route to renew certificates
 app.post('/renew', async (req, res, next) => {
-    const { commonName, password } = req.body;
+    const { commonName, ca_password } = req.body;
 
     if (!srcDir) {
         return res.status(400).json({ error: 'Current profile directory is not set.' });
@@ -189,7 +189,7 @@ app.post('/renew', async (req, res, next) => {
 
 // Route to revoke certificates
 app.post('/revoke', async (req, res, next) => {
-    const { commonName, password } = req.body;
+    const { commonName, ca_password } = req.body;
 
     if (!srcDir) {
         return res.status(400).json({ error: 'Current profile directory is not set.' });
@@ -214,7 +214,7 @@ app.post('/revoke', async (req, res, next) => {
 
 // Route to disable certificates
 app.post('/disable', async (req, res, next) => {
-    const { commonName, password } = req.body;
+    const { commonName, ca_password } = req.body;
 
     if (!srcDir) {
         return res.status(400).json({ error: 'Current profile directory is not set.' });
@@ -251,7 +251,7 @@ const execPromise = (command) => {
 
 // Route to define session passphrase
 app.post('/set-password', async (req, res, next) => {
-    const { password } = req.body;
+    const { ca_password } = req.body;
 
     if (!srcDir) {
         return res.status(400).json({ error: 'Current profile directory is not set.' });
