@@ -849,10 +849,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
                 break;
             case 'view':
+                let profile;
                 fetch('/current-profile')
-                    .then(response => response.json())
-                    .then(data => {
-                        const profile = data.currentProfile;
+                    .then(response => {
+                        if (!response.ok) {
+                            showAlert('basicAlert');
+                            return Promise.reject();
+                        }
+                        return response.json();
+                    })
+                    .then(async profileData => {
+                        profile = profileData.currentProfile;
+                        if (profile === 'Select a profile') {
+                            showAlert('profileAlert');
+                            certTableBody.innerHTML = '';
+                            return Promise.reject();
+                        }
+                        const commonName = certData.id;
+                        const response = await fetch(`/subject-alt?cert=${commonName}`);
+                        const subjAlt = await response.json();
+                        const dnsList = subjAlt.dns || [];
+                        const ipList = subjAlt.ip || [];
 
                         let subjectArray = (certData.subject || '')
                             .replace(/^Subject\s*\(.*?\):\s*/, '')
@@ -876,13 +893,13 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <p><strong>${texts[lang].headers.serial}:</strong> ${certData.serial ? certData.serial : `${texts[lang].undefined}`}</p>
                                 <p><strong>${texts[lang].headers.signature}:</strong> ${certData.hash ? certData.hash : `${texts[lang].undefined}`}</p>
 
-                                <p><strong>IP:</strong> ${certData.ip && certData.ip.length > 0 
-                                    ? certData.ip.map(ip => `<span>${ip}</span>`).join(', ') 
+                                <p><strong>IP:</strong> ${ipList.length > 0
+                                    ? ipList.map(ip => `<span>${ip}</span>`).join(', ')
                                     : `${texts[lang].modals.missing.IP}`}
                                 </p>
 
-                                <p><strong>DNS:</strong> ${certData.dns && certData.dns.length > 0 
-                                    ? certData.dns.map(dns => `<span>${dns}</span>`).join(', ') 
+                                <p><strong>DNS:</strong> ${dnsList.length > 0
+                                    ? dnsList.map(dns => `<span>${dns}</span>`).join(', ')
                                     : `${texts[lang].modals.missing.DNS}`}
                                 </p>
 
