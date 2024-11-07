@@ -87,7 +87,7 @@ default_md             = ${DIGEST}
 distinguished_name     = distinguished_name
 
 [ x509 ]
-x509_extensions        = x509v3_ext
+x509_extensions        = server_ext
 
 [ crl ]
 authorityKeyIdentifier = keyid:always
@@ -108,7 +108,17 @@ keyUsage               = cRLSign, keyCertSign
 # subjectAltName         = email:copy
 # issuerAltName          = issuer:copy
 
-[ x509v3_ext ]
+[ server_ext ]
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid,issuer
+basicConstraints       = CA:false
+# nsCertType             = @nsCertType_section
+# keyUsage               = @keyUsage_section
+# extendedKeyUsage       = @extendedKeyUsage_section
+# subjectAltName         = email:copy
+# issuerAltName          = issuer:copy
+
+[ user_ext ]
 subjectKeyIdentifier   = hash
 authorityKeyIdentifier = keyid,issuer
 basicConstraints       = CA:false
@@ -335,7 +345,7 @@ function create-self() {
     -key "$KEYFILE"
     ${SUBJECT:+-subj "$SUBJECT"}
     ${SUBJALT:+-addext "subjectAltName=$SUBJALT"}
-    -config "$CNFFILE" -extensions ${EXT:-x509v3_ext}
+    -config "$CNFFILE" -extensions ${EXT:-server_ext}
     ${PASSWORD:+-passin env:PASSWORD}
   )
   $OPENSSL req "${PARAMS[@]}"
@@ -390,7 +400,7 @@ function ca-create-crt() {
     -in  "$CSRFILE"
     -out "$CRTFILE"
     -days "$NUMDAYS"
-    -extensions ${EXT:-x509v3_ext}
+    -extensions ${EXT:-server_ext}
     ${CA_PASSWORD:+-passin env:CA_PASSWORD}
   )
   $OPENSSL ca "${PARAMS[@]}"
