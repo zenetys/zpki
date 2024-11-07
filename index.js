@@ -815,6 +815,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div id="addedDnsNames" class="mt-2"></div>
                         </div>
                     </div>
+                    <!--
                     <div class="mb-3">
                         <label for="type" class="form-label">${texts[lang].modals.type}</label>
                         <select class="form-select" id="type" name="type">
@@ -822,6 +823,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <option value="user">${texts[lang].modals.selector.select2}</option>
                         </select>
                     </div>
+                    -->
                     <div class="mb-3">
                         <label for="startDate" class="form-label">${texts[lang].headers.startDate}</label>
                         <input type="datetime-local" class="form-control" id="startDate" value="">
@@ -842,8 +844,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     const org = document.getElementById('org').value.trim();
                     const orgUnit = document.getElementById('orgunit').value.trim();
                     const sanIP = Array.from(document.getElementById('addedSanIP').children).map(el => el.innerText);
-                    const type = document.getElementById('type').value;
                     const sanDNS = Array.from(document.getElementById('addedDnsNames').children).map(el => el.innerText);
+                    // const type = document.getElementById('type').value;
                     const startDate = document.getElementById('startDate').value;
                     const endDate = document.getElementById('endDate').value;
                     const confirmAction = document.getElementById('confirmAction');
@@ -872,8 +874,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 commonName: commonName,
                                 subject: subject,
                                 sanIP: sanIP,
-                                type: type,
                                 sanDNS: sanDNS,
+                                // type: type + '_ext',
                                 startDate: startDate,
                                 endDate: endDate,
                                 password: password.pkiaccess
