@@ -120,6 +120,33 @@ app.get('/list', (req, res, next) => {
     }
 });
 
+// Route to get DNS & IP data
+app.get('/subject-alt', (req, res, next) => {
+    const commonName = req.query.cert;
+
+    if (!srcDir) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
+    if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}). Only alphanumeric characters, spaces, hyphens, and underscores are allowed, and the length must be between 1 and 64 characters.` });
+
+    exec(`sudo -n $PWD/zpki -C "${srcDir}" ca-display-crt "${commonName}" --json`, (error, stdout) => {
+        if (error || !stdout) return res.status(400).json({ error: 'Certficate not found.' });
+
+        try {
+            const jsonOutput = JSON.parse(stdout);
+            const san = jsonOutput["X509v3 Subject Alternative Name"];
+            if (!san) return res.json({ error: 'SAN not found.' });
+
+            const dns = [], ip = [];
+            san.split(',').forEach(part => {
+                part = part.trim();
+                if (part.startsWith('DNS:')) dns.push(part.split(':')[1].trim());
+                else if (part.startsWith('IP Address:')) ip.push(part.split(':')[1].trim());
+            });
+
+            res.json({ dns, ip });
+        } catch (e) {
+            res.status(500).json({ error: 'Error while listing alternative names.' });
+        }
     });
 });
 
