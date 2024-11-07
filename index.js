@@ -1351,19 +1351,21 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('switchMenu').addEventListener('click', function() {
         hideAlert('profileAlert');
 
-        fetch('/current-profile')
-            .then(response => response.json())
-            .then(profileData => {
-                const profile = profileData.currentProfile;
-                if (profile === 'Select a profile') {
-                    showAlert('profileAlert');
-                    return;
-                }
-                return fetch('/list');
-            })
-            .then(() => loadPassword())
-            .then(() => loadCertData())
-            .catch(error => console.error('Error on profile switch:', error));
+        setTimeout(() => {
+            fetch('/current-profile')
+                .then(response => response.json())
+                .then(profileData => {
+                    const profile = profileData.currentProfile;
+                    if (profile === 'Select a profile') {
+                        showAlert('profileAlert');
+                        return;
+                    }
+                    return fetch('/list');
+                })
+                .then(() => loadPassword())
+                .then(() => loadCertData())
+                .catch(error => console.error('Error on profile switch:', error));
+        }, 100);
     });
 
     // Check password while input
