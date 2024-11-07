@@ -804,12 +804,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         <label class="form-label">${texts[lang].modals.subject}</label>
                         <div id="sanContainer">
                             <div class="input-group mb-2">
-                                <input type="text" class="form-control" placeholder="IP" id="sanIp">
+                                <input type="text" class="form-control" placeholder="IP" id="sanIP">
                                 <button class="btn btn border" type="button" id="addIpButton">+</button>
                             </div>
                             <div id="addedSanIP" class="mt-2"></div>
                             <div class="input-group mb-2">
-                                <input type="text" class="form-control" placeholder="DNS" id="sanDns">
+                                <input type="text" class="form-control" placeholder="DNS" id="sanDNS">
                                 <button class="btn btn border" type="button" id="addDnsButton">+</button>
                             </div>
                             <div id="addedDnsNames" class="mt-2"></div>
@@ -842,8 +842,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     const org = document.getElementById('org').value.trim();
                     const orgUnit = document.getElementById('orgunit').value.trim();
                     const sanIP = Array.from(document.getElementById('addedSanIP').children).map(el => el.innerText);
-                    const sanDns = Array.from(document.getElementById('addedDnsNames').children).map(el => el.innerText);
                     const type = document.getElementById('type').value;
+                    const sanDNS = Array.from(document.getElementById('addedDnsNames').children).map(el => el.innerText);
                     const startDate = document.getElementById('startDate').value;
                     const endDate = document.getElementById('endDate').value;
                     const confirmAction = document.getElementById('confirmAction');
@@ -872,8 +872,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 commonName: commonName,
                                 subject: subject,
                                 sanIP: sanIP,
-                                sanDns: sanDns,
                                 type: type,
+                                sanDNS: sanDNS,
                                 startDate: startDate,
                                 endDate: endDate,
                                 password: password.pkiaccess
@@ -997,14 +997,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         <label class="form-label">SAN (Subject Alternative Name)</label>
                         <div id="sanContainer">
                             <div class="input-group mb-2">
-                                <input type="text" class="form-control" placeholder="IP" id="sanIp" value="${certData.ip && certData.ip.length > 0 
+                                <input type="text" class="form-control" placeholder="IP" id="sanIP" value="${certData.ip && certData.ip.length > 0 
                                     ? certData.ip.map(ip => `<span>${ip}</span>`).join(', ') 
                                     : ''}">
                                 <button class="btn btn border" type="button" id="addIpButton">+</button>
                             </div>
                             <div id="addedSanIP" class="mt-2"></div>
                             <div class="input-group mb-2">
-                                <input type="text" class="form-control" placeholder="DNS" id="sanDns" value="${certData.dns && certData.dns.length > 0 
+                                <input type="text" class="form-control" placeholder="DNS" id="sanDNS" value="${certData.dns && certData.dns.length > 0 
                                     ? certData.dns.map(dns => `<span>${dns}</span>`).join(', ') 
                                     : ''}">
                                 <button class="btn btn border" type="button" id="addDnsButton">+</button>
@@ -1039,7 +1039,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const org = document.getElementById('org').value.trim();
                     const orgUnit = document.getElementById('orgunit').value.trim();
                     const sanIP = Array.from(document.getElementById('addedSanIP').children).map(el => el.innerText);
-                    const sanDns = Array.from(document.getElementById('addedDnsNames').children).map(el => el.innerText);
+                    const sanDNS = Array.from(document.getElementById('addedDnsNames').children).map(el => el.innerText);
                     const type = document.getElementById('type').value;
                     const startDate = document.getElementById('startDate').value;
                     const endDate = document.getElementById('endDate').value;
@@ -1063,7 +1063,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 commonName: commonName,
                                 subject: subject,
                                 sanIP: sanIP,
-                                sanDns: sanDns,
+                                sanDNS: sanDNS,
                                 type: type,
                                 startDate: startDate,
                                 endDate: endDate,
@@ -1207,7 +1207,7 @@ document.addEventListener('DOMContentLoaded', function() {
             endDate.value = new Date(now.setFullYear(now.getFullYear() + 1, now.getMonth(), now.getDate() + 1) - offset).toISOString().slice(0, 16);
 
             addIpButton.onclick = function() {
-                const ipValue = document.getElementById('sanIp').value;
+                const ipValue = document.getElementById('sanIP').value;
                 if (ipValue) {
                     if (isValidIPv4(ipValue) || isValidIPv6(ipValue)) {
                         const ipList = document.getElementById('addedSanIP');
@@ -1215,7 +1215,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             ${ipValue}
                             <button class="btn btn-sm btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>`;
-                        document.getElementById('sanIp').value = '';
+                        document.getElementById('sanIP').value = '';
                     } else {
                         showAlert('incorrectAlert');
                     }
@@ -1223,7 +1223,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
 
             addDnsButton.onclick = function() {
-                const dnsValue = document.getElementById('sanDns').value;
+                const dnsValue = document.getElementById('sanDNS').value;
                 if (dnsValue) {
                     if (isValidDNS(dnsValue)) {
                         const dnsList = document.getElementById('addedDnsNames');
@@ -1231,7 +1231,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             ${dnsValue}
                             <button class="btn btn-sm btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>`;
-                        document.getElementById('sanDns').value = '';
+                        document.getElementById('sanDNS').value = '';
                     } else {
                         showAlert('incorrectAlert');
                     }
