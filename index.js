@@ -1307,6 +1307,8 @@ document.addEventListener('DOMContentLoaded', function() {
             matchFound = matchFound || match;
         });
         if (!matchFound && searchText) showAlert('searchAlert');
+        else hideAlert('searchAlert');
+    });
     });
 
     // Open modal & load password
