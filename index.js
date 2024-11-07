@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             undefined: "Unbekannt",
         },
-    };    
+    };
     let isLocked = lockState !== null ? lockState : true;
 
     // Set default language from localStorage or use English as default
@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function() {
     $(`#languageMenu .dropdown-item[data-lang="${lang}"]`).addClass('active').find('.checkmark').show();
 
     // Hide checkmarks for other languages
-    $('#languageMenu .dropdown-item').not(`[data-lang="${lang}"]`).find('.checkmark').hide(); 
+    $('#languageMenu .dropdown-item').not(`[data-lang="${lang}"]`).find('.checkmark').hide();
 
     // Language switcher
     $('#languageMenu .dropdown-item').click(function () {
@@ -363,9 +363,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateInterface() {
         const checkboxes = document.querySelectorAll('.cert-checkbox');
         if (!isLocked) {
-            checkboxes.forEach(checkbox => {
-                checkbox.disabled = false;
-            });
+            checkboxes.forEach(checkbox => { checkbox.disabled = false; });
             createBtn.classList.remove('disabled');
             createBtn.classList.remove('btn-secondary');
             createBtn.classList.add('btn-primary');
@@ -373,9 +371,7 @@ document.addEventListener('DOMContentLoaded', function() {
             lockInterface.classList.add('btn-success');
             lockInterface.innerHTML = `<img src="images/unlock-solid.svg" class="icon"/>`;
         } else {
-            checkboxes.forEach(checkbox => {
-                checkbox.disabled = true;
-            });
+            checkboxes.forEach(checkbox => { checkbox.disabled = true; });
             createBtn.classList.add('disabled');
             createBtn.classList.remove('btn-primary');
             createBtn.classList.add('btn-secondary');
@@ -395,20 +391,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 confirmAction.classList.remove('btn-success', 'btn-danger');
                 confirmAction.disabled = !commonName.value;
     
-                if (!commonName.value) {
-                    confirmAction.classList.add('btn-danger');
-                } else {
-                    confirmAction.classList.add('btn-primary');
-                }
+                if (!commonName.value) confirmAction.classList.add('btn-danger');
+                else confirmAction.classList.add('btn-primary');
             };
         }
     }    
 
     // Initialize tool tips
     function initializeTooltips() {
-        $('[data-bs-toggle="tooltip"]').tooltip({
-            html: true
-        });
+        $('[data-bs-toggle="tooltip"]').tooltip({ html: true });
     }
 
     // Save lock state in local storage
@@ -418,13 +409,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Show all different alerts
     function showAlert(alert) {
-        const showAlert = new bootstrap.Toast(document.getElementById(alert));
-        showAlert.show();
+        new bootstrap.Toast(document.getElementById(alert)).show();
     }
 
     function hideAlert(alert) {
-        const hideAlert = new bootstrap.Toast(document.getElementById(alert));
-        hideAlert.hide();
+        new bootstrap.Toast(document.getElementById(alert)).hide();
     }
 
     // Verify if is a valid IPv4 format
@@ -516,23 +505,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 const numericA = parseInt(nameA.replace(/\D/g, ''), 10);
                 const numericB = parseInt(nameB.replace(/\D/g, ''), 10);
 
-                if (numericA !== numericB) {
-                    return order === 'asc' ? numericA - numericB : numericB - numericA;
-                }
-                return order === 'asc'
-                    ? nameA.localeCompare(nameB)
-                    : nameB.localeCompare(nameA);
+                if (numericA !== numericB) return order === 'asc' ? numericA - numericB : numericB - numericA;
+                return order === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
             }
 
             // Default sorting for other text fields
             const valueA = cellA.textContent.trim();
             const valueB = cellB.textContent.trim();
 
-            return order === 'asc'
-                ? valueA.localeCompare(valueB)
-                : valueB.localeCompare(valueA);
+            return order === 'asc' ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
         });
-
         rows.forEach(row => certTableBody.appendChild(row));
     }
 
@@ -568,29 +550,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 certTableBody.innerHTML = '';
                 data.forEach(cert => {
                     const status = cert.status;
-                    let statusColor, statusBtn, statusText;
-
-                    if (status === 'V') {
-                        statusColor = 'success';
-                        statusText = texts[lang].status.valid;
-                        statusBtn = `<img src="images/circle-check-solid.svg" class="icon me-1"/> ${statusText}`;
-                    } else if (status === 'E') {
-                        statusColor = 'warning';
-                        statusText = texts[lang].status.expired;
-                        statusBtn = `<img src="images/triangle-exclamation-solid.svg" class="icon me-1"/> ${statusText}`;
-                    } else if (status === 'R') {
-                        statusColor = 'danger';
-                        statusText = texts[lang].status.revoked;
-                        statusBtn = `<img src="images/circle-xmark-solid.svg" class="icon me-1"/> ${statusText}`;
-                    } else if (status === 'D') {
-                        statusColor = 'dark';
-                        statusText = texts[lang].status.disabled;
-                        statusBtn = `<img src="images/circle-minus-solid.svg" class="icon me-1"/> ${statusText}`;
-                    } else {
-                        statusColor = 'secondary';
-                        statusText = texts[lang].status.unknown;
-                        statusBtn = `<img src="images/question-solid.svg" class="icon me-1"/> ${statusText}`;
-                    }
+                    const statusMap = {
+                        V: { color: 'success', icon: 'circle-check-solid.svg', textKey: 'valid' },
+                        E: { color: 'warning', icon: 'triangle-exclamation-solid.svg', textKey: 'expired' },
+                        R: { color: 'danger', icon: 'circle-xmark-solid.svg', textKey: 'revoked' },
+                        D: { color: 'dark', icon: 'circle-minus-solid.svg', textKey: 'disabled' },
+                        default: { color: 'secondary', icon: 'question-solid.svg', textKey: 'unknown' }
+                    };
+                    
+                    const { color: statusColor, icon, textKey } = statusMap[status] || statusMap.default;
+                    const statusText = texts[lang].status[textKey];
+                    const statusBtn = `<img src="images/${icon}" class="icon me-1"/> ${statusText}`;
 
                     const row = document.createElement('tr');
                     row.innerHTML = `
@@ -634,9 +604,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     row.querySelector('.disable').addEventListener('click', () => showModal('disable', cert));
 
                     row.addEventListener('click', function(event) {
-                        if (!event.target.closest('.check-container') && !event.target.closest('.status-container') && !event.target.closest('.download-container')) {
-                            showModal('view', cert);
-                        }
+                        if (!event.target.closest('.check-container') && !event.target.closest('.status-container') 
+                            && !event.target.closest('.download-container')) { showModal('view', cert); }
                     });
 
                     // On line hover, show / hide action buttons
@@ -667,7 +636,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Shift + click checkboxes
                 let lastChecked = null;
                 const checkboxes = document.querySelectorAll('.cert-checkbox');
-
                 checkboxes.forEach(checkbox => {
                     checkbox.addEventListener('click', function(e) {
                         e.stopPropagation();
@@ -679,13 +647,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (e.shiftKey) {
                             let inBetween = false;
                             checkboxes.forEach(cb => {
-                                if (cb === this || cb === lastChecked) {
-                                    inBetween = !inBetween;
-                                }
-
-                                if (inBetween && !cb.disabled) {
-                                    cb.checked = this.checked;
-                                }
+                                if (cb === this || cb === lastChecked) inBetween = !inBetween;
+                                if (inBetween && !cb.disabled) cb.checked = this.checked;
                             });
                         }
                         lastChecked = this;
@@ -695,10 +658,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Select all checkboxes on header click
                 selectBoxHeader.addEventListener('click', function() {
                     const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked || checkbox.disabled);
-                    
-                    checkboxes.forEach(checkbox => {
-                        if (!checkbox.disabled) checkbox.checked = !allChecked;
-                    });
+                    checkboxes.forEach(checkbox => { if (!checkbox.disabled) checkbox.checked = !allChecked; });
                 });
 
                 // Tooltips
@@ -706,11 +666,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
                 // Hide tooltips on mouse out
-                document.addEventListener('mouseout', function() {
-                    tooltipList.forEach(tooltip => {
-                        tooltip.hide();
-                    });
-                });
+                document.addEventListener('mouseout', function() { tooltipList.forEach(tooltip => { tooltip.hide(); }); });
 
                 // Popovers
                 var popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
@@ -719,27 +675,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Set popovers for downloads
                 popoverTriggerList.forEach((triggerEl) => {
                     triggerEl.addEventListener('click', function(event) {
-                        popoverList.forEach(popover => {
-                            if (popover._element !== this) {
-                                popover.hide();
-                            }
-                        });
+                        popoverList.forEach(popover => { if (popover._element !== this) popover.hide(); });
                         const popoverInstance = bootstrap.Popover.getInstance(this);
-                        if (popoverInstance) {
-                            popoverInstance.hide();
-                        } else {
-                            new bootstrap.Popover(this).show();
-                        }
+                        if (popoverInstance) popoverInstance.hide();
+                        else new bootstrap.Popover(this).show();
                         event.stopPropagation();
                     });
                 });
 
                 // Hide popovers on outside click
-                document.addEventListener('click', function() {
-                    popoverList.forEach(popover => {
-                        popover.hide();
-                    });
-                });
+                document.addEventListener('click', function() { popoverList.forEach(popover => { popover.hide(); }); });
 
                 initializeTooltips();
                 updateInterface();
@@ -915,11 +860,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             ? subjectArray.map(el => `<span>${el}</span>`).join('<br>')
                             : `${texts[lang].undefined}`;
 
-                        if (subjectArray.length === 1) {
-                            splitSubject = `<span>${subjectArray[0]}</span>`;
-                        } else {
-                            splitSubject = `<br>${splitSubject}`;
-                        }
+                        if (subjectArray.length === 1) splitSubject = `<span>${subjectArray[0]}</span>`;
+                        else splitSubject = `<br>${splitSubject}`;        
 
                         modalTitle.textContent = `${texts[lang].titles.viewCert}`;
                         formContent.innerHTML = `
@@ -927,7 +869,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <p><strong>${texts[lang].modals.CA}:</strong> ${certData.issuer ? certData.issuer : `${texts[lang].undefined}`}</p>
                                 <p><strong>${texts[lang].modals.CN}:</strong> ${certData.id ? certData.id : `${texts[lang].undefined}`}</p>
                                 <p><strong>${texts[lang].modals.SUBJ}:</strong> ${splitSubject}</p>
-                    
+
                                 <p><strong>${texts[lang].headers.serial}:</strong> ${certData.serial ? certData.serial : `${texts[lang].undefined}`}</p>
                                 <p><strong>${texts[lang].headers.signature}:</strong> ${certData.hash ? certData.hash : `${texts[lang].undefined}`}</p>
 
@@ -1252,14 +1194,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load password and update interface
     async function loadPassword() {
-
         const fetchedPassword = await fetchPassword();
         passwordInput.value = fetchedPassword;
         passwordModalTitle.textContent = `${texts[lang].titles.enterPass}`;
 
-        if (fetchedPassword === '') {
-            isLocked = true;
-        }
+        if (fetchedPassword === '') isLocked = true;
         saveLock(isLocked);
     }
 
@@ -1290,9 +1229,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!isValid) {
                 wrongPassword.textContent = `${texts[lang].inputs.wrongPass}`;
                 wrongPassword.style.display = 'block';
-            } else {
-                rightPassword.textContent = `${texts[lang].inputs.rightPass}`;
-            }
+            } else rightPassword.textContent = `${texts[lang].inputs.rightPass}`;
         } else {
             passwordSubmit.disabled = false;
             passwordSubmit.className = 'btn btn-primary float-end mt-3';
@@ -1350,21 +1287,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Reload interface on profile switch
     document.getElementById('switchMenu').addEventListener('click', function() {
         hideAlert('profileAlert');
-
         setTimeout(() => {
-            fetch('/current-profile')
-                .then(response => response.json())
-                .then(profileData => {
-                    const profile = profileData.currentProfile;
-                    if (profile === 'Select a profile') {
-                        showAlert('profileAlert');
-                        return;
-                    }
-                    return fetch('/list');
-                })
-                .then(() => loadPassword())
-                .then(() => loadCertData())
-                .catch(error => console.error('Error on profile switch:', error));
+            loadPassword();
+            loadCertData();
         }, 100);
     });
 
