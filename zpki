@@ -687,7 +687,7 @@ function ca-update-dump-crt() {
   [[ -z $CRTFILE ]] && fatal "Function needs an argument" && return
   [[ -e $CRTFILE ]] || fatal "Cannot get $CRTFILE"
   [[ -z $KEYFILE ]] && {
-    KEYFILE=${CRTFILE%.pem}.key
+    KEYFILE=${CRTFILE%.*}.key
     KEYFILE=private/${KEYFILE##*/}
   }
   for A in hash=$(openssl x509 -in "$CRTFILE" -noout -hash -serial \
