@@ -340,6 +340,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if ([texts['en'].titles.selectProfile, texts['fr'].titles.selectProfile, texts['es'].titles.selectProfile, texts['de'].titles.selectProfile].includes(currentText)) {
             $('#switchCurrentCA').html(texts[lang].titles.selectProfile);
         }
+        $('#passwordModalTitle').html(texts[lang].titles.enterPass);
         $('#sessionExpired').html(`<img src="images/circle-info-solid.svg" class="icon mt-0 me-2"> ${texts[lang].titles.sessionExpired}`);
         $('#sessionDescription').html(`${texts[lang].titles.sessionDescription}`);
         $('#incorrectFormat').html(`<img src="images/circle-info-solid.svg" class="icon mt-0 me-2"> ${texts[lang].titles.incorrectFormat}`);
@@ -1230,7 +1231,6 @@ document.addEventListener('DOMContentLoaded', function() {
     async function loadPassword() {
         const fetchedPassword = await fetchPassword();
         passwordInput.value = fetchedPassword;
-        passwordModalTitle.textContent = `${texts[lang].titles.enterPass}`;
 
         if (fetchedPassword === '') isLocked = true;
         saveLock(isLocked);
