@@ -1504,9 +1504,9 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('thead th').forEach(header => {
         header.addEventListener('dblclick', function() {
             const sortKey = this.getAttribute('data-sort');
-            const currentOrder = this.classList.contains('asc') ? 'desc' : 'asc';
+            const currentOrder = this.classList.contains('desc') ? 'asc' : 'desc';
             this.classList.remove('asc', 'desc');
-            this.classList.add(currentOrder || 'asc');
+            this.classList.add(currentOrder || 'desc');
             sortTable(sortKey, currentOrder);
         });
     });
