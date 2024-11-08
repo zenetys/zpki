@@ -976,6 +976,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div id="addedDnsNames" class="mt-2"></div>
                         </div>
                     </div>
+                    <!--
                     <div class="mb-3">
                         <label for="type" class="form-label">${texts[lang].modals.type}</label>
                         <select class="form-select" id="type" name="type">
@@ -983,6 +984,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <option value="user">${texts[lang].modals.selector.select2}</option>
                         </select>
                     </div>
+                    -->
                     <div class="mb-3">
                         <label for="startDate" class="form-label">${texts[lang].headers.startDate}</label>
                         <input type="datetime-local" class="form-control" id="startDate" value="">
@@ -1004,7 +1006,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const orgUnit = document.getElementById('orgunit').value.trim();
                     const sanIP = Array.from(document.getElementById('addedSanIP').children).map(el => el.innerText);
                     const sanDNS = Array.from(document.getElementById('addedDnsNames').children).map(el => el.innerText);
-                    const type = document.getElementById('type').value;
+                    // const type = document.getElementById('type').value;
                     const startDate = document.getElementById('startDate').value;
                     const endDate = document.getElementById('endDate').value;
                     const confirmAction = document.getElementById('confirmAction');
@@ -1028,7 +1030,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 subject: subject,
                                 sanIP: sanIP,
                                 sanDNS: sanDNS,
-                                type: type,
+                                // type: type + '_ext',
                                 startDate: startDate,
                                 endDate: endDate,
                                 ca_password: password.pkiaccess
