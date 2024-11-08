@@ -432,10 +432,26 @@ document.addEventListener('DOMContentLoaded', function() {
         $('#passwordSubmit').html(texts[lang].actions.confirm);
 
         // Alerts
-        $('#sessionExpired').html(`<img src="images/circle-info-solid.svg" class="icon mt-0 me-2"> ${texts[lang].titles.sessionExpired}`);
-        $('#sessionDescription').html(texts[lang].titles.sessionDescription);
-        $('#incorrectFormat').html(`<img src="images/circle-info-solid.svg" class="icon mt-0 me-2"> ${texts[lang].titles.incorrectFormat}`);
-        $('#incorrectDescription').html(texts[lang].titles.incorrectDescription);
+        $('#errorFound').html(`<img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.errorFound}</strong>`);
+        $('#errorFoundDescription').html(texts[lang].alerts.descriptions.errorFoundDescription);
+        $('#incorrectCN').html(`<img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectCN}</strong>`);
+        $('#incorrectCNDescription').html(texts[lang].alerts.descriptions.incorrectCNDescription);
+        $('#incorrectDNS').html(`<img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectDNS}</strong>`);
+        $('#incorrectDNSDescription').html(texts[lang].alerts.descriptions.incorrectDNSDescription);
+        $('#incorrectFormat').html(`<img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectFormat}</strong>`);
+        $('#incorrectFormatDescription').html(texts[lang].alerts.descriptions.incorrectFormatDescription);
+        $('#incorrectIP').html(`<img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectIP}</strong>`);
+        $('#incorrectIPDescription').html(texts[lang].alerts.descriptions.incorrectIPDescription);
+        $('#incorrectPassphrase').html(`<img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectPassphrase}</strong>`);
+        $('#incorrectPassphraseDescription').html(texts[lang].alerts.descriptions.incorrectPassphraseDescription);
+        $('#missingCertificate').html(`<img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.missingCertificate}</strong>`);
+        $('#missingCertificateDescription').html(texts[lang].alerts.descriptions.missingCertificateDescription);
+        $('#requestsLimit').html(`<img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.requestsLimit}</strong>`);
+        $('#requestsLimitDescription').html(texts[lang].alerts.descriptions.requestsLimitDescription);
+        $('#searchFailed').html(`<img src="images/circle-info-solid.svg" class="icon mt-0"/> <strong class="m-auto">${texts[lang].alerts.errors.searchFailed}</strong> <img src="images/circle-info-solid.svg" class="icon mt-0"/>`);
+        $('#searchFailedDescription').html(texts[lang].alerts.descriptions.searchFailedDescription);
+        $('#sessionExpired').html(`<img src="images/circle-info-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.sessionExpired}</strong>`);
+        $('#sessionExpiredDescription').html(texts[lang].alerts.descriptions.sessionExpiredDescription);        
 
         // Languages dropdown
         $('#english').html(`${texts[lang].lang.english} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
@@ -1282,7 +1298,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         };
                         ipList.appendChild(ipItem);
                         document.getElementById('sanIP').value = '';
-                    } else showAlert('incorrectAlert');
+                    } else showAlert('formatAlert');
                 } else if (ipExists) showAlert('IPAlert');
             };
 
@@ -1304,7 +1320,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         };
                         dnsList.appendChild(dnsItem);
                         document.getElementById('sanDNS').value = '';
-                    } else showAlert('incorrectAlert');
+                    } else showAlert('formatAlert');
                 } else if (dnsExists) showAlert('DNSAlert');
             };
         }
