@@ -340,6 +340,9 @@ document.addEventListener('DOMContentLoaded', function() {
             $('#switchCurrentCA').html(texts[lang].titles.selectProfile);
         }
         $('#passwordModalTitle').html(texts[lang].titles.enterPass);
+        $('#password').attr('placeholder', texts[lang].modals.enterPass);
+        $('#passwordSubmit').html(texts[lang].actions.confirm);
+
         $('#sessionExpired').html(`<img src="images/circle-info-solid.svg" class="icon mt-0 me-2"> ${texts[lang].titles.sessionExpired}`);
         $('#sessionDescription').html(`${texts[lang].titles.sessionDescription}`);
         $('#incorrectFormat').html(`<img src="images/circle-info-solid.svg" class="icon mt-0 me-2"> ${texts[lang].titles.incorrectFormat}`);
