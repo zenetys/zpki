@@ -483,7 +483,7 @@ function ca-list() {
       printf("%s\t", "subject");
       printf("%s\t", "issuer");
       printf("%s\t", "email");
-      printf("%s\n", "hash");
+      printf("%s\t", "hash");
       printf("%s\n", "keyStatus");
       # printf("%s\t", "filename");
     }
