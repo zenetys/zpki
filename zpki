@@ -893,9 +893,6 @@ if [[ $COMMON_NAME ]]; then
   for ((i=1;i<${#ARGS[@]};i++)) ; do
     SUBJALT="${SUBJALT:+$SUBJALT,}${ARGS[i]}"
   done
-else
-  $ACTION "${ARGS[@]}"
-  exit $?
 fi
 
 if [[ $ACTION == create-cnf ]]; then
@@ -904,6 +901,9 @@ if [[ $ACTION == create-cnf ]]; then
 elif [[ $ACTION == create-ca ]]; then
   SUBJECT=${SUBJECT:-"/CN=Certificate Authority"}
   create-ca
+  exit $?
+elif [[ -z $COMMON_NAME ]]; then
+  $ACTION "${ARGS[@]}"
   exit $?
 fi
 
