@@ -334,27 +334,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update the language
     function updateLanguage(lang) {
-        // Update top page content
-        const currentText = $('#switchCurrentCA').html();
-        if ([texts['en'].titles.selectProfile, texts['fr'].titles.selectProfile, texts['es'].titles.selectProfile, texts['de'].titles.selectProfile].includes(currentText)) {
-            $('#switchCurrentCA').html(texts[lang].titles.selectProfile);
-        }
+        // Search Bar
+        $('#certSearch').attr('placeholder', texts[lang].titles.searchBar);
+
+        // Password modal
         $('#passwordModalTitle').html(texts[lang].titles.enterPass);
         $('#password').attr('placeholder', texts[lang].modals.enterPass);
         $('#passwordSubmit').html(texts[lang].actions.confirm);
 
+        // Alerts
         $('#sessionExpired').html(`<img src="images/circle-info-solid.svg" class="icon mt-0 me-2"> ${texts[lang].titles.sessionExpired}`);
-        $('#sessionDescription').html(`${texts[lang].titles.sessionDescription}`);
+        $('#sessionDescription').html(texts[lang].titles.sessionDescription);
         $('#incorrectFormat').html(`<img src="images/circle-info-solid.svg" class="icon mt-0 me-2"> ${texts[lang].titles.incorrectFormat}`);
-        $('#incorrectDescription').html(`${texts[lang].titles.incorrectDescription}`);
-        $('#certSearch').attr('placeholder', texts[lang].titles.searchBar);
-        $('#passwordSubmit').html(`${texts[lang].actions.confirm}`);
+        $('#incorrectDescription').html(texts[lang].titles.incorrectDescription);
+
+        // Languages dropdown
         $('#english').html(`${texts[lang].lang.english} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
         $('#french').html(`${texts[lang].lang.french} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
         $('#spanish').html(`${texts[lang].lang.spanish} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
         $('#german').html(`${texts[lang].lang.german} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
-        
-        // Update table headers
+
+        // Table headers
         $('th[data-sort="status"]').html(`<img src="images/chart-simple-solid.svg" class="icon me-1"/> ${texts[lang].headers.status}`);
         $('th[data-sort="commonName"]').html(`<img src="images/file-lines-solid.svg" class="icon me-1"/> ${texts[lang].headers.commonName}`);
         $('th[data-sort="serial"]').html(`<img src="images/hashtag-solid.svg" class="icon me-1"/> ${texts[lang].headers.serial}`);
