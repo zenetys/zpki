@@ -509,6 +509,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Update URL parameters
+    function updateUrlAndLoadData(searchTerm, tags) {
+        const params = new URLSearchParams();
+        if (searchTerm) params.append("s", searchTerm);
+        if (tags.length > 0) params.append("tags", tags.join(","));
+        history.pushState({}, "", `${location.pathname}?${params}`);
+        loadCertData(searchTerm, tags);
+    }
+
+    // Get selected tags
+    function getSelectedTags() {
+        const tags = [];
+        if (document.getElementById("tagValid").classList.contains("active")) tags.push("valid");
+        if (document.getElementById("tagExpired").classList.contains("active")) tags.push("expired");
+        if (document.getElementById("tagRevoked").classList.contains("active")) tags.push("revoked");
+        if (document.getElementById("tagDisabled").classList.contains("active")) tags.push("disabled");
+        return tags;
+    }
+
     // Initialize tool tips
     function initializeTooltips() {
         $('[data-bs-toggle="tooltip"]').tooltip({ html: true });
@@ -661,6 +680,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(data => {
                 certTableBody.innerHTML = '';
+                let anyMatchFound = false;
                 data.forEach(cert => {
                     const status = cert.status;
                     const statusMap = {
@@ -670,14 +690,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         D: { color: 'dark', icon: 'circle-minus-solid.svg', textKey: 'disabled' },
                         default: { color: 'secondary', icon: 'question-solid.svg', textKey: 'unknown' }
                     };
-                    
+
                     const { color: statusColor, icon, textKey } = statusMap[status] || statusMap.default;
                     const statusText = texts[lang].status[textKey];
                     const statusBtn = `<img src="images/${icon}" class="icon me-1"/> ${statusText}`;
 
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td class="text-center check-container"><input type="checkbox" class="cert-checkbox" data-id="${cert.id}" ${status === 'D' ? 'disabled' : ''}></td>                        
+                        <td class="text-center check-container"><input type="checkbox" class="cert-checkbox" data-id="${cert.id}" ${status === 'D' ? 'disabled' : ''}></td>
                         <td class="status-container" data-sort="status">
                             <div class="button-container">
                                 <button class="btn btn-ssm btn-status btn-${statusColor} rounded-pill" data-id="${cert.id}">${statusBtn}</button>
@@ -710,6 +730,20 @@ document.addEventListener('DOMContentLoaded', function() {
                         </td>
                     `;
                     certTableBody.appendChild(row);
+
+                    const matchTags = tags.length === 0 || tags.includes(textKey);
+                    const matchSearch = searchTerm === '' || row.textContent.includes(searchTerm);
+
+                    if (matchTags && matchSearch) {
+                        anyMatchFound = true;
+                        row.style.display = '';
+                        if (searchTerm !== '') {
+                            row.querySelectorAll('td').forEach(cell => {
+                                if (cell.textContent.includes(searchTerm)) cell.classList.add('highlight');
+                                else cell.classList.remove('highlight');
+                            });
+                        }
+                    } else row.style.display = 'none';
 
                     // On action buttons click, show modal
                     row.querySelector('.renew').addEventListener('click', () => showModal('renew', cert));
@@ -798,6 +832,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Hide popovers on outside click
                 document.addEventListener('click', function() { popoverList.forEach(popover => { popover.hide(); }); });
+
+                if (searchTerm !== '' && !anyMatchFound) showAlert('searchAlert');
+                else hideAlert('searchAlert');
 
                 initializeTooltips();
                 updateInterface();
@@ -1496,6 +1533,23 @@ document.addEventListener('DOMContentLoaded', function() {
             sortTable(sortKey, currentOrder);
         });
     });
+
+    // Tags toggle
+    document.querySelectorAll(".btn-ssm").forEach(button => {
+        button.addEventListener("click", () => {
+            button.classList.toggle("active");
+            const searchTerm = certSearchInput.value;
+            const tags = getSelectedTags();
+            updateUrlAndLoadData(searchTerm, tags);
+        });
+    });
+
+    if (searchTerm) certSearchInput.value = searchTerm;
+    if (tagsParam) tags = tagsParam.split(',').map(tag => tag.trim());
+    if (tags.includes("valid")) document.getElementById("tagValid").classList.add("opacity-75");
+    if (tags.includes("expired")) document.getElementById("tagExpired").classList.add("opacity-75");
+    if (tags.includes("revoked")) document.getElementById("tagRevoked").classList.add("opacity-75");
+    if (tags.includes("disabled")) document.getElementById("tagDisabled").classList.add("opacity-75");
 
     loadPassword();
     loadCertData(searchTerm, tags);
