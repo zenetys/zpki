@@ -1,14 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const lockState = JSON.parse(localStorage.getItem('isLocked'));
-    const createBtn = document.getElementById('createBtn');
-    const certSearchInput = document.getElementById('certSearch');
-    const certTableBody = document.getElementById('certTableBody');
-    const selectBoxHeader = document.querySelector('[data-sort="selectBox"]');
-    const lockInterface = document.getElementById('lockInterface');
     const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
-    const passwordInput = document.getElementById('password');
+    const selectBoxHeader = document.querySelector('[data-sort="selectBox"]');
     const rightPassword = document.getElementById('rightPassword');
     const wrongPassword = document.getElementById('wrongPassword');
+    const lockState = JSON.parse(localStorage.getItem('isLocked'));
+    const certSearchInput = document.getElementById('certSearch');
+    const certTableBody = document.getElementById('certTableBody');
+    const lockInterface = document.getElementById('lockInterface');
+    const passwordInput = document.getElementById('password');
+    const createBtn = document.getElementById('createBtn');
     const texts = {
         en: {
             actions: {
@@ -493,7 +493,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateConfirm() {
         const commonName = document.getElementById('commonName');
         const confirmAction = document.getElementById('confirmAction');
-    
+
         if (commonName) {
             commonName.oninput = () => {
                 confirmAction.classList.remove('btn-success', 'btn-danger');
@@ -503,7 +503,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 else confirmAction.classList.add('btn-primary');
             };
         }
-    }    
+    }
 
     // Initialize tool tips
     function initializeTooltips() {
@@ -1428,7 +1428,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         if (!matchFound && searchText) showAlert('searchAlert');
         else hideAlert('searchAlert');
-    });
     });
 
     // Open modal & load password
