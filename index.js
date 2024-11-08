@@ -1054,13 +1054,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="mb-3">
                         <div class="input-group">
                             <span class="input-group-text">/O=</span>
-                            <input type="text" class="form-control" id="org" placeholder="${texts[lang].modals.ORG}" aria-label="Organisation" value="${oValue}">
+                            <input type="text" class="form-control" id="org" aria-label="Organisation" placeholder="${texts[lang].modals.ORG}" value="${oValue}">
                         </div>
                     </div>
                     <div class="mb-3">
                         <div class="input-group">
                             <span class="input-group-text">/OU=</span>
-                            <input type="text" class="form-control" id="orgunit" placeholder="${texts[lang].modals.ORGUNIT}" aria-label="Organisation Unit" value="${ouValue}">
+                            <input type="text" class="form-control" id="orgunit" aria-label="Organisation Unit" placeholder="${texts[lang].modals.ORGUNIT}" value="${ouValue}">
                         </div>
                     </div>
                     -->
