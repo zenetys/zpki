@@ -18,12 +18,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 cancel: "Cancel",
                 confirm: "Confirm",
             },
-            status: {
-                valid: "Valid",
-                expired: "Expired",
-                revoked: "Revoked",
-                disabled: "Disabled",
-                unknown: "Unknown"
+            alerts: {
+                errors: {
+                    errorFound: "Error",
+                    incorrectCN: "Incorrect CN",
+                    incorrectDNS: "Incorrect DNS",
+                    incorrectFormat: "Incorrect format",
+                    incorrectIP: "Incorrect IP",
+                    incorrectPassphrase: "Incorrect Passphrase",
+                    missingCertificate: "Missing certificates",
+                    requestsLimit: "Too many requests",
+                    searchFailed: "No certificate found",
+                    sessionExpired: "Session Expired",
+
+                },
+                descriptions: {
+                    errorFoundDescription: "An error has occurred, check the logs for details.",
+                    incorrectCNDescription: "This certificate name is already used, choose another name.",
+                    incorrectDNSDescription: "This DNS is already selected, select another one.",
+                    incorrectFormatDescription: "Use a correct format in the SAN input.",
+                    incorrectIPDescription: "This IP adress is already selected, select another one.",
+                    incorrectPassphraseDescription: "Use the right certificate authority passphrase to continue.",
+                    missingCertificateDescription: "No certificate found, please create one.",
+                    requestsLimitDescription: "You have made too many requests, wait a minute before trying again.",
+                    searchFailedDescription: "No certificate found, search another one.",
+                    sessionExpiredDescription: "The session has expired, please select a profile.",
+                }
+            },
+            confirmations: {
+                confirmRevoke: "Are you sure you want to revoke this certificate?",
+                confirmDisable: "Are you sure you want to disable this certificate?",
             },
             headers: {
                 status: "Status",
@@ -34,19 +58,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 endDate: "End Date",
                 downloads: "Downloads",
             },
-            titles: {
-                sessionExpired: "Session expired",
-                sessionDescription: "The session has expired, please select a profile.",
-                incorrectFormat: "Incorrect format",
-                incorrectDescription: "Use a correct format in the SAN input.",
-                searchBar: "Search for a certificate",
-                selectProfile: "Select a profile",
-                enterPass: "Enter your Passphrase",
-                createMultiSan: "Create Multi SAN Certificate",
-                viewCert: "Certificate details",
-                renewCert: "Renew Certificate",
-                revokeCert: "Revoke Certificate",
-                disableCert: "Disable Certificate",
+            inputs: {
+                wrongPass: "Incorrect passphrase.",
+                wrongPassLength: "Passphrase must be at least 4 characters long.",
+                rightPass: "Looks good !",
+            },
+            lang: {
+                english: "English",
+                french: "French",
+                spanish: "Spanish",
+                german: "German"
             },
             modals: {
                 CA: "Certificate Authority",
@@ -67,20 +88,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     type: "No type defined",
                 },
             },
-            inputs: {
-                wrongPass: "Incorrect passphrase.",
-                wrongPassLength: "Passphrase must be at least 4 characters long.",
-                rightPass: "Looks good !",
+            status: {
+                valid: "Valid",
+                expired: "Expired",
+                revoked: "Revoked",
+                disabled: "Disabled",
+                unknown: "Unknown"
             },
-            confirmations: {
-                confirmRevoke: "Are you sure you want to revoke this certificate?",
-                confirmDisable: "Are you sure you want to disable this certificate?",
-            },
-            lang: {
-                english: "English",
-                french: "French",
-                spanish: "Spanish",
-                german: "German"
+            titles: {
+                searchBar: "Search for a certificate",
+                selectProfile: "Select a profile",
+                enterPass: "Enter your Passphrase",
+                createMultiSan: "Create Multi SAN Certificate",
+                viewCert: "Certificate details",
+                renewCert: "Renew Certificate",
+                revokeCert: "Revoke Certificate",
+                disableCert: "Disable Certificate",
             },
             undefined: "Undefined",
         },
@@ -92,12 +115,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 cancel: "Annuler",
                 confirm: "Confirmer",
             },
-            status: {
-                valid: "Valide",
-                expired: "Expiré",
-                revoked: "Révoqué",
-                disabled: "Désactivé",
-                unknown: "Inconnu"
+            alerts: {
+                errors: {
+                    errorFound: "Erreur",
+                    incorrectCN: "CN incorrect",
+                    incorrectDNS: "DNS incorrect",
+                    incorrectFormat: "Format incorrect",
+                    incorrectIP: "IP incorrecte",
+                    incorrectPassphrase: "Passphrase incorrecte",
+                    missingCertificate: "Certificats manquants",
+                    requestsLimit: "Trop de requêtes",
+                    searchFailed: "Aucun certificat trouvé",
+                    sessionExpired: "Session expirée",
+                },
+                descriptions: {
+                    errorFoundDescription: "Une erreur est survenue, consultez les logs pour plus de détails.",
+                    incorrectCNDescription: "Ce nom de certificat est déjà utilisé, choisissez un autre nom.",
+                    incorrectDNSDescription: "Ce DNS est déjà sélectionné, sélectionnez un autre.",
+                    incorrectFormatDescription: "Utilisez un format correct dans le champ SAN.",
+                    incorrectIPDescription: "Cette adresse IP est déjà sélectionnée, sélectionnez une autre.",
+                    incorrectPassphraseDescription: "Utilisez la bonne passphrase de l'autorité de certification pour continuer.",
+                    missingCertificateDescription: "Aucun certificat trouvé, veuillez en créer un.",
+                    requestsLimitDescription: "Vous avez fait trop de requêtes, attendez une minute avant de réessayer.",
+                    searchFailedDescription: "Aucun certificat trouvé, essayez une autre recherche.",
+                    sessionExpiredDescription: "La session a expiré, veuillez sélectionner un profil.",
+                }
+            },
+            confirmations: {
+                confirmRevoke: "Êtes-vous sûr de vouloir révoquer ce certificat ?",
+                confirmDisable: "Êtes-vous sûr de vouloir désactiver ce certificat ?",
             },
             headers: {
                 status: "Statut",
@@ -108,19 +154,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 endDate: "Date de fin",
                 downloads: "Téléchargements",
             },
-            titles: {
-                sessionExpired: "Session expirée",
-                sessionDescription: "La session a expiré, veuillez sélectionner un profil.",
-                incorrectFormat: "Format incorrect",
-                incorrectDescription: "Utilisez un format correct dans le champ SAN.",
-                searchBar: "Rechercher un certificat",
-                selectProfile: "Sélectionner",
-                enterPass: "Entrer votre Passphrase",
-                createMultiSan: "Créer un certificat Multi SAN",
-                viewCert: "Informations du certificat",
-                renewCert: "Renouveler le certificat",
-                revokeCert: "Révoquer le certificat",
-                disableCert: "Désactiver le certificat",
+            inputs: {
+                wrongPass: "Passphrase incorrecte.",
+                wrongPassLength: "La passphrase doit comporter au moins 4 caractères.",
+                rightPass: "C'est bon !",
+            },
+            lang: {
+                english: "Anglais",
+                french: "Français",
+                spanish: "Espagnol",
+                german: "Allemand"
             },
             modals: {
                 CA: "Autorité de certification",
@@ -136,25 +179,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 enterPass: "Entrez votre passphrase (peut être vide)",
                 missing: {
-                    IP: "Pas d'IP définie",
-                    DNS: "Pas de DNS défini",
-                    type: "Pas de type défini",
+                    IP: "Aucune IP définie",
+                    DNS: "Aucun DNS défini",
+                    type: "Aucun type défini",
                 },
             },
-            inputs: {
-                wrongPass: "Passphrase incorrecte.",
-                wrongPassLength: "La passphrase doit contenir au moins 4 caractères.",
-                rightPass: "C'est bon !",
+            status: {
+                valid: "Valide",
+                expired: "Expiré",
+                revoked: "Révoqué",
+                disabled: "Désactivé",
+                unknown: "Inconnu"
             },
-            confirmations: {
-                confirmRevoke: "Êtes-vous sûr de vouloir révoquer ce certificat ?",
-                confirmDisable: "Êtes-vous sûr de vouloir désactiver ce certificat ?",
-            },
-            lang: {
-                english: "Anglais",
-                french: "Français",
-                spanish: "Espagnol",
-                german: "Allemand"
+            titles: {
+                searchBar: "Rechercher un certificat",
+                selectProfile: "Sélectionner un profil",
+                enterPass: "Entrez votre passphrase",
+                createMultiSan: "Créer un certificat Multi SAN",
+                viewCert: "Détails du certificat",
+                renewCert: "Renouveler le certificat",
+                revokeCert: "Révoquer le certificat",
+                disableCert: "Désactiver le certificat",
             },
             undefined: "Indéfini",
         },
@@ -166,12 +211,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 cancel: "Cancelar",
                 confirm: "Confirmar",
             },
-            status: {
-                valid: "Válido",
-                expired: "Expirado",
-                revoked: "Revocado",
-                disabled: "Deshabilitado",
-                unknown: "Desconocido"
+            alerts: {
+                errors: {
+                    errorFound: "Error",
+                    incorrectCN: "CN incorrecto",
+                    incorrectDNS: "DNS incorrecto",
+                    incorrectFormat: "Formato incorrecto",
+                    incorrectIP: "IP incorrecta",
+                    incorrectPassphrase: "Frase secreta incorrecta",
+                    missingCertificate: "Certificados faltantes",
+                    requestsLimit: "Demasiadas solicitudes",
+                    searchFailed: "No se encontró el certificado",
+                    sessionExpired: "Sesión expirada",
+                },
+                descriptions: {
+                    errorFoundDescription: "Ha ocurrido un error, consulte los registros para más detalles.",
+                    incorrectCNDescription: "Este nombre de certificado ya está en uso, elija otro nombre.",
+                    incorrectDNSDescription: "Este DNS ya está seleccionado, elija otro.",
+                    incorrectFormatDescription: "Use un formato correcto en el campo SAN.",
+                    incorrectIPDescription: "Esta dirección IP ya está seleccionada, elija otra.",
+                    incorrectPassphraseDescription: "Use la frase secreta correcta de la autoridad de certificación para continuar.",
+                    missingCertificateDescription: "No se encontró ningún certificado, por favor cree uno.",
+                    requestsLimitDescription: "Ha realizado demasiadas solicitudes, espere un minuto antes de intentar nuevamente.",
+                    searchFailedDescription: "No se encontró ningún certificado, intente con otra búsqueda.",
+                    sessionExpiredDescription: "La sesión ha expirado, seleccione un perfil.",
+                }
+            },
+            confirmations: {
+                confirmRevoke: "¿Está seguro de que desea revocar este certificado?",
+                confirmDisable: "¿Está seguro de que desea deshabilitar este certificado?",
             },
             headers: {
                 status: "Estado",
@@ -182,25 +250,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 endDate: "Fecha de finalización",
                 downloads: "Descargas",
             },
-            titles: {
-                sessionExpired: "Sesión expirada",
-                sessionDescription: "La sesión ha expirado, por favor seleccione un perfil.",
-                incorrectFormat: "Formato incorrecto",
-                incorrectDescription: "Utilice un formato correcto en la entrada SAN.",
-                searchBar: "Buscar un certificado",
-                selectProfile: "Seleccionar",
-                enterPass: "Ingresar tu frase de paso",
-                createMultiSan: "Crear Certificado Multi SAN",
-                viewCert: "Información del certificado",
-                renewCert: "Renovar Certificado",
-                revokeCert: "Revocar Certificado",
-                disableCert: "Deshabilitar Certificado",
+            inputs: {
+                wrongPass: "Frase secreta incorrecta.",
+                wrongPassLength: "La frase secreta debe tener al menos 4 caracteres.",
+                rightPass: "¡Todo bien!",
+            },
+            lang: {
+                english: "Inglés",
+                french: "Francés",
+                spanish: "Español",
+                german: "Alemán"
             },
             modals: {
                 CA: "Autoridad de Certificación",
                 CN: "Nombre Común",
                 ORG: "Nombre de la Organización",
-                ORGUNIT: "Nombre de la Unidad Organizacional",
+                ORGUNIT: "Nombre de la Unidad Organizativa",
                 SUBJ: "Sujeto (O / OU / CN)",
                 subject: "SAN (Nombre Alternativo del Sujeto)",
                 type: "Tipo de certificado",
@@ -208,27 +273,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     select1: "Servidor",
                     select2: "Usuario",
                 },
-                enterPass: "Ingrese su frase de paso (puede estar vacía)",
+                enterPass: "Ingrese su frase secreta (puede estar vacía)",
                 missing: {
-                    IP: "No se ha definido IP",
-                    DNS: "No se ha definido DNS",
-                    type: "No se ha definido tipo",
+                    IP: "No se definió una IP",
+                    DNS: "No se definió un DNS",
+                    type: "No se definió un tipo",
                 },
             },
-            inputs: {
-                wrongPass: "Frase de acceso incorrecta.",
-                wrongPassLength: "La frase de acceso debe tener al menos 4 caracteres.",
-                rightPass: "¡Todo bien!",
-            },            
-            confirmations: {
-                confirmRevoke: "¿Estás seguro de que quieres revocar este certificado?",
-                confirmDisable: "¿Estás seguro de que quieres deshabilitar este certificado?",
+            status: {
+                valid: "Válido",
+                expired: "Expirado",
+                revoked: "Revocado",
+                disabled: "Deshabilitado",
+                unknown: "Desconocido"
             },
-            lang: {
-                english: "Inglés",
-                french: "Francés",
-                spanish: "Español",
-                german: "Alemán"
+            titles: {
+                searchBar: "Buscar un certificado",
+                selectProfile: "Seleccionar un perfil",
+                enterPass: "Ingrese su frase secreta",
+                createMultiSan: "Crear Certificado Multi SAN",
+                viewCert: "Detalles del certificado",
+                renewCert: "Renovar Certificado",
+                revokeCert: "Revocar Certificado",
+                disableCert: "Deshabilitar Certificado",
             },
             undefined: "Indefinido",
         },
@@ -240,12 +307,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 cancel: "Abbrechen",
                 confirm: "Bestätigen",
             },
-            status: {
-                valid: "Gültig",
-                expired: "Abgelaufen",
-                revoked: "Widerrufen",
-                disabled: "Deaktiviert",
-                unknown: "Unbekannt"
+            alerts: {
+                errors: {
+                    errorFound: "Fehler",
+                    incorrectCN: "Falscher CN",
+                    incorrectDNS: "Falscher DNS",
+                    incorrectFormat: "Falsches Format",
+                    incorrectIP: "Falsche IP",
+                    incorrectPassphrase: "Falsches Passwort",
+                    missingCertificate: "Fehlende Zertifikate",
+                    requestsLimit: "Zu viele Anfragen",
+                    searchFailed: "Kein Zertifikat gefunden",
+                    sessionExpired: "Sitzung abgelaufen",
+                },
+                descriptions: {
+                    errorFoundDescription: "Ein Fehler ist aufgetreten. Siehe Protokolle für weitere Details.",
+                    incorrectCNDescription: "Dieser Zertifikatsname ist bereits vergeben. Wählen Sie einen anderen Namen.",
+                    incorrectDNSDescription: "Dieser DNS ist bereits ausgewählt. Wählen Sie einen anderen.",
+                    incorrectFormatDescription: "Verwenden Sie ein korrektes Format im SAN-Feld.",
+                    incorrectIPDescription: "Diese IP-Adresse ist bereits ausgewählt. Wählen Sie eine andere.",
+                    incorrectPassphraseDescription: "Verwenden Sie das richtige Passwort der Zertifizierungsstelle, um fortzufahren.",
+                    missingCertificateDescription: "Kein Zertifikat gefunden, bitte erstellen Sie eines.",
+                    requestsLimitDescription: "Sie haben zu viele Anfragen gestellt. Warten Sie eine Minute, bevor Sie es erneut versuchen.",
+                    searchFailedDescription: "Kein Zertifikat gefunden. Versuchen Sie eine andere Suche.",
+                    sessionExpiredDescription: "Die Sitzung ist abgelaufen. Bitte wählen Sie ein Profil.",
+                }
+            },
+            confirmations: {
+                confirmRevoke: "Möchten Sie dieses Zertifikat wirklich widerrufen?",
+                confirmDisable: "Möchten Sie dieses Zertifikat wirklich deaktivieren?",
             },
             headers: {
                 status: "Status",
@@ -253,50 +343,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 serial: "Seriennummer",
                 signature: "Signatur",
                 startDate: "Anfangsdatum",
-                endDate: "Enddatum",
+                endDate: "Ablaufdatum",
                 downloads: "Downloads",
-            },
-            titles: {
-                sessionExpired: "Sitzung abgelaufen",
-                sessionDescription: "Die Sitzung ist abgelaufen, bitte wählen Sie ein Profil.",
-                incorrectFormat: "Ungültiges Format",
-                incorrectDescription: "Verwenden Sie ein korrektes Format im SAN-Feld.",
-                searchBar: "Suche nach einem Zertifikat",
-                selectProfile: "Profil auswählen",
-                enterPass: "Geben Sie Ihre Passwortphrase ein",
-                createMultiSan: "Multi-SAN-Zertifikat erstellen",
-                viewCert: "Informationen zum Zertifikat",
-                renewCert: "Zertifikat erneuern",
-                revokeCert: "Zertifikat widerrufen",
-                disableCert: "Zertifikat deaktivieren",
-            },
-            modals: {
-                CA: "Zertifizierungsstelle",
-                CN: "Allgemeiner Name",
-                ORG: "Name der Organisation",
-                ORGUNIT: "Name der Organisationseinheit",
-                SUBJ: "Betreff (O / OU / CN)",
-                subject: "SAN (Alternative Name des Betreffs)",
-                type: "Zertifikatstyp",
-                selector: {
-                    select1: "Server",
-                    select2: "Benutzer",
-                },
-                enterPass: "Geben Sie Ihre Passwortphrase ein (kann leer sein)",
-                missing: {
-                    IP: "Keine IP definiert",
-                    DNS: "Kein DNS definiert",
-                    type: "Kein Typ definiert",
-                },
             },
             inputs: {
                 wrongPass: "Falsches Passwort.",
-                wrongPassLength: "Die Passphrase muss mindestens 4 Zeichen lang sein.",
-                rightPass: "Sieht gut aus!",
-            },            
-            confirmations: {
-                confirmRevoke: "Sind Sie sicher, dass Sie dieses Zertifikat widerrufen möchten?",
-                confirmDisable: "Sind Sie sicher, dass Sie dieses Zertifikat deaktivieren möchten?",
+                wrongPassLength: "Das Passwort muss mindestens 4 Zeichen lang sein.",
+                rightPass: "Passt!",
             },
             lang: {
                 english: "Englisch",
@@ -304,8 +357,44 @@ document.addEventListener('DOMContentLoaded', function() {
                 spanish: "Spanisch",
                 german: "Deutsch"
             },
-            undefined: "Unbekannt",
-        },
+            modals: {
+                CA: "Zertifizierungsstelle",
+                CN: "Allgemeiner Name",
+                ORG: "Organisationsname",
+                ORGUNIT: "Organisationseinheit",
+                SUBJ: "Betreff (O / OU / CN)",
+                subject: "SAN (Subject Alternative Name)",
+                type: "Zertifikatstyp",
+                selector: {
+                    select1: "Server",
+                    select2: "Benutzer",
+                },
+                enterPass: "Geben Sie Ihr Passwort ein (kann leer sein)",
+                missing: {
+                    IP: "Keine IP definiert",
+                    DNS: "Kein DNS definiert",
+                    type: "Kein Typ definiert",
+                },
+            },
+            status: {
+                valid: "Gültig",
+                expired: "Abgelaufen",
+                revoked: "Widerrufen",
+                disabled: "Deaktiviert",
+                unknown: "Unbekannt"
+            },
+            titles: {
+                searchBar: "Nach einem Zertifikat suchen",
+                selectProfile: "Profil auswählen",
+                enterPass: "Geben Sie Ihr Passwort ein",
+                createMultiSan: "Multi-SAN-Zertifikat erstellen",
+                viewCert: "Zertifikatsdetails",
+                renewCert: "Zertifikat erneuern",
+                revokeCert: "Zertifikat widerrufen",
+                disableCert: "Zertifikat deaktivieren",
+            },
+            undefined: "Undefiniert",
+        },        
     };
     let isLocked = lockState !== null ? lockState : true;
 
