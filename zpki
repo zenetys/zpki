@@ -537,7 +537,7 @@ function ca-list() {
     # printf("%s\t", "filename");
   }
   {
-    status = (isExpired(rfc3339($2)) ? "E" : $1);
+    status = ($1 == "V" && isExpired(rfc3339($2)) ? "E" : $1);
     if (FORMAT_JSON)
       entry_json();
     else
