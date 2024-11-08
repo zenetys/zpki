@@ -818,18 +818,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     .split(/(?:\/|\n)/)
                     .filter(Boolean);
 
-                var cnValue = '';
-                var oValue = '';
-                var ouValue = '';
+                var cnValue, oValue, ouValue = '';
 
                 subjectArray.forEach(part => {
-                    if (part.startsWith('CN=')) {
-                        cnValue = part.replace('CN=', '');
-                    } else if (part.startsWith('O=')) {
-                        oValue = part.replace('O=', '');
-                    } else if (part.startsWith('OU=')) {
-                        ouValue = part.replace('OU=', '');
-                    }
+                    if (part.startsWith('CN=')) cnValue = part.replace('CN=', '');
+                    else if (part.startsWith('O=')) oValue = part.replace('O=', '');
+                    else if (part.startsWith('OU=')) ouValue = part.replace('OU=', '');
                 });
             }
         } catch {};
