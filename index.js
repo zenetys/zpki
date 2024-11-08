@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const certTableBody = document.getElementById('certTableBody');
     const selectBoxHeader = document.querySelector('[data-sort="selectBox"]');
     const lockInterface = document.getElementById('lockInterface');
-    const passwordModalTitle = document.getElementById('passwordModalTitle');
     const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
     const passwordInput = document.getElementById('password');
     const rightPassword = document.getElementById('rightPassword');
