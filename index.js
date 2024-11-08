@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const lockInterface = document.getElementById('lockInterface');
     const passwordInput = document.getElementById('password');
     const createBtn = document.getElementById('createBtn');
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchTerm = urlParams.get('s') ? urlParams.get('s') : '';
+    const tagsParam = urlParams.get('tags');
     const texts = {
         en: {
             actions: {
@@ -396,6 +399,7 @@ document.addEventListener('DOMContentLoaded', function() {
             undefined: "Undefiniert",
         },        
     };
+    let tags = [];
     let isLocked = lockState !== null ? lockState : true;
 
     // Set default language from localStorage or use English as default
@@ -418,7 +422,7 @@ document.addEventListener('DOMContentLoaded', function() {
         lang = $(this).data('lang');
         localStorage.setItem('language', lang);
         updateLanguage(lang);
-        loadCertData();
+        loadCertData(searchTerm, tags);
     });
 
     // Update the language
@@ -627,7 +631,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Function to load data & update table
-    function loadCertData() {
+    function loadCertData(searchTerm = '', tags = []) {
         let profile;
         fetch('/current-profile')
             .then(response => {
@@ -1406,28 +1410,11 @@ document.addEventListener('DOMContentLoaded', function() {
         showModal('create');
     });
 
-    // Filter certificates by name
-    certSearchInput.addEventListener('input', function() {
-        const searchText = encodeName(this.value).toLowerCase();
-        const rows = certTableBody.querySelectorAll('tr');
-        let matchFound = false;
-        rows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            let match = false;
-    
-            cells.forEach(cell => {
-                cell.classList.remove('highlight');
-                const cellText = encodeName(cell.textContent).toLowerCase();
-                if (cellText.includes(searchText) && searchText) {
-                    cell.classList.add('highlight');
-                    match = true;
-                }
-            });
-            row.style.display = searchText === '' || match ? '' : 'none';
-            matchFound = matchFound || match;
-        });
-        if (!matchFound && searchText) showAlert('searchAlert');
-        else hideAlert('searchAlert');
+    // Filter certificates by name & show tags
+    certSearchInput.addEventListener("input", () => {
+        const searchTerm = certSearchInput.value;
+        const tags = getSelectedTags();
+        updateUrlAndLoadData(searchTerm, tags);
     });
 
     // Open modal & load password
@@ -1511,5 +1498,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     loadPassword();
-    loadCertData();
+    loadCertData(searchTerm, tags);
 });
