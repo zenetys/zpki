@@ -838,6 +838,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <input type="text" class="form-control" id="commonName" placeholder="${texts[lang].modals.CN}" required>
                         </div>
                     </div>
+                    <!--
                     <div class="mb-3">
                         <div class="input-group">
                             <span class="input-group-text">/O=</span>
@@ -850,6 +851,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <input type="text" class="form-control" id="orgunit" placeholder="${texts[lang].modals.ORGUNIT}" aria-label="Organisation Unit">
                         </div>
                     </div>
+                    -->
                     <div class="mb-3">
                         <label class="form-label">${texts[lang].modals.subject}</label>
                         <div id="sanContainer">
@@ -891,8 +893,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Confirm certificate creation
                 document.getElementById('confirmAction').onclick = async function() {
                     let commonName = document.getElementById('commonName').value;
-                    const org = document.getElementById('org').value.trim();
-                    const orgUnit = document.getElementById('orgunit').value.trim();
+                    // const org = document.getElementById('org').value.trim();
+                    // const orgUnit = document.getElementById('orgunit').value.trim();
                     const sanIP = Array.from(document.getElementById('addedSanIP').children).map(el => el.innerText);
                     const sanDNS = Array.from(document.getElementById('addedDnsNames').children).map(el => el.innerText);
                     // const type = document.getElementById('type').value;
@@ -909,9 +911,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     let subject = '';
-                    if (org) subject += `/O=${org}`;
-                    if (orgUnit) subject += `/OU=${orgUnit}`;
-                    if ((org && orgUnit) || org || orgUnit) subject += `/CN=${commonName}`;
+                    // if (org) subject += `/O=${org}`;
+                    // if (orgUnit) subject += `/OU=${orgUnit}`;
+                    // if ((org && orgUnit) || org || orgUnit) subject += `/CN=${commonName}`;
 
                     try {
                         const getPassword = await fetch('/get-password', {
@@ -1047,6 +1049,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <input type="text" class="form-control" id="commonName" placeholder="${texts[lang].modals.CN}" value="${cnValue}" readonly>
                         </div>
                     </div>
+                    <!--
                     <div class="mb-3">
                         <div class="input-group">
                             <span class="input-group-text">/O=</span>
@@ -1059,6 +1062,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <input type="text" class="form-control" id="orgunit" placeholder="${texts[lang].modals.ORGUNIT}" aria-label="Organisation Unit" value="${ouValue}">
                         </div>
                     </div>
+                    -->
                     <div class="mb-3">
                         <label class="form-label">SAN (Subject Alternative Name)</label>
                         <div id="sanContainer">
@@ -1104,8 +1108,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Confirm certificate renewal
                 document.getElementById('confirmAction').onclick = async function() {
                     const commonName = document.getElementById('commonName').value;
-                    const org = document.getElementById('org').value.trim();
-                    const orgUnit = document.getElementById('orgunit').value.trim();
+                    // const org = document.getElementById('org').value.trim();
+                    // const orgUnit = document.getElementById('orgunit').value.trim();
                     const sanIP = Array.from(document.getElementById('addedSanIP').children).map(el => el.innerText);
                     const sanDNS = Array.from(document.getElementById('addedDnsNames').children).map(el => el.innerText);
                     // const type = document.getElementById('type').value;
@@ -1116,9 +1120,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     confirmAction.disabled = true;
 
                     let subject = '';
-                    if (org) subject += `/O=${org}`;
-                    if (orgUnit) subject += `/OU=${orgUnit}`;
-                    if ((org && orgUnit) || org || orgUnit) subject += `/CN=${commonName}`;
+                    // if (org) subject += `/O=${org}`;
+                    // if (orgUnit) subject += `/OU=${orgUnit}`;
+                    // if ((org && orgUnit) || org || orgUnit) subject += `/CN=${commonName}`;
 
                     try {
                         const getPassword = await fetch('/get-password', {
