@@ -695,19 +695,21 @@ function ca-update-dump-crt() {
   local CRTFILE=${1:-$CRTFILE}; shift
   local KEYFILE=${1:-$KEYFILE}; shift
   local IFS=$'\n'
-  local hash serial notBefore notAfter subject issuer email keyStatus
+  local A keyStatus
   [[ -z $CRTFILE ]] && fatal "Function needs an argument" && return
   [[ -e $CRTFILE ]] || fatal "Cannot get $CRTFILE"
   [[ -z $KEYFILE ]] && {
     KEYFILE=${CRTFILE%.*}.key
     KEYFILE=private/${KEYFILE##*/}
   }
-  for A in hash=$(openssl x509 -in "$CRTFILE" -noout -hash -serial \
-                          -startdate -enddate -email -subject -issuer); do
-    eval "${A%%=*}='${A#*=}'"
+  # hash and email do not have <key>= in output
+  # force subject/issuer oneline output as default format varies in openssl versions
+  for A in $(openssl x509 -in "$CRTFILE" -noout -hash -serial -email \
+                -startdate -enddate -subject -issuer -nameopt oneline |
+                sed -re '1s,^,hash=,;t; 3{/=/!s,^,email=,;t}; /^[^=]+=/!s,^,skip=,;t' \
+                    -e '/^(subject|issuer)=/{s!((^[^=]+=)|,) ([^=]+) = !\2/\3=!g}'); do
+    declare "x509_$A"
   done
-  subject="/${subject//, /\/}"; subject="${subject// = /=}"
-  issuer="/${issuer//, /\/}"; issuer="${issuer// = /=}"
   if [[ ! -e $KEYFILE ]]; then
     keyStatus="missing"
   elif [[ ! -s $KEYFILE ]]; then
@@ -717,9 +719,9 @@ function ca-update-dump-crt() {
   else
     keyStatus="plain"
   fi
-  printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "$serial" "$hash" \
-      $(date -Iseconds -d "$notBefore") $(date -Iseconds -d "$notAfter") \
-      "$subject" "$issuer" "$email" "$keyStatus"
+  printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "$x509_serial" "$x509_hash" \
+      "$(date -Iseconds -d "$x509_notBefore")" "$(date -Iseconds -d "$x509_notAfter")" \
+      "$x509_subject" "$x509_issuer" "$x509_email" "$keyStatus"
 }
 
 #X-ACTION ca-dump-crt [CRTFILE]: Dump the content of a certificate (.crt) file
