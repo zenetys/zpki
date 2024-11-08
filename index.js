@@ -812,6 +812,7 @@ document.addEventListener('DOMContentLoaded', function() {
         footerContent.style.display = '';
 
         try {
+            if (certData.issuer !== '') var caValue = certData.issuer.split('CN = ')[1] || certData.issuer;
             if (certData.subject !== '') {
                 var subjectArray = (certData.subject || '')
                     .replace(/^Subject\s*\(.*?\):\s*/, '')
@@ -834,7 +835,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 formContent.innerHTML = `
                     <div class="mb-3">
                         <div class="input-group">
-                            <span class="input-group-text">/CN=</span>
+                            <span class="input-group-text">CN</span>
                             <input type="text" class="form-control" id="commonName" placeholder="${texts[lang].modals.CN}" required>
                         </div>
                     </div>
@@ -990,7 +991,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         modalTitle.textContent = `${texts[lang].titles.viewCert}`;
                         formContent.innerHTML = `
                             <div id="certDetails">
-                                <p><strong>${texts[lang].modals.CA}:</strong> ${certData.issuer ? certData.issuer : `${texts[lang].undefined}`}</p>
+                                <p><strong>${texts[lang].modals.CA}:</strong> ${caValue}</p>
                                 <p><strong>${texts[lang].modals.CN}:</strong> ${certData.id ? certData.id : `${texts[lang].undefined}`}</p>
                                 <p><strong>${texts[lang].modals.SUBJ}:</strong> ${splitSubject}</p>
 
@@ -1040,12 +1041,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="mb-3">
                         <div class="input-group">
                             <span class="input-group-text">CA</span>
-                            <input type="text" class="form-control" id="certificateAuthority" value="${certData.issuer}" placeholder="${texts[lang].modals.CA}" readonly>
+                            <input type="text" class="form-control" id="certificateAuthority" placeholder="${texts[lang].modals.CA}" value="${caValue}" readonly>
                         </div>
                     </div>
                     <div class="mb-3">
                         <div class="input-group">
-                            <span class="input-group-text">/CN=</span>
+                            <span class="input-group-text">CN</span>
                             <input type="text" class="form-control" id="commonName" placeholder="${texts[lang].modals.CN}" value="${cnValue}" readonly>
                         </div>
                     </div>
@@ -1167,7 +1168,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p>${texts[lang].confirmations.confirmRevoke}</p>
                     <div class="mb-3">
                         <div class="input-group">
-                            <span class="input-group-text">/CN=</span>
+                            <span class="input-group-text">CA</span>
+                            <input type="text" class="form-control" id="certificateAuthority" placeholder="${texts[lang].modals.CA}" value="${caValue}" readonly>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text">CN</span>
                             <input type="text" class="form-control" id="commonName" placeholder="${texts[lang].modals.CN}" value="${cnValue}" readonly>
                         </div>
                     </div>
@@ -1218,7 +1225,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p>${texts[lang].confirmations.confirmDisable}</p>
                     <div class="mb-3">
                         <div class="input-group">
-                            <span class="input-group-text">/CN=</span>
+                            <span class="input-group-text">CA</span>
+                            <input type="text" class="form-control" id="certificateAuthority" placeholder="${texts[lang].modals.CA}" value="${caValue}" readonly>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text">CN</span>
                             <input type="text" class="form-control" id="commonName" placeholder="${texts[lang].modals.CN}" value="${cnValue}" readonly>
                         </div>
                     </div>
