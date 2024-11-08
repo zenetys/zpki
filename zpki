@@ -456,7 +456,7 @@ function ca-list() {
 
   [[ ! -s $CA_IDXFILE || ! -s $CA_IDZFILE ]] && { fatal "No certficate found"; return; }
 
-  gawk -v "FORMAT_$FORMAT=1" -v IDZFILE=ca.idz < $CA_IDXFILE '
+  TZ=UTC gawk -v "FORMAT_$FORMAT=1" -v IDZFILE=ca.idz < $CA_IDXFILE '
   BEGIN {
     FS="\t";
 
@@ -488,11 +488,11 @@ function ca-list() {
       # printf("%s\t", "filename");
     }
   }
-  function rfc3339(date, formattedDate) {
+  function rfc3339(date) {
     if (!date) return;
-    ds = gensub(/(..)/, "\\1 ", "g", date);
-    formattedDate = strftime("%Y-%m-%dT%H:%M:%S%z", mktime("20" ds));
-    return substr(formattedDate, 1, 22) ":" substr(formattedDate, 23);
+    if (length(date) < 15) date = "20" date;
+    return substr(date, 1, 4)"-"substr(date, 5, 2)"-"substr(date, 7, 2)"T" \
+        substr(date, 9, 2)":"substr(date, 11, 2)":"substr(date, 13);
   }
   function cn(dn, a) {
     if (match(dn, /CN=([^/]*)/, a)) {
@@ -500,7 +500,7 @@ function ca-list() {
     }
   }
   function isExpired(expirationDate) {
-    currentTime = strftime("%Y-%m-%dT%H:%M:%S%z");
+    currentTime = strftime("%Y-%m-%dT%H:%M:%SZ");
     return (expirationDate < currentTime);
   }
 
@@ -720,7 +720,8 @@ function ca-update-dump-crt() {
     keyStatus="plain"
   fi
   printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "$x509_serial" "$x509_hash" \
-      "$(date -Iseconds -d "$x509_notBefore")" "$(date -Iseconds -d "$x509_notAfter")" \
+      "$(date -ud "$x509_notBefore" +%Y-%m-%dT%H:%M:%SZ)" \
+      "$(date -ud "$x509_notAfter" +%Y-%m-%dT%H:%M:%SZ)" \
       "$x509_subject" "$x509_issuer" "$x509_email" "$keyStatus"
 }
 
