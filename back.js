@@ -107,6 +107,7 @@ app.get('/current-profile', (req, res) => {
 
 // Route to get the list of certificates
 app.get('/list', (req, res, next) => {
+    if (!req.session.pkiaccess) return res.status(400).json({ error: 'Session expired.' });
     if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
 
     try {
@@ -124,6 +125,7 @@ app.get('/list', (req, res, next) => {
 app.get('/subject-alt', (req, res, next) => {
     const commonName = req.query.cert;
 
+    if (!req.session.pkiaccess) return res.status(400).json({ error: 'Session expired.' });
     if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}). Only alphanumeric characters, spaces, hyphens, and underscores are allowed, and the length must be between 1 and 64 characters.` });
@@ -169,10 +171,11 @@ app.post('/switch-profile', (req, res) => {
 
 // Route to create certificates
 app.post('/create', async (req, res, next) => {
-    const { commonName, subject, sanIP, sanDNS, ca_password } = req.body;
+    const { commonName, subject, sanIP, sanDNS } = req.body;
     const type = 'server_ext'; // Will be used above in the future
     const password = ''; // Will be used above in the future
 
+    if (!req.session.pkiaccess) return res.status(400).json({ error: 'Session expired.' });
     if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}). Only alphanumeric characters, spaces, hyphens, and underscores are allowed, and the length must be between 1 and 64 characters.` });
@@ -180,7 +183,7 @@ app.post('/create', async (req, res, next) => {
     try {
         await checkSudoers();
         await execPromise(`
-            CA_PASSWORD=${ca_password} \
+            CA_PASSWORD=${req.session.pkiaccess} \
             PASSWORD=${password === '' ? '' : password} \
             EXT=${type} \
             ${zpkiCmd} \
@@ -198,8 +201,9 @@ app.post('/create', async (req, res, next) => {
 
 // Route to renew certificates
 app.post('/renew', async (req, res, next) => {
-    const { commonName, ca_password } = req.body;
+    const { commonName } = req.body;
 
+    if (!req.session.pkiaccess) return res.status(400).json({ error: 'Session expired.' });
     if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
@@ -207,7 +211,7 @@ app.post('/renew', async (req, res, next) => {
     try {
         await checkSudoers();
         await execPromise(`
-            CA_PASSWORD=${ca_password} \
+            CA_PASSWORD=${req.session.pkiaccess} \
             ${zpkiCmd} \
             -C "${srcFolder}" \
             -y -c none \
@@ -221,8 +225,9 @@ app.post('/renew', async (req, res, next) => {
 
 // Route to revoke certificates
 app.post('/revoke', async (req, res, next) => {
-    const { commonName, ca_password } = req.body;
+    const { commonName } = req.body;
 
+    if (!req.session.pkiaccess) return res.status(400).json({ error: 'Session expired.' });
     if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
@@ -230,7 +235,7 @@ app.post('/revoke', async (req, res, next) => {
     try {
         await checkSudoers();
         await execPromise(`
-            CA_PASSWORD=${ca_password} \
+            CA_PASSWORD=${req.session.pkiaccess} \
             ${zpkiCmd} \
             -C "${srcFolder}" \
             -y -c none \
@@ -244,8 +249,9 @@ app.post('/revoke', async (req, res, next) => {
 
 // Route to disable certificates
 app.post('/disable', async (req, res, next) => {
-    const { commonName, ca_password } = req.body;
+    const { commonName } = req.body;
 
+    if (!req.session.pkiaccess) return res.status(400).json({ error: 'Session expired.' });
     if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
@@ -253,7 +259,7 @@ app.post('/disable', async (req, res, next) => {
     try {
         await checkSudoers();
         await execPromise(`
-            CA_PASSWORD=${ca_password} \
+            CA_PASSWORD=${req.session.pkiaccess} \
             ${zpkiCmd} \
             -C "${srcFolder}" \
             -y -c none \
