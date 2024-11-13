@@ -1,0 +1,4 @@
+#!/bin/sh
+find -L "${1:-.}/" -mindepth 2 -maxdepth 2 -type f -name ca.idz -printf '%P\n' |
+    sed -e 's@/.*@@' |
+    sort
