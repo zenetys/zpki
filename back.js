@@ -306,9 +306,22 @@ app.post('/set-password', async (req, res, next) => {
 });
 
 // Route to get session passphrase
-app.get('/get-password', (req, res) => { 
-    if (req.session.pkiaccess) res.json({ pkiaccess: req.session.pkiaccess });
-    else res.json({ pkiaccess: '' });
+app.get('/is-locked', async (req, res) => {
+    if (!req.session.pkiaccess) return res.json({ response: false });
+    if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
+
+    try {
+        await checkSudoers();
+        await execPromise(`
+            CA_PASSWORD=${req.session.pkiaccess} \
+            ${zpkiCmd} \
+            -C "${srcFolder}" \
+            ca-test-password
+        `);
+        return res.json({ response: true });
+    } catch (error) {
+        res.json({ response: false });
+    }
 });
 
 app.listen(port, () => {
