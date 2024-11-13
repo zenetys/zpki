@@ -15,7 +15,11 @@ const session = require('express-session');
 // Set basic variables
 const app = express();
 const port = 3000;
-let srcDir;
+
+const caBaseDir = process.env.CA_BASEDIR || __dirname;
+const zpkiCmd = process.env.PKI_CMD || __dirname + '/zpki';
+
+let srcFolder;
 
 // Centralized error handling middleware
 const handleError = (err, req, res, next) => {
@@ -55,24 +59,20 @@ app.use(session({
     secret: crypto.randomBytes(16).toString('hex'),
     resave: false,
     saveUninitialized: false,
-    cookie: {
-        maxAge: 600000,
-        secure: false,
-        httpOnly: true,
-    }
+    cookie: {}
 }));
 
 // Route to serve main page & select a default profile
 app.get('/', (req, res) => {
     if (req.session.currentProfile) {
-        srcDir = path.join(__dirname, req.session.currentProfile);
-        res.sendFile(path.join(__dirname, 'index.html'));
+        srcFolder = path.join(caBaseDir, req.session.currentProfile);
+        res.sendFile(path.join(caBaseDir, 'index.html'));
     }
 });
 
 // Route to get all available profiles
 app.get('/profiles', (req, res) => {
-    fs.readdir(__dirname, { withFileTypes: true }, (err, files) => {
+    fs.readdir(caBaseDir, { withFileTypes: true }, (err, files) => {
         if (err) {
             return res.status(500).json({ error: 'Unable to scan directory: ' + err });
         }
@@ -88,16 +88,16 @@ app.get('/profiles', (req, res) => {
 app.get('/current-profile', (req, res) => {
     const currentProfile = req.session.currentProfile;
     if (!currentProfile) {
-        fs.readdir(__dirname, { withFileTypes: true }, (err, files) => { 
+        fs.readdir(caBaseDir, { withFileTypes: true }, (err, files) => { 
             if (err) {
                 return res.status(500).json({ error: 'Unable to scan directory: ' + err });
             } else {
-                srcDir = path.join(__dirname, files
+                srcFolder = path.join(caBaseDir, files
                     .filter(file => file.isDirectory() && file.name !== '.git' 
                         && file.name !== 'images' && file.name !== 'node_modules')
                     .map(file => file.name)[0])
                     .split('/').pop()
-                res.json({ currentProfile: srcDir });
+                res.json({ currentProfile: srcFolder });
             }
         });
     }
@@ -107,11 +107,11 @@ app.get('/current-profile', (req, res) => {
 
 // Route to get the list of certificates
 app.get('/list', (req, res, next) => {
-    if (!srcDir) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
 
     try {
         checkSudoers();
-        exec('sudo -n $PWD/zpki -C ' + srcDir + ' ca-list --json', (error, stdout) => {
+        exec(`${zpkiCmd} -C ' + srcFolder + ' ca-list --json`, (error, stdout) => {
             if (error) return res.status(400).json({ error: 'No certificate found, please create one.' });
             res.json(JSON.parse(stdout));
         });
@@ -124,11 +124,11 @@ app.get('/list', (req, res, next) => {
 app.get('/subject-alt', (req, res, next) => {
     const commonName = req.query.cert;
 
-    if (!srcDir) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}). Only alphanumeric characters, spaces, hyphens, and underscores are allowed, and the length must be between 1 and 64 characters.` });
 
-    exec(`sudo -n $PWD/zpki -C "${srcDir}" ca-display-crt "${commonName}" --json`, (error, stdout) => {
+    exec(`${zpkiCmd} -C "${srcFolder}" ca-display-crt "${commonName}" --json`, (error, stdout) => {
         if (error || !stdout) return res.status(400).json({ error: 'Certficate not found.' });
 
         try {
@@ -153,14 +153,14 @@ app.get('/subject-alt', (req, res, next) => {
 // Route to switch profile
 app.post('/switch-profile', (req, res) => {
     const { profile } = req.body;
-    const currentPath = path.join(__dirname, profile);
+    const currentPath = path.join(caBaseDir, profile);
 
     fs.stat(currentPath, (err, stats) => {
         if (err || !stats.isDirectory()) {
             return res.status(400).json({ error: 'Invalid profile.' });
         }
 
-        srcDir = currentPath;
+        srcFolder = currentPath;
         req.session.currentProfile = profile;
         req.session.pkiaccess = '';
         return res.json({ response: `Profile switched to ${profile}.` });
@@ -173,7 +173,7 @@ app.post('/create', async (req, res, next) => {
     const type = 'server_ext'; // Will be used above in the future
     const password = ''; // Will be used above in the future
 
-    if (!srcDir) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}). Only alphanumeric characters, spaces, hyphens, and underscores are allowed, and the length must be between 1 and 64 characters.` });
 
@@ -183,8 +183,8 @@ app.post('/create', async (req, res, next) => {
             CA_PASSWORD=${ca_password} \
             PASSWORD=${password === '' ? '' : password} \
             EXT=${type} \
-            sudo -n $PWD/zpki \
-            -C "${srcDir}" \
+            ${zpkiCmd} \
+            -C "${srcFolder}" \
             -y ${password === '' ? '-c none' : ''} \
             ca-create-crt "${subject === '' ? commonName : subject}" \
             ${sanIP && sanIP.length > 0 ? sanIP.map(ip => `IP:${ip}`).join(' ') : ''} \
@@ -200,7 +200,7 @@ app.post('/create', async (req, res, next) => {
 app.post('/renew', async (req, res, next) => {
     const { commonName, ca_password } = req.body;
 
-    if (!srcDir) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
 
@@ -208,8 +208,8 @@ app.post('/renew', async (req, res, next) => {
         await checkSudoers();
         await execPromise(`
             CA_PASSWORD=${ca_password} \
-            sudo -n $PWD/zpki \
-            -C "${srcDir}" \
+            ${zpkiCmd} \
+            -C "${srcFolder}" \
             -y -c none \
             ca-update-crt "${commonName}"
         `);
@@ -223,7 +223,7 @@ app.post('/renew', async (req, res, next) => {
 app.post('/revoke', async (req, res, next) => {
     const { commonName, ca_password } = req.body;
 
-    if (!srcDir) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
 
@@ -231,8 +231,8 @@ app.post('/revoke', async (req, res, next) => {
         await checkSudoers();
         await execPromise(`
             CA_PASSWORD=${ca_password} \
-            sudo -n $PWD/zpki \
-            -C "${srcDir}" \
+            ${zpkiCmd} \
+            -C "${srcFolder}" \
             -y -c none \
             ca-revoke-crt "${commonName}"
         `);
@@ -246,7 +246,7 @@ app.post('/revoke', async (req, res, next) => {
 app.post('/disable', async (req, res, next) => {
     const { commonName, ca_password } = req.body;
 
-    if (!srcDir) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
 
@@ -254,8 +254,8 @@ app.post('/disable', async (req, res, next) => {
         await checkSudoers();
         await execPromise(`
             CA_PASSWORD=${ca_password} \
-            sudo -n $PWD/zpki \
-            -C "${srcDir}" \
+            ${zpkiCmd} \
+            -C "${srcFolder}" \
             -y -c none \
             ca-disable-crt "${commonName}"
         `);
@@ -281,15 +281,15 @@ const execPromise = (command) => {
 app.post('/set-password', async (req, res, next) => {
     const { ca_password } = req.body;
 
-    if (!srcDir) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!ca_password) return res.status(400).json({ error: 'Passphrase argument is empty.' });
 
     try {
         await checkSudoers();
         await execPromise(`
             CA_PASSWORD=${ca_password} \
-            sudo -n $PWD/zpki \
-            -C "${srcDir}" \
+            ${zpkiCmd} \
+            -C "${srcFolder}" \
             ca-test-password
         `);
         req.session.pkiaccess = ca_password;
