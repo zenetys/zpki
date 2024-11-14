@@ -27,8 +27,8 @@ const checkCommonName = (name) => {
 
 // Safe command execution
 const safeExec = (command, args = []) => {
-    return new Promise((resolve, reject) => {
-        const process = spawn(command, args, { shell: true });
+    return new Promise((resolve) => {
+        const process = spawn(command, args);
         let output = '';
         let errorOutput = '';
 
@@ -134,7 +134,7 @@ app.get('/subject-alt', async (req, res) => {
     try {
         const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-display-crt', commonName, '--json']);
 
-        if (output instanceof Error) { return res.status(500).json({ error: 'Process stopped.' }); }
+        if (output instanceof Error) { return res.status(500).json({ error: 'Certificate not found.' }); }
 
         const jsonOutput = JSON.parse(output);
         const san = jsonOutput["X509v3 Subject Alternative Name"];
