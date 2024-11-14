@@ -1,24 +1,17 @@
 const { spawn } = require('child_process');
 const fs = require('fs');
 const crypto = require('crypto');
-
-const path = require('path');
-const helmet = require('helmet');
-const bodyParser = require('body-parser');
-const rateLimit = require('express-rate-limit');
-
 const cors = require('cors');
 const express = require('express');
 const session = require('express-session');
-
-// Set basic variables
+const path = require('path');
+const helmet = require('helmet');
+const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
 
 const caBaseDir = process.env.CA_BASEDIR || __dirname;
 const zpkiCmd = process.env.PKI_CMD || __dirname + '/zpki';
-
-let srcFolder;
 
 // Centralized error handling middleware
 const handleError = (err, req, res, next) => {
@@ -27,7 +20,7 @@ const handleError = (err, req, res, next) => {
 };
 
 // Validate certificate name
-const validateName = (name) => {
+const checkCommonName = (name) => {
     const regex = /^[a-zA-Z0-9-_ ]+$/;
     return regex.test(name) && name.length > 0 && name.length < 64;
 };
@@ -70,7 +63,6 @@ const safeExec = (command, args = []) => {
 // Setup
 app.use(cors({ methods: ['GET', 'POST'] }));
 app.use(express.static(__dirname));
-app.use(rateLimit({ windowMs: 1 * 60 * 1000, max: 1000, message: { error: 'API Rate Limit Exceeded.' }}));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
