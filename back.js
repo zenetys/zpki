@@ -78,7 +78,7 @@ app.use(session({
 // Route to serve main page & select a default profile
 app.get('/', (req, res) => {
     if (req.session.currentProfile) {
-        srcFolder = path.join(caBaseDir, req.session.currentProfile);
+        req.session.srcFolder = path.join(caBaseDir, req.session.currentProfile);
         res.sendFile(path.join(caBaseDir, 'index.html'));
     }
 });
@@ -105,12 +105,12 @@ app.get('/current-profile', (req, res) => {
             if (err) {
                 return res.status(500).json({ error: 'Unable to scan directory: ' + err });
             } else {
-                srcFolder = path.join(caBaseDir, files
+                req.session.srcFolder = path.join(caBaseDir, files
                     .filter(file => file.isDirectory() && file.name !== '.git' 
                         && file.name !== 'images' && file.name !== 'node_modules')
                     .map(file => file.name)[0])
                     .split('/').pop()
-                res.json({ currentProfile: srcFolder });
+                res.json({ currentProfile: req.session.srcFolder });
             }
         });
     }
@@ -121,8 +121,8 @@ app.get('/current-profile', (req, res) => {
 // Route to get the list of certificates
 app.get('/list', (req, res, next) => {
     if (!req.session.pkiaccess) return res.status(400).json({ error: 'Session expired.' });
-    if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
 
+    if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     try {
         await checkSudoers();
         const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-list', '--json']);
@@ -138,7 +138,7 @@ app.get('/subject-alt', (req, res, next) => {
     const commonName = req.query.cert;
 
     if (!req.session.pkiaccess) return res.status(400).json({ error: 'Session expired.' });
-    if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}). Only alphanumeric characters, spaces, hyphens, and underscores are allowed, and the length must be between 1 and 64 characters.` });
 
@@ -175,7 +175,7 @@ app.post('/switch-profile', (req, res) => {
             return res.status(400).json({ error: 'Invalid profile.' });
         }
 
-        srcFolder = currentPath;
+        req.session.srcFolder = currentPath;
         req.session.currentProfile = profile;
         req.session.pkiaccess = '';
         return res.json({ response: `Profile switched to ${profile}.` });
@@ -189,7 +189,7 @@ app.post('/create', async (req, res, next) => {
     const password = ''; // Will be used above in the future
 
     if (!req.session.pkiaccess) return res.status(400).json({ error: 'Session expired.' });
-    if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}). Only alphanumeric characters, spaces, hyphens, and underscores are allowed, and the length must be between 1 and 64 characters.` });
 
@@ -200,7 +200,7 @@ app.post('/create', async (req, res, next) => {
             PASSWORD=${password === '' ? '' : password} \
             EXT=${type} \
             ${zpkiCmd} \
-            -C "${srcFolder}" \
+            -C "${req.session.srcFolder}" \
             -y ${password === '' ? '-c none' : ''} \
             ca-create-crt "${subject === '' ? commonName : subject}" \
             ${sanIP && sanIP.length > 0 ? sanIP.map(ip => `IP:${ip}`).join(' ') : ''} \
@@ -218,7 +218,7 @@ app.post('/renew', async (req, res, next) => {
     const { commonName } = req.body;
 
     if (!req.session.pkiaccess) return res.status(400).json({ error: 'Session expired.' });
-    if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
 
@@ -227,7 +227,7 @@ app.post('/renew', async (req, res, next) => {
         const output = await safeExec(`
             CA_PASSWORD=${req.session.caPassword} \
             ${zpkiCmd} \
-            -C "${srcFolder}" \
+            -C "${req.session.srcFolder}" \
             -y -c none \
             ca-update-crt "${commonName}"
         `);
@@ -243,7 +243,7 @@ app.post('/revoke', async (req, res, next) => {
     const { commonName } = req.body;
 
     if (!req.session.pkiaccess) return res.status(400).json({ error: 'Session expired.' });
-    if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
 
@@ -252,7 +252,7 @@ app.post('/revoke', async (req, res, next) => {
         const output = await safeExec(`
             CA_PASSWORD=${req.session.caPassword} \
             ${zpkiCmd} \
-            -C "${srcFolder}" \
+            -C "${req.session.srcFolder}" \
             -y -c none \
             ca-revoke-crt "${commonName}"
         `);
@@ -268,7 +268,7 @@ app.post('/disable', async (req, res, next) => {
     const { commonName } = req.body;
 
     if (!req.session.pkiaccess) return res.status(400).json({ error: 'Session expired.' });
-    if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
 
@@ -277,7 +277,7 @@ app.post('/disable', async (req, res, next) => {
         const output = await safeExec(`
             CA_PASSWORD=${req.session.caPassword} \
             ${zpkiCmd} \
-            -C "${srcFolder}" \
+            -C "${req.session.srcFolder}" \
             -y -c none \
             ca-disable-crt "${commonName}"
         `);
@@ -292,15 +292,15 @@ app.post('/disable', async (req, res, next) => {
 app.post('/set-password', async (req, res, next) => {
     const { ca_password } = req.body;
 
-    if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!ca_password) return res.status(400).json({ error: 'Passphrase argument is empty.' });
+    if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
 
     try {
         await checkSudoers();
         const output = await safeExec(`
             CA_PASSWORD=${ca_password} \
             ${zpkiCmd} \
-            -C "${srcFolder}" \
+            -C "${req.session.srcFolder}" \
             ca-test-password
         `);
         req.session.pkiaccess = ca_password;
@@ -314,14 +314,14 @@ app.post('/set-password', async (req, res, next) => {
 // Route to get session passphrase
 app.get('/is-locked', async (req, res) => {
     if (!req.session.pkiaccess) return res.json({ response: false });
-    if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
 
     try {
         await checkSudoers();
         const output = await safeExec(`
             CA_PASSWORD=${req.session.caPassword} \
             ${zpkiCmd} \
-            -C "${srcFolder}" \
+            -C "${req.session.srcFolder}" \
             ca-test-password
         `);
         return res.json({ response: true });
