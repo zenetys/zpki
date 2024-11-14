@@ -840,7 +840,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     else if (part.startsWith('OU=')) ouValue = part.replace('OU=', '');
                 });
             }
-        } catch (error) { showAlert('basicAlert'); }
+        } catch {};
 
         switch (action) {
             case 'create':
