@@ -25,16 +25,6 @@ const checkCommonName = (name) => {
     return regex.test(name) && name.length > 0 && name.length < 64;
 };
 
-// Check if current user is in sudoers
-const checkSudoers = async () => {
-    try {
-        const output = await safeExec('sudo', ['-l']);
-        if (output instanceof Error) { return res.status(500).json({ error: 'You don\'t have sudo privileges.' }); }
-    } catch (error) {
-        throw new Error('You don\'t have sudo privileges.');
-    }
-};
-
 // Safe command execution
 const safeExec = (command, args = []) => {
     return new Promise((resolve, reject) => {
@@ -122,7 +112,6 @@ app.get('/current-profile', (req, res) => {
 app.get('/list', async (req, res) => {
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     try {
-        await checkSudoers();
         const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-list', '--json']);
         if (output instanceof Error) { return res.status(500).json({ error: 'Error while listing certificates.' }); }
         res.json(JSON.parse(output));
@@ -192,7 +181,6 @@ app.post('/create', async (req, res) => {
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
 
     try {
-        await checkSudoers();
         const output = await safeExec(`
             CA_PASSWORD=${req.session.caPassword} \
             PASSWORD=${password === '' ? '' : password} \
@@ -221,7 +209,6 @@ app.post('/renew', async (req, res) => {
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
 
     try {
-        await checkSudoers();
         const output = await safeExec(`
             CA_PASSWORD=${req.session.caPassword} \
             ${zpkiCmd} \
@@ -246,7 +233,6 @@ app.post('/revoke', async (req, res) => {
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
 
     try {
-        await checkSudoers();
         const output = await safeExec(`
             CA_PASSWORD=${req.session.caPassword} \
             ${zpkiCmd} \
@@ -271,7 +257,6 @@ app.post('/disable', async (req, res) => {
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
 
     try {
-        await checkSudoers();
         const output = await safeExec(`
             CA_PASSWORD=${req.session.caPassword} \
             ${zpkiCmd} \
@@ -297,7 +282,6 @@ app.post('/set-password', async (req, res) => {
     }
 
     try {
-        await checkSudoers();
         const output = await safeExec(`
             CA_PASSWORD=${ca_password} \
             ${zpkiCmd} \
