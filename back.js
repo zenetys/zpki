@@ -123,6 +123,72 @@ app.get('/list', async (req, res) => {
     }
 });
 
+// Route to download a certificate file (.crt)
+app.get('/download-crt', async (req, res) => {
+    const commonName = req.query.cert;
+
+    if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
+    if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
+
+    try {
+        const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-dump-crt', commonName]);
+
+        if (output instanceof Error) { return res.status(500).json({ error: 'Certificate not found.' }); }
+
+        res.setHeader('Content-Disposition', `attachment; filename=${commonName}.crt`);
+        res.setHeader('Content-Type', 'application/x-x509-ca-cert');
+        res.end(output);
+    } catch (error) {
+        console.error('Error executing command:', error);
+        res.status(500).json({ error: 'Certificate not found.' });
+    }
+});
+
+// Route to download a certificate signing request (.csr)
+app.get('/download-csr', async (req, res) => {
+    const commonName = req.query.cert;
+
+    if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
+    if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
+
+    try {
+        const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-dump-csr', commonName]);
+
+        if (output instanceof Error) { return res.status(500).json({ error: 'Certificate not found.' }); }
+
+        res.setHeader('Content-Disposition', `attachment; filename=${commonName}.csr`);
+        res.setHeader('Content-Type', 'application/x-x509-ca-cert');
+        res.end(output);
+    } catch (error) {
+        console.error('Error executing command:', error);
+        res.status(500).json({ error: 'Certificate not found.' });
+    }
+});
+
+// Route to download a key file (.key)
+app.get('/download-key', async (req, res) => {
+    const commonName = req.query.cert;
+
+    if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
+    if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
+
+    try {
+        const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-dump-key', commonName]);
+
+        if (output instanceof Error) { return res.status(500).json({ error: 'Certificate not found.' }); }
+
+        res.setHeader('Content-Disposition', `attachment; filename=${commonName}.key`);
+        res.setHeader('Content-Type', 'application/x-x509-ca-cert');
+        res.end(output);
+    } catch (error) {
+        console.error('Error executing command:', error);
+        res.status(500).json({ error: 'Certificate not found.' });
+    }
+});
+
 // Route to get DNS & IP data
 app.get('/subject-alt', async (req, res) => {
     const commonName = req.query.cert;
