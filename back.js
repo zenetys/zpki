@@ -175,9 +175,9 @@ app.post('/switch-profile', (req, res) => {
             return res.status(400).json({ error: 'Invalid profile.' });
         }
 
+        req.session.caPassword = null;
         req.session.srcFolder = currentPath;
         req.session.currentProfile = profile;
-        req.session.pkiaccess = '';
         return res.json({ response: `Profile switched to ${profile}.` });
     });
 });
@@ -188,7 +188,7 @@ app.post('/create', async (req, res, next) => {
     const type = 'server_ext'; // Will be used above in the future
     const password = ''; // Will be used above in the future
 
-    if (!req.session.pkiaccess) return res.status(400).json({ error: 'Session expired.' });
+    if (!req.session.caPassword) return res.status(400).json({ error: 'Session expired.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}). Only alphanumeric characters, spaces, hyphens, and underscores are allowed, and the length must be between 1 and 64 characters.` });
@@ -217,7 +217,7 @@ app.post('/create', async (req, res, next) => {
 app.post('/renew', async (req, res, next) => {
     const { commonName } = req.body;
 
-    if (!req.session.pkiaccess) return res.status(400).json({ error: 'Session expired.' });
+    if (!req.session.caPassword) return res.status(400).json({ error: 'Session expired.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
@@ -242,7 +242,7 @@ app.post('/renew', async (req, res, next) => {
 app.post('/revoke', async (req, res, next) => {
     const { commonName } = req.body;
 
-    if (!req.session.pkiaccess) return res.status(400).json({ error: 'Session expired.' });
+    if (!req.session.caPassword) return res.status(400).json({ error: 'Session expired.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
@@ -267,7 +267,7 @@ app.post('/revoke', async (req, res, next) => {
 app.post('/disable', async (req, res, next) => {
     const { commonName } = req.body;
 
-    if (!req.session.pkiaccess) return res.status(400).json({ error: 'Session expired.' });
+    if (!req.session.caPassword) return res.status(400).json({ error: 'Session expired.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
@@ -303,8 +303,8 @@ app.post('/set-password', async (req, res, next) => {
             -C "${req.session.srcFolder}" \
             ca-test-password
         `);
-        req.session.pkiaccess = ca_password;
         if (output instanceof Error) { return res.status(500).json({ error: 'Incorrect passphrase.' }); }
+        req.session.caPassword = ca_password;
         return res.json({ response: 'Passphrase saved!' });
     } catch (error) {
         res.status(400).json({ error: 'Incorrect passphrase.' });
@@ -313,7 +313,7 @@ app.post('/set-password', async (req, res, next) => {
 
 // Route to get session passphrase
 app.get('/is-locked', async (req, res) => {
-    if (!req.session.pkiaccess) return res.json({ response: false });
+    if (!req.session.caPassword) return res.json({ response: true });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
 
     try {
