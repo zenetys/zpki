@@ -1,3 +1,4 @@
+.env
 ca.cnf
 ca.crlnum
 ca.crlnum.old
