@@ -547,7 +547,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Format date to YYYY/MM/DD from ISO format
     function formatDate(isoDateString) {
         const date = new Date(isoDateString);
-        return date.toLocaleDateString('fr-FR');
+        return date.toISOString().split('T')[0];
     }
 
     // Sorting columns
