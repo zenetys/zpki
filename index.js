@@ -693,9 +693,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                         <td data-sort="endDate"><span class="tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="${cert.endDate}">${formatDate(cert.endDate)}</span></td>
                         <td class="download-container">
                             <button type="button" class="btn btn-light btn-sm" data-bs-toggle="popover" data-bs-html="true" data-bs-content="
-                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='${profile}/certs/${replaceSpaces(cert.id)}.crt' download><img src='images/certificate-solid.svg' class='icon me-1'/>.crt</a>
-                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='${profile}/certs/${replaceSpaces(cert.id)}.csr' download><img src='images/lock-solid.svg' class='icon me-1'/>.csr</a>
-                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='${profile}/private/${replaceSpaces(cert.id)}.key' download><img src='images/key-solid.svg' class='icon me-1'/>.key</a>
+                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-crt?cert=${cert.id}' download><img src='images/certificate-solid.svg' class='icon me-1'/>.crt</a>
+                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-csr?cert=${cert.id}' download><img src='images/lock-solid.svg' class='icon me-1'/>.csr</a>
+                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-key?cert=${cert.id}' download><img src='images/key-solid.svg' class='icon me-1'/>.key</a>
                                 <a class='btn btn-light btn-sm d-block text-start exportP12 ${cert.keyStatus === 'encrypted' ? '' : 'disabled'}'><img src='images/file-export-solid.svg' class='icon me-1'/>.pkcs12</a>
                             ">
                                 <img src="images/file-arrow-down-solid.svg" class="icon"/>
@@ -959,25 +959,14 @@ document.addEventListener('DOMContentLoaded', async function() {
                 };
                 break;
             case 'view':
-                let profile;
-                fetch(`${API_BASE_URL}/current-profile`)
+                const commonName = certData.id;
+                fetch(`${API_BASE_URL}/subject-alt?cert=${commonName}`)
                     .then(response => {
                         if (!response.ok) {
                             showAlert('basicAlert');
                             return Promise.reject();
                         }
-                        return response.json();
-                    })
-                    .then(async profileData => {
-                        profile = profileData.currentProfile;
-                        if (profile === 'Select a profile') {
-                            showAlert('profileAlert');
-                            certTableBody.innerHTML = '';
-                            return Promise.reject();
-                        }
-                        const commonName = certData.id;
-                        const response = await fetch(`/subject-alt?cert=${commonName}`);
-                        const subjAlt = await response.json();
+                        const subjAlt = response.json();
                         const dnsList = subjAlt.dns || [];
                         const ipList = subjAlt.ip || [];
 
@@ -1020,13 +1009,13 @@ document.addEventListener('DOMContentLoaded', async function() {
                                 <p class="text-wrap">
                                     <strong class="me-2">${texts[lang].headers.downloads}:</strong>
                                     <span class="d-inline-block mt-1">
-                                        <a class="btn btn-light btn-sm mb-1 me-1" href="${profile}/certs/${replaceSpaces(certData.id)}.crt" download>
+                                        <a class="btn btn-light btn-sm mb-1 me-1" href='download-crt?cert=${certData.id}' download>
                                             <img src="images/certificate-solid.svg" class="icon me-1"/>.crt
                                         </a>
-                                        <a class="btn btn-light btn-sm mb-1 me-1" href="${profile}/certs/${replaceSpaces(certData.id)}.csr" download>
+                                        <a class="btn btn-light btn-sm mb-1 me-1" href='download-csr?cert=${certData.id}' download>
                                             <img src="images/lock-solid.svg" class="icon me-1"/>.csr
                                         </a>
-                                        <a class="btn btn-light btn-sm mb-1 me-1" href="${profile}/private/${replaceSpaces(certData.id)}.key" download>
+                                        <a class="btn btn-light btn-sm mb-1 me-1" href='download-key?cert=${certData.id}' download>
                                             <img src="images/key-solid.svg" class="icon me-1"/>.key
                                         </a>
                                         <a class="btn btn-light btn-sm mb-1 exportP12 ${certData.keyStatus === 'encrypted' ? '' : 'disabled'}">
@@ -1038,7 +1027,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         `;
                         footerContent.style.display = 'none';
                     })
-                    .catch(error => console.error('Profile loading error:', error));
+                    .catch(error => console.error('Certificate displaying error:', error));
                 break;
             case 'renew':
                 modalTitle.textContent = `${texts[lang].titles.renewCert}`;
