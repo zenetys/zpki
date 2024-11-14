@@ -140,8 +140,6 @@ app.get('/subject-alt', (req, res, next) => {
     if (!req.session.pkiaccess) return res.status(400).json({ error: 'Session expired.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
-    if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}). Only alphanumeric characters, spaces, hyphens, and underscores are allowed, and the length must be between 1 and 64 characters.` });
-
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
     try {
         const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-display-crt', commonName, '--json']);
@@ -191,7 +189,7 @@ app.post('/create', async (req, res, next) => {
     if (!req.session.caPassword) return res.status(400).json({ error: 'Session expired.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
-    if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}). Only alphanumeric characters, spaces, hyphens, and underscores are allowed, and the length must be between 1 and 64 characters.` });
+    if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
 
     try {
         await checkSudoers();
@@ -220,7 +218,7 @@ app.post('/renew', async (req, res, next) => {
     if (!req.session.caPassword) return res.status(400).json({ error: 'Session expired.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
-    if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
+    if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
 
     try {
         await checkSudoers();
@@ -245,7 +243,7 @@ app.post('/revoke', async (req, res, next) => {
     if (!req.session.caPassword) return res.status(400).json({ error: 'Session expired.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
-    if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
+    if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
 
     try {
         await checkSudoers();
@@ -270,7 +268,7 @@ app.post('/disable', async (req, res, next) => {
     if (!req.session.caPassword) return res.status(400).json({ error: 'Session expired.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
-    if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
+    if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
 
     try {
         await checkSudoers();
