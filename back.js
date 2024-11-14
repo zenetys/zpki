@@ -33,7 +33,14 @@ const validateName = (name) => {
 };
 
 // Check if current user is in sudoers
-const checkSudoers = () => {
+const checkSudoers = async () => {
+    try {
+        const output = await safeExec('sudo', ['-l']);
+        if (output instanceof Error) { return res.status(500).json({ error: 'You don\'t have sudo privileges.' }); }
+    } catch (error) {
+        throw new Error('You don\'t have sudo privileges.');
+    }
+};
 
 // Safe command execution
 const safeExec = (command, args = []) => {
@@ -125,11 +132,10 @@ app.get('/list', (req, res, next) => {
     if (!srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
 
     try {
-        checkSudoers();
-        exec(`${zpkiCmd} -C ' + srcFolder + ' ca-list --json`, (error, stdout) => {
-            if (error) return res.status(400).json({ error: 'No certificate found, please create one.' });
-            res.json(JSON.parse(stdout));
-        });
+        await checkSudoers();
+        const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-list', '--json']);
+        if (output instanceof Error) { return res.status(500).json({ error: 'Error while listing certificates.' }); }
+        res.json(JSON.parse(output));
     } catch (error) {
         res.status(400).json({ error: 'Error while listing certificates.' });
     }
@@ -144,26 +150,27 @@ app.get('/subject-alt', (req, res, next) => {
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!validateName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}). Only alphanumeric characters, spaces, hyphens, and underscores are allowed, and the length must be between 1 and 64 characters.` });
 
-    exec(`${zpkiCmd} -C "${srcFolder}" ca-display-crt "${commonName}" --json`, (error, stdout) => {
-        if (error || !stdout) return res.status(400).json({ error: 'Certficate not found.' });
+    if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
+    try {
+        const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-display-crt', commonName, '--json']);
 
-        try {
-            const jsonOutput = JSON.parse(stdout);
-            const san = jsonOutput["X509v3 Subject Alternative Name"];
-            if (!san) return res.json({ error: 'SAN not found.' });
+        if (output instanceof Error) { return res.status(500).json({ error: 'Process stopped.' }); }
 
-            const dns = [], ip = [];
-            san.split(',').forEach(part => {
-                part = part.trim();
-                if (part.startsWith('DNS:')) dns.push(part.split(':')[1].trim());
-                else if (part.startsWith('IP Address:')) ip.push(part.split(':')[1].trim());
-            });
+        const jsonOutput = JSON.parse(output);
+        const san = jsonOutput["X509v3 Subject Alternative Name"];
+        if (!san) return res.json({ error: 'SAN not found.' });
 
-            res.json({ dns, ip });
-        } catch (e) {
-            res.status(500).json({ error: 'Error while listing alternative names.' });
-        }
-    });
+        const dns = [], ip = [];
+        san.split(',').forEach(part => {
+            part = part.trim();
+            if (part.startsWith('DNS:')) dns.push(part.split(':')[1].trim());
+            else if (part.startsWith('IP Address:')) ip.push(part.split(':')[1].trim());
+        });
+
+        res.json({ dns, ip });
+    } catch (e) {
+        res.status(500).json({ error: 'Certificate not found.' });
+    }
 });
 
 // Route to switch profile
@@ -196,8 +203,8 @@ app.post('/create', async (req, res, next) => {
 
     try {
         await checkSudoers();
-        await execPromise(`
-            CA_PASSWORD=${req.session.pkiaccess} \
+        const output = await safeExec(`
+            CA_PASSWORD=${req.session.caPassword} \
             PASSWORD=${password === '' ? '' : password} \
             EXT=${type} \
             ${zpkiCmd} \
@@ -207,6 +214,7 @@ app.post('/create', async (req, res, next) => {
             ${sanIP && sanIP.length > 0 ? sanIP.map(ip => `IP:${ip}`).join(' ') : ''} \
             ${sanDNS && sanDNS.length > 0 ? sanDNS.map(dns => `DNS:${dns}`).join(' ') : ''}
         `);
+        if (output instanceof Error) { return res.status(500).json({ error: 'Certificate creation error.' }); }
         res.json({ response: 'Certificate created successfully!' });
     } catch (error) {
         res.status(400).json({ error: 'Certificate creation error.' });
@@ -224,13 +232,14 @@ app.post('/renew', async (req, res, next) => {
 
     try {
         await checkSudoers();
-        await execPromise(`
-            CA_PASSWORD=${req.session.pkiaccess} \
+        const output = await safeExec(`
+            CA_PASSWORD=${req.session.caPassword} \
             ${zpkiCmd} \
             -C "${srcFolder}" \
             -y -c none \
             ca-update-crt "${commonName}"
         `);
+        if (output instanceof Error) { return res.status(500).json({ error: 'Certificate renewal error.' }); }
         res.json({ response: 'Certificate renewed successfully!' });
     } catch (error) {
         res.status(400).json({ error: 'Certificate renewal error.' });
@@ -248,13 +257,14 @@ app.post('/revoke', async (req, res, next) => {
 
     try {
         await checkSudoers();
-        await execPromise(`
-            CA_PASSWORD=${req.session.pkiaccess} \
+        const output = await safeExec(`
+            CA_PASSWORD=${req.session.caPassword} \
             ${zpkiCmd} \
             -C "${srcFolder}" \
             -y -c none \
             ca-revoke-crt "${commonName}"
         `);
+        if (output instanceof Error) { return res.status(500).json({ error: 'Certificate revocation error.' }); }
         res.json({ response: 'Certificate revoked successfully!' });
     } catch (error) {
         res.status(400).json({ error: 'Certificate revocation error.' });
@@ -272,30 +282,19 @@ app.post('/disable', async (req, res, next) => {
 
     try {
         await checkSudoers();
-        await execPromise(`
-            CA_PASSWORD=${req.session.pkiaccess} \
+        const output = await safeExec(`
+            CA_PASSWORD=${req.session.caPassword} \
             ${zpkiCmd} \
             -C "${srcFolder}" \
             -y -c none \
             ca-disable-crt "${commonName}"
         `);
+        if (output instanceof Error) { return res.status(500).json({ error: 'Certificate deactivation error.' }); }
         res.json({ response: 'Certificate disabled successfully!' });
     } catch (error) {
         res.status(400).json({ error: 'Certificate deactivation error.' });
     }
 });
-
-// Execute command
-const execPromise = (command) => {
-    return new Promise((resolve, reject) => {
-        exec(command, (error, stdout, stderr) => {
-            if (error) {
-                return reject(new Error(stderr));
-            }
-            resolve(stdout.trim());
-        });
-    });
-};
 
 // Route to define session passphrase
 app.post('/set-password', async (req, res, next) => {
@@ -306,13 +305,14 @@ app.post('/set-password', async (req, res, next) => {
 
     try {
         await checkSudoers();
-        await execPromise(`
+        const output = await safeExec(`
             CA_PASSWORD=${ca_password} \
             ${zpkiCmd} \
             -C "${srcFolder}" \
             ca-test-password
         `);
         req.session.pkiaccess = ca_password;
+        if (output instanceof Error) { return res.status(500).json({ error: 'Incorrect passphrase.' }); }
         return res.json({ response: 'Passphrase saved!' });
     } catch (error) {
         res.status(400).json({ error: 'Incorrect passphrase.' });
@@ -326,13 +326,14 @@ app.get('/is-locked', async (req, res) => {
 
     try {
         await checkSudoers();
-        await execPromise(`
-            CA_PASSWORD=${req.session.pkiaccess} \
+        const output = await safeExec(`
+            CA_PASSWORD=${req.session.caPassword} \
             ${zpkiCmd} \
             -C "${srcFolder}" \
             ca-test-password
         `);
         return res.json({ response: true });
+        if (output instanceof Error) { return res.json({ response: true }); }
     } catch (error) {
         res.json({ response: false });
     }
