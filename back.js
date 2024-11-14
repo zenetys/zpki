@@ -286,8 +286,11 @@ app.post('/disable', async (req, res) => {
 app.post('/set-password', async (req, res) => {
     const { ca_password } = req.body;
 
-    if (!ca_password) return res.status(400).json({ error: 'Passphrase argument is empty.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (ca_password === null) {
+        req.session.caPassword = null;
+        return res.json({ response: 'Passphrase removed.' });
+    }
 
     try {
         await checkSudoers();
