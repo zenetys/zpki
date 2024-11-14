@@ -801,8 +801,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 initializeTooltips();
                 updateInterface();
-            })
-            .catch(() => {});
+            });
     }
 
     // Function to manage all modals
@@ -831,7 +830,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     else if (part.startsWith('OU=')) ouValue = part.replace('OU=', '');
                 });
             }
-        } catch {};
+        } catch (error) { showAlert('basicAlert'); }
 
         switch (action) {
             case 'create':
