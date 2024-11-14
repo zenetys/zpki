@@ -326,10 +326,10 @@ app.get('/is-locked', async (req, res) => {
             -C "${req.session.srcFolder}" \
             ca-test-password
         `);
-        return res.json({ response: true });
         if (output instanceof Error) { return res.json({ response: true }); }
+        return res.json({ response: false });
     } catch (error) {
-        res.json({ response: false });
+        res.json({ response: true });
     }
 });
 
