@@ -1,5 +1,4 @@
-const { exec } = require('child_process');
-
+const { spawn } = require('child_process');
 const fs = require('fs');
 const crypto = require('crypto');
 
@@ -35,12 +34,27 @@ const validateName = (name) => {
 
 // Check if current user is in sudoers
 const checkSudoers = () => {
+
+// Safe command execution
+const safeExec = (command, args = []) => {
     return new Promise((resolve, reject) => {
-        exec('sudo -l', (error, stdout, stderr) => {
-            if (error) {
-                reject(new Error("You don't have sudo privileges."));
+        const process = spawn(command, args, { shell: true });
+        let output = '';
+        let errorOutput = '';
+
+        process.stdout.on('data', (data) => {
+            output += data;
+        });
+
+        process.stderr.on('data', (data) => {
+            errorOutput += data;
+        });
+
+        process.on('close', (code) => {
+            if (code === 0) {
+                resolve(output.trim());
             } else {
-                resolve(true);
+                resolve(new Error(errorOutput.trim() || `Command failed with code ${code}`));
             }
         });
     });
