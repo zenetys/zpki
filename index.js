@@ -647,7 +647,14 @@ document.addEventListener('DOMContentLoaded', async function() {
             .then(data => {
                 certTableBody.innerHTML = '';
                 let anyMatchFound = false;
-                data.forEach(cert => {
+
+                const filteredData = tags.length === 0 ? data.filter(cert => cert.status === 'V') : data;
+                filteredData.sort((a, b) => {
+                    const dateA = new Date(a.endDate);
+                    const dateB = new Date(b.endDate);
+                    return dateA - dateB;
+                });
+                filteredData.forEach(cert => {
                     const status = cert.status;
                     const statusMap = {
                         V: { color: 'success', icon: 'circle-check-solid.svg', textKey: 'valid' },
