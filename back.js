@@ -119,9 +119,7 @@ app.get('/current-profile', (req, res) => {
 });
 
 // Route to get the list of certificates
-app.get('/list', (req, res, next) => {
-    if (!req.session.pkiaccess) return res.status(400).json({ error: 'Session expired.' });
-
+app.get('/list', async (req, res) => {
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     try {
         await checkSudoers();
@@ -134,7 +132,7 @@ app.get('/list', (req, res, next) => {
 });
 
 // Route to get DNS & IP data
-app.get('/subject-alt', (req, res, next) => {
+app.get('/subject-alt', async (req, res) => {
     const commonName = req.query.cert;
 
     if (!req.session.pkiaccess) return res.status(400).json({ error: 'Session expired.' });
@@ -164,7 +162,7 @@ app.get('/subject-alt', (req, res, next) => {
 });
 
 // Route to switch profile
-app.post('/switch-profile', (req, res) => {
+app.post('/switch-profile', async (req, res) => {
     const { profile } = req.body;
     const currentPath = path.join(caBaseDir, profile);
 
@@ -181,7 +179,7 @@ app.post('/switch-profile', (req, res) => {
 });
 
 // Route to create certificates
-app.post('/create', async (req, res, next) => {
+app.post('/create', async (req, res) => {
     const { commonName, subject, sanIP, sanDNS } = req.body;
     const type = 'server_ext'; // Will be used above in the future
     const password = ''; // Will be used above in the future
@@ -212,7 +210,7 @@ app.post('/create', async (req, res, next) => {
 });
 
 // Route to renew certificates
-app.post('/renew', async (req, res, next) => {
+app.post('/renew', async (req, res) => {
     const { commonName } = req.body;
 
     if (!req.session.caPassword) return res.status(400).json({ error: 'Session expired.' });
@@ -237,7 +235,7 @@ app.post('/renew', async (req, res, next) => {
 });
 
 // Route to revoke certificates
-app.post('/revoke', async (req, res, next) => {
+app.post('/revoke', async (req, res) => {
     const { commonName } = req.body;
 
     if (!req.session.caPassword) return res.status(400).json({ error: 'Session expired.' });
@@ -262,7 +260,7 @@ app.post('/revoke', async (req, res, next) => {
 });
 
 // Route to disable certificates
-app.post('/disable', async (req, res, next) => {
+app.post('/disable', async (req, res) => {
     const { commonName } = req.body;
 
     if (!req.session.caPassword) return res.status(400).json({ error: 'Session expired.' });
@@ -287,7 +285,7 @@ app.post('/disable', async (req, res, next) => {
 });
 
 // Route to define session passphrase
-app.post('/set-password', async (req, res, next) => {
+app.post('/set-password', async (req, res) => {
     const { ca_password } = req.body;
 
     if (!ca_password) return res.status(400).json({ error: 'Passphrase argument is empty.' });
