@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const urlParams = new URLSearchParams(window.location.search);
     const searchTerm = urlParams.get('s') ? urlParams.get('s') : '';
     const tagsParam = urlParams.get('tags');
+    const API_BASE_URL = '.';
     const texts = {
         en: {
             actions: {
@@ -617,7 +618,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Function to load data & update table
     function loadCertData(searchTerm = '', tags = []) {
         let profile;
-        fetch('/current-profile')
+        fetch(`${API_BASE_URL}/current-profile`)
             .then(response => {
                 if (!response.ok) {
                     showAlert('basicAlert');
@@ -633,7 +634,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     certTableBody.innerHTML = '';
                     return Promise.reject();
                 }
-                return fetch('/list');
+                return fetch(`${API_BASE_URL}/list`)
             })
             .then(response => {
                 if (!response.ok) {
@@ -952,7 +953,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 break;
             case 'view':
                 let profile;
-                fetch('/current-profile')
+                fetch(`${API_BASE_URL}/current-profile`)
                     .then(response => {
                         if (!response.ok) {
                             showAlert('basicAlert');
@@ -1321,7 +1322,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Check if common name exists
     async function checkCommonName(commonName) {
         try {
-            const response = await fetch('/list');
+            const response = await fetch(`${API_BASE_URL}/list`);
             const cert = await response.json();
             return cert.some(cert => cert.id === commonName);
         } catch (error) { return false; }
