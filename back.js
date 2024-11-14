@@ -28,7 +28,7 @@ const checkCommonName = (name) => {
 // Safe command execution
 const safeExec = (command, args = []) => {
     return new Promise((resolve) => {
-        const process = spawn(command, args);
+        const process = spawn(command, args, { stdio: 'pipe' });
         let output = '';
         let errorOutput = '';
 
