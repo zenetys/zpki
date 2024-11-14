@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     let locked;
     let lang = localStorage.getItem('language') || 'en';
 
-    // Set the active class on the corresponding language menu item
+    // Language dropdown interactions
     $('#languageMenu .dropdown-item').removeClass('active');
     $(`#languageMenu .dropdown-item[data-lang="${lang}"]`).addClass('active').find('.checkmark').show();
     $('#languageMenu .dropdown-item').not(`[data-lang="${lang}"]`).find('.checkmark').hide();
