@@ -306,6 +306,7 @@ app.post('/set-password', async (req, res) => {
         `);
         if (output instanceof Error) { return res.status(500).json({ error: 'Incorrect passphrase.' }); }
         req.session.caPassword = ca_password;
+        setTimeout(() => { req.session.caPassword = null }, 600000);
         return res.json({ response: 'Passphrase saved!' });
     } catch (error) {
         res.status(400).json({ error: 'Incorrect passphrase.' });
