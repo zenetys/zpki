@@ -1,10 +1,11 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
     const selectBoxHeader = document.querySelector('[data-sort="selectBox"]');
     const wrongPassword = document.getElementById('wrongPassword');
     const certSearchInput = document.getElementById('certSearch');
     const certTableBody = document.getElementById('certTableBody');
     const lockInterface = document.getElementById('lockInterface');
+    const passwordForm = document.getElementById('passwordForm');
     const passwordInput = document.getElementById('password');
     const createBtn = document.getElementById('createBtn');
     const urlParams = new URLSearchParams(window.location.search);
@@ -386,6 +387,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },        
     };
     let tags = [];
+    let locked;
     let lang = localStorage.getItem('language') || 'en';
 
     // Set the active class on the corresponding language menu item
@@ -450,7 +452,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update lock / unlock buttons
     function updateInterface() {
         const checkboxes = document.querySelectorAll('.cert-checkbox');
-        if (!isLocked) {
+        if (!locked) {
             checkboxes.forEach(checkbox => { checkbox.disabled = false; });
             createBtn.classList.remove('disabled');
             createBtn.classList.remove('btn-secondary');
@@ -720,7 +722,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // On line hover, show / hide action buttons
                     row.addEventListener('mouseover', function() {
-                        if (!isLocked) {
+                        if (!locked) {
                             const btn = row.querySelector('.btn-status');
                             const actionButtons = row.querySelector('.action-buttons');
                             const checkboxes = document.querySelectorAll('.cert-checkbox');
@@ -733,7 +735,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     });
                     row.addEventListener('mouseout', function() {
-                        if (!isLocked) {
+                        if (!locked) {
                             const btn = row.querySelector('.btn-status');
                             const actionButtons = row.querySelector('.action-buttons');
 
@@ -920,36 +922,28 @@ document.addEventListener('DOMContentLoaded', function() {
                     // if ((org && orgUnit) || org || orgUnit) subject += `/CN=${commonName}`;
 
                     try {
-                        const getPassword = await fetch('/get-password', {
-                            method: 'GET',
-                            headers: { 'Content-Type': 'application/json' }
-                        });
-                        if (getPassword.ok) {
-                            const password = await getPassword.json();
-                            const data = {
-                                commonName: commonName,
-                                subject: subject,
-                                sanIP: sanIP,
-                                sanDNS: sanDNS,
-                                // type: type + '_ext',
-                                startDate: startDate,
-                                endDate: endDate,
-                                ca_password: password.pkiaccess
-                            };
+                        const data = {
+                            commonName: commonName,
+                            subject: subject,
+                            sanIP: sanIP,
+                            sanDNS: sanDNS,
+                            // type: type + '_ext',
+                            startDate: startDate,
+                            endDate: endDate,
+                        };
 
-                            const response = await fetch('/create', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(data)
-                            });
-        
-                            if (response.ok) {
-                                loadCertData();
-                                modal.hide();
-                            } else {
-                                showAlert('passphraseAlert');
-                                confirmAction.disabled = false;
-                            }
+                        const response = await fetch(`${API_BASE_URL}/create`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        });
+    
+                        if (response.ok) {
+                            loadCertData();
+                            modal.hide();
+                        } else {
+                            showAlert('passphraseAlert');
+                            confirmAction.disabled = false;
                         }
                     } catch (error) {
                         console.error('Creation error:', error);
@@ -1129,36 +1123,28 @@ document.addEventListener('DOMContentLoaded', function() {
                     // if ((org && orgUnit) || org || orgUnit) subject += `/CN=${commonName}`;
 
                     try {
-                        const getPassword = await fetch('/get-password', {
-                            method: 'GET',
-                            headers: { 'Content-Type': 'application/json' }
-                        });
-                        if (getPassword.ok) {
-                            const password = await getPassword.json();
-                            const data = {
-                                commonName: commonName,
-                                subject: subject,
-                                sanIP: sanIP,
-                                sanDNS: sanDNS,
-                                // type: type + '_ext',
-                                startDate: startDate,
-                                endDate: endDate,
-                                ca_password: password.pkiaccess
-                            };
+                        const data = {
+                            commonName: commonName,
+                            subject: subject,
+                            sanIP: sanIP,
+                            sanDNS: sanDNS,
+                            // type: type + '_ext',
+                            startDate: startDate,
+                            endDate: endDate,
+                        };
 
-                            const response = await fetch('/renew', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(data)
-                            });
-                    
-                            if (response.ok) {
-                                loadCertData();
-                                modal.hide();
-                            } else {
-                                showAlert('passphraseAlert');
-                                confirmAction.disabled = false;
-                            }
+                        const response = await fetch(`${API_BASE_URL}/renew`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        });
+                
+                        if (response.ok) {
+                            loadCertData();
+                            modal.hide();
+                        } else {
+                            showAlert('passphraseAlert');
+                            confirmAction.disabled = false;
                         }
                     } catch (error) {
                         console.error('Renewal error:', error);
@@ -1195,27 +1181,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     confirmAction.disabled = true;
 
                     try {
-                        const getPassword = await fetch('/get-password', {
-                            method: 'GET',
-                            headers: { 'Content-Type': 'application/json' }
+                        const response = await fetch(`${API_BASE_URL}/revoke`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ commonName: commonName })
                         });
-                        if (getPassword.ok) {
-                            const password = await getPassword.json();
-                            const response = await fetch('/revoke', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ commonName: commonName, ca_password: password.pkiaccess })
-                            });
-                    
-                            if (response.ok) {
-                                loadCertData();
-                                modal.hide();
-                            } else {
-                                showAlert('passphraseAlert');
-                                confirmAction.disabled = false;
-                            }
+                
+                        if (response.ok) {
+                            loadCertData();
+                            modal.hide();
                         } else {
-                            console.error('Passphrase fetching error:', getPassword.statusText);
+                            showAlert('passphraseAlert');
+                            confirmAction.disabled = false;
                         }
                     } catch (error) {
                         console.error('Revocation error:', error);
@@ -1250,27 +1227,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     const confirmAction = document.getElementById('confirmAction');
                     confirmAction.disabled = true;
                     try {
-                        const getPassword = await fetch('/get-password', {
-                            method: 'GET',
-                            headers: { 'Content-Type': 'application/json' }
+                        const response = await fetch(`${API_BASE_URL}/disable`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ commonName: commonName })
                         });
-                        if (getPassword.ok) {
-                            const password = await getPassword.json();
-                            const response = await fetch('/disable', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ commonName: commonName, ca_password: password.pkiaccess })
-                            });
-                    
-                            if (response.ok) {
-                                loadCertData();
-                                modal.hide();
-                            } else {
-                                showAlert('passphraseAlert');
-                                confirmAction.disabled = false;
-                            }
+                
+                        if (response.ok) {
+                            loadCertData();
+                            modal.hide();
                         } else {
-                            console.error('Passphrase fetching error:', getPassword.statusText);
+                            showAlert('passphraseAlert');
+                            confirmAction.disabled = false;
                         }
                     } catch (error) {
                         console.error('Deactivation error:', error);
@@ -1340,55 +1308,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Utility function to fetch password from the server
-    async function fetchPassword() {
-        const response = await fetch('/get-password');
-        if (response.status === 429) showAlert('requestsAlert');
-        else if (!response.ok) throw new Error('Request failed');
-        return (await response.json()).pkiaccess;
-    }
-
-    // Load password and update interface
-    async function loadPassword() {
-        const fetchedPassword = await fetchPassword();
-        passwordInput.value = fetchedPassword;
-
-        if (fetchedPassword === '') isLocked = true;
-        saveLock(isLocked);
-    }
-
-    // Check if the input password is valid
-    async function checkPassword() {
-        const passwordSubmit = document.getElementById('passwordSubmit');
-        const tmpPassword = await fetchPassword();
-
-        passwordInput.classList.remove('is-invalid', 'is-valid');
-        wrongPassword.style.display = 'none';
-
-        if (passwordInput.value.length < 4 && passwordInput.value.length > 0) {
-            passwordInput.classList.add('is-invalid');
-            wrongPassword.textContent = `${texts[lang].inputs.wrongPassLength}`;
-            wrongPassword.style.display = 'block';
-            passwordSubmit.className = 'btn btn-danger float-end mt-3';
-            passwordSubmit.disabled = true;
-            return;
-        }
-
-        if (tmpPassword) {
-            const isValid = passwordInput.value === tmpPassword;
-            passwordInput.classList.toggle('is-valid', isValid);
-            passwordInput.classList.toggle('is-invalid', !isValid);
-            passwordSubmit.disabled = !isValid;
-            passwordSubmit.className = `btn ${isValid ? 'btn-success' : 'btn-danger'} float-end mt-3`;
-
-            if (!isValid) {
-                wrongPassword.textContent = `${texts[lang].inputs.wrongPass}`;
-                wrongPassword.style.display = 'block';
-            } else rightPassword.textContent = `${texts[lang].inputs.rightPass}`;
-        } else {
-            passwordSubmit.disabled = false;
-            passwordSubmit.className = 'btn btn-primary float-end mt-3';
-        }
+    // Check if current interface has to be locked
+    async function isLocked() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/is-locked`);
+            if (!response.ok) return Promise.reject();
+            locked = (await response.json()).response;
+            return locked;
+        } catch (error) { return true; }
     }
 
     // Check if common name exists
@@ -1399,6 +1326,25 @@ document.addEventListener('DOMContentLoaded', function() {
             return cert.some(cert => cert.id === commonName);
         } catch (error) { return false; }
     }
+
+    // Open modal & load password
+    lockInterface.addEventListener('click', async (e) => {
+        e.preventDefault();
+        try {
+            if (await isLocked()) passwordModal.show();
+            else if (!await isLocked()) {
+                const response = await fetch(`${API_BASE_URL}/set-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ca_password: null }),
+                });
+                if (response.ok) locked = true;
+                else showAlert('basicAlert');
+            }
+        } catch (error) { showAlert('basicAlert'); }
+        updateInterface();
+        loadCertData();
+    });
 
     // Handle button clicks and input events
     createBtn.addEventListener('click', (e) => {
@@ -1413,68 +1359,79 @@ document.addEventListener('DOMContentLoaded', function() {
         updateUrl(searchTerm, tags);
     });
 
-    // Open modal & load password
-    lockInterface.addEventListener('click', (e) => {
+    // Handle password form submission
+    passwordForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        passwordModal.show();
-        checkPassword();
+        const passwordSubmit = document.getElementById('passwordSubmit');
+        passwordSubmit.disabled = true;
+        try {
+            if (await isLocked()) {
+                const response = await fetch(`${API_BASE_URL}/set-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ca_password: passwordInput.value }),
+                });
+
+                if (response.ok) {
+                    locked = false;
+                    passwordModal.hide();
+                    passwordInput.value = '';
+                    passwordSubmit.disabled = false;
+                }
+                else {
+                    passwordSubmit.className = `btn ${locked ? 'btn-danger' : ''} float-end mt-3`;
+                    passwordInput.classList.toggle('is-invalid', locked);
+                    wrongPassword.textContent = `${texts[lang].inputs.wrongPass}`;
+                    wrongPassword.style.display = 'block';
+                    showAlert('passphraseAlert');
+                }
+            }
+        } catch (error) { showAlert('basicAlert'); }
+        updateInterface();
+        loadCertData();
+    });
+
+    // Check if the input password is valid
+    passwordForm.addEventListener('input', function() {
+        const passwordSubmit = document.getElementById('passwordSubmit');
+
+        passwordInput.classList.remove('is-invalid', 'is-valid');
+        wrongPassword.style.display = 'none';
+
+        if (passwordInput.value.length < 4 && passwordInput.value.length > 0) {
+            wrongPassword.textContent = `${texts[lang].inputs.wrongPassLength}`;
+            wrongPassword.style.display = 'block';
+            passwordInput.classList.add('is-invalid');
+            passwordSubmit.className = 'btn btn-danger float-end mt-3';
+            passwordSubmit.disabled = true;
+            return;
+        } else {
+            passwordSubmit.disabled = false;
+            passwordSubmit.className = 'btn btn-primary float-end mt-3';
+        }
     });
 
     // Reload interface on profile switch
-    document.getElementById('switchMenu').addEventListener('click', function() {
+    document.getElementById('switchMenu').addEventListener('click', async function() {
         hideAlert('profileAlert');
-        setTimeout(() => {
-            loadPassword();
-            loadCertData();
-        }, 100);
-    });
-
-    // Check password while input
-    document.getElementById('passwordForm').oninput = checkPassword;
-
-    // Handle password form submission
-    document.getElementById('passwordForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const passwordSubmit = document.getElementById('passwordSubmit');
-        const ca_password = passwordInput.value.trim() || 'none';
-        const tmpPassword = await fetchPassword();
-
-        passwordSubmit.disabled = true;
-
-        if (!tmpPassword) {
-            const response = await fetch('/set-password', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ca_password }),
-            });
-
-            if (response.ok) {
-                isLocked = false;
-                passwordModal.hide();
-                passwordInput.classList.add('is-valid');
-            } else {
-                isLocked = true;
-                passwordInput.classList.add('is-invalid');
-                passwordSubmit.disabled = false;
-                wrongPassword.textContent = `${texts[lang].inputs.wrongPass}`;
-                wrongPassword.style.display = 'block';
-                showAlert('passphraseAlert');
+        try {
+            if (!await isLocked()) {
+                const response = await fetch(`${API_BASE_URL}/set-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ca_password: null }),
+                });
+                if (response.ok) locked = true;
+                else showAlert('basicAlert');
             }
-        } else if (ca_password === tmpPassword) {
-            isLocked = !isLocked;
-            passwordModal.hide();
-            passwordInput.classList.add('is-valid');
-        } else {
-            isLocked = true;
-            passwordSubmit.disabled = false;
-            passwordInput.classList.add('is-invalid');
-        }
+        } catch (error) { showAlert('basicAlert'); }
         updateInterface();
+        loadCertData();
     });
 
     // Toggle eye on password modal
-    document.getElementById('togglePassword').addEventListener('click', function (event) {
-        event.preventDefault();
+    document.getElementById('togglePassword').addEventListener('click', function (e) {
+        e.preventDefault();
         const toggleIcon = document.getElementById('togglePasswordIcon');
         const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         passwordInput.setAttribute('type', type);
@@ -1509,5 +1466,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!tags.includes('revoked')) document.getElementById('tagRevoked').classList.add('opacity-25');
     if (!tags.includes('disabled')) document.getElementById('tagDisabled').classList.add('opacity-25');
 
+    await isLocked();
+    setInterval(async () => { await isLocked(), updateInterface(); }, 5000);
     loadCertData(searchTerm, tags);
+    updateLanguage(lang);
 });
