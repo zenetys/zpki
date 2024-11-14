@@ -166,14 +166,18 @@ app.post('/switch-profile', async (req, res) => {
     const { profile } = req.body;
     const currentPath = path.join(caBaseDir, profile);
 
-    fs.stat(currentPath, (err, stats) => {
-        if (err || !stats.isDirectory()) {
+    try {
+        const stats = await fs.promises.stat(currentPath);
+        if (!stats.isDirectory()) {
             return res.status(400).json({ error: 'Invalid profile.' });
         }
         req.session.caPassword = null;
         req.session.srcFolder = currentPath;
         req.session.currentProfile = profile;
         return res.json({ response: `Profile switched to ${profile}.` });
+    } catch (err) {
+        return res.status(400).json({ error: 'Invalid profile.' });
+    }
 });
 
 // Route to create certificates
