@@ -135,10 +135,10 @@ app.get('/list', async (req, res) => {
 app.get('/subject-alt', async (req, res) => {
     const commonName = req.query.cert;
 
-    if (!req.session.pkiaccess) return res.status(400).json({ error: 'Session expired.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
+
     try {
         const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-display-crt', commonName, '--json']);
 
@@ -170,19 +170,17 @@ app.post('/switch-profile', async (req, res) => {
         if (err || !stats.isDirectory()) {
             return res.status(400).json({ error: 'Invalid profile.' });
         }
-
         req.session.caPassword = null;
         req.session.srcFolder = currentPath;
         req.session.currentProfile = profile;
         return res.json({ response: `Profile switched to ${profile}.` });
-    });
 });
 
 // Route to create certificates
 app.post('/create', async (req, res) => {
     const { commonName, subject, sanIP, sanDNS } = req.body;
-    const type = 'server_ext'; // Will be used above in the future
-    const password = ''; // Will be used above in the future
+    const type = 'server_ext';
+    const password = '';
 
     if (!req.session.caPassword) return res.status(400).json({ error: 'Session expired.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
