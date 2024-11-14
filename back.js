@@ -50,7 +50,8 @@ const safeExec = (command, args = []) => {
     });
 };
 
-// Setup
+// ----------- ----------- APP SETUP ----------- ----------- //
+
 app.use(cors({ methods: ['GET', 'POST'] }));
 app.use(express.static(__dirname));
 app.use(express.json());
@@ -64,6 +65,8 @@ app.use(session({
     saveUninitialized: false,
     cookie: {}
 }));
+
+// ----------- ----------- GET REQUESTS ----------- ----------- //
 
 // Route to serve main page & select a default profile
 app.get('/', (req, res) => {
@@ -149,6 +152,27 @@ app.get('/subject-alt', async (req, res) => {
         res.status(500).json({ error: 'Certificate not found.' });
     }
 });
+
+// Route to get session passphrase
+app.get('/is-locked', async (req, res) => {
+    if (!req.session.caPassword) return res.json({ response: true });
+    if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
+
+    try {
+        const output = await safeExec(`
+            CA_PASSWORD=${req.session.caPassword} \
+            ${zpkiCmd} \
+            -C "${req.session.srcFolder}" \
+            ca-test-password
+        `);
+        if (output instanceof Error) { return res.json({ response: true }); }
+        return res.json({ response: false });
+    } catch (error) {
+        res.json({ response: true });
+    }
+});
+
+// ----------- ----------- POST REQUESTS ----------- ----------- //
 
 // Route to switch profile
 app.post('/switch-profile', async (req, res) => {
@@ -294,26 +318,6 @@ app.post('/set-password', async (req, res) => {
         return res.json({ response: 'Passphrase saved!' });
     } catch (error) {
         res.status(400).json({ error: 'Incorrect passphrase.' });
-    }
-});
-
-// Route to get session passphrase
-app.get('/is-locked', async (req, res) => {
-    if (!req.session.caPassword) return res.json({ response: true });
-    if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
-
-    try {
-        await checkSudoers();
-        const output = await safeExec(`
-            CA_PASSWORD=${req.session.caPassword} \
-            ${zpkiCmd} \
-            -C "${req.session.srcFolder}" \
-            ca-test-password
-        `);
-        if (output instanceof Error) { return res.json({ response: true }); }
-        return res.json({ response: false });
-    } catch (error) {
-        res.json({ response: true });
     }
 });
 
