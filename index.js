@@ -1392,7 +1392,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     passwordForm.addEventListener('input', function() {
         const passwordSubmit = document.getElementById('passwordSubmit');
 
-        passwordInput.classList.remove('is-invalid', 'is-valid');
+        passwordInput.classList.remove('is-invalid');
         wrongPassword.style.display = 'none';
 
         if (passwordInput.value.length < 4 && passwordInput.value.length > 0) {
@@ -1411,6 +1411,11 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Reload interface on profile switch
     document.getElementById('switchMenu').addEventListener('click', async function() {
         hideAlert('profileAlert');
+        passwordInput.value = '';
+        passwordInput.classList.remove('is-invalid');
+        wrongPassword.style.display = 'none';
+        passwordSubmit.className = 'btn btn-primary float-end mt-3';
+        passwordSubmit.disabled = false;
         try {
             if (!await isLocked()) {
                 const response = await fetch(`${API_BASE_URL}/set-password`, {
