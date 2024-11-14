@@ -1,9 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
     const selectBoxHeader = document.querySelector('[data-sort="selectBox"]');
-    const rightPassword = document.getElementById('rightPassword');
     const wrongPassword = document.getElementById('wrongPassword');
-    const lockState = JSON.parse(localStorage.getItem('isLocked'));
     const certSearchInput = document.getElementById('certSearch');
     const certTableBody = document.getElementById('certTableBody');
     const lockInterface = document.getElementById('lockInterface');
@@ -30,7 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     incorrectIP: "Incorrect IP",
                     incorrectPassphrase: "Incorrect Passphrase",
                     missingCertificate: "Missing certificates",
-                    requestsLimit: "Too many requests",
                     searchFailed: "No certificate found",
                     sessionExpired: "Session Expired",
 
@@ -43,7 +40,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     incorrectIPDescription: "This IP adress is already selected, select another one.",
                     incorrectPassphraseDescription: "Use the right certificate authority passphrase to continue.",
                     missingCertificateDescription: "No certificate found, please create one.",
-                    requestsLimitDescription: "You have made too many requests, wait a minute before trying again.",
                     searchFailedDescription: "No certificate found, search another one.",
                     sessionExpiredDescription: "The session has expired, please select a profile.",
                 }
@@ -64,7 +60,6 @@ document.addEventListener('DOMContentLoaded', function() {
             inputs: {
                 wrongPass: "Incorrect passphrase.",
                 wrongPassLength: "Passphrase must be at least 4 characters long.",
-                rightPass: "Looks good !",
             },
             lang: {
                 english: "English",
@@ -127,7 +122,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     incorrectIP: "IP incorrecte",
                     incorrectPassphrase: "Passphrase incorrecte",
                     missingCertificate: "Certificats manquants",
-                    requestsLimit: "Trop de requêtes",
                     searchFailed: "Aucun certificat trouvé",
                     sessionExpired: "Session expirée",
                 },
@@ -139,7 +133,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     incorrectIPDescription: "Cette adresse IP est déjà sélectionnée, sélectionnez une autre.",
                     incorrectPassphraseDescription: "Utilisez la bonne passphrase de l'autorité de certification pour continuer.",
                     missingCertificateDescription: "Aucun certificat trouvé, veuillez en créer un.",
-                    requestsLimitDescription: "Vous avez fait trop de requêtes, attendez une minute avant de réessayer.",
                     searchFailedDescription: "Aucun certificat trouvé, essayez une autre recherche.",
                     sessionExpiredDescription: "La session a expiré, veuillez sélectionner un profil.",
                 }
@@ -160,7 +153,6 @@ document.addEventListener('DOMContentLoaded', function() {
             inputs: {
                 wrongPass: "Passphrase incorrecte.",
                 wrongPassLength: "La passphrase doit comporter au moins 4 caractères.",
-                rightPass: "C'est bon !",
             },
             lang: {
                 english: "Anglais",
@@ -223,7 +215,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     incorrectIP: "IP incorrecta",
                     incorrectPassphrase: "Frase secreta incorrecta",
                     missingCertificate: "Certificados faltantes",
-                    requestsLimit: "Demasiadas solicitudes",
                     searchFailed: "No se encontró el certificado",
                     sessionExpired: "Sesión expirada",
                 },
@@ -235,7 +226,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     incorrectIPDescription: "Esta dirección IP ya está seleccionada, elija otra.",
                     incorrectPassphraseDescription: "Use la frase secreta correcta de la autoridad de certificación para continuar.",
                     missingCertificateDescription: "No se encontró ningún certificado, por favor cree uno.",
-                    requestsLimitDescription: "Ha realizado demasiadas solicitudes, espere un minuto antes de intentar nuevamente.",
                     searchFailedDescription: "No se encontró ningún certificado, intente con otra búsqueda.",
                     sessionExpiredDescription: "La sesión ha expirado, seleccione un perfil.",
                 }
@@ -256,7 +246,6 @@ document.addEventListener('DOMContentLoaded', function() {
             inputs: {
                 wrongPass: "Frase secreta incorrecta.",
                 wrongPassLength: "La frase secreta debe tener al menos 4 caracteres.",
-                rightPass: "¡Todo bien!",
             },
             lang: {
                 english: "Inglés",
@@ -319,7 +308,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     incorrectIP: "Falsche IP",
                     incorrectPassphrase: "Falsches Passwort",
                     missingCertificate: "Fehlende Zertifikate",
-                    requestsLimit: "Zu viele Anfragen",
                     searchFailed: "Kein Zertifikat gefunden",
                     sessionExpired: "Sitzung abgelaufen",
                 },
@@ -331,7 +319,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     incorrectIPDescription: "Diese IP-Adresse ist bereits ausgewählt. Wählen Sie eine andere.",
                     incorrectPassphraseDescription: "Verwenden Sie das richtige Passwort der Zertifizierungsstelle, um fortzufahren.",
                     missingCertificateDescription: "Kein Zertifikat gefunden, bitte erstellen Sie eines.",
-                    requestsLimitDescription: "Sie haben zu viele Anfragen gestellt. Warten Sie eine Minute, bevor Sie es erneut versuchen.",
                     searchFailedDescription: "Kein Zertifikat gefunden. Versuchen Sie eine andere Suche.",
                     sessionExpiredDescription: "Die Sitzung ist abgelaufen. Bitte wählen Sie ein Profil.",
                 }
@@ -352,7 +339,6 @@ document.addEventListener('DOMContentLoaded', function() {
             inputs: {
                 wrongPass: "Falsches Passwort.",
                 wrongPassLength: "Das Passwort muss mindestens 4 Zeichen lang sein.",
-                rightPass: "Passt!",
             },
             lang: {
                 english: "Englisch",
@@ -400,20 +386,12 @@ document.addEventListener('DOMContentLoaded', function() {
         },        
     };
     let tags = [];
-    let isLocked = lockState !== null ? lockState : true;
-
-    // Set default language from localStorage or use English as default
     let lang = localStorage.getItem('language') || 'en';
-    updateLanguage(lang);
 
     // Set the active class on the corresponding language menu item
     $('#languageMenu .dropdown-item').removeClass('active');
     $(`#languageMenu .dropdown-item[data-lang="${lang}"]`).addClass('active').find('.checkmark').show();
-
-    // Hide checkmarks for other languages
     $('#languageMenu .dropdown-item').not(`[data-lang="${lang}"]`).find('.checkmark').hide();
-
-    // Language switcher
     $('#languageMenu .dropdown-item').click(function () {
         $('#languageMenu .dropdown-item').removeClass('active');
         $('#languageMenu .dropdown-item').find('.checkmark').hide();
@@ -450,8 +428,6 @@ document.addEventListener('DOMContentLoaded', function() {
         $('#incorrectPassphraseDescription').html(texts[lang].alerts.descriptions.incorrectPassphraseDescription);
         $('#missingCertificate').html(`<img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.missingCertificate}</strong>`);
         $('#missingCertificateDescription').html(texts[lang].alerts.descriptions.missingCertificateDescription);
-        $('#requestsLimit').html(`<img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.requestsLimit}</strong>`);
-        $('#requestsLimitDescription').html(texts[lang].alerts.descriptions.requestsLimitDescription);
         $('#searchFailed').html(`<img src="images/circle-info-solid.svg" class="icon mt-0"/> <strong class="m-auto">${texts[lang].alerts.errors.searchFailed}</strong> <img src="images/circle-info-solid.svg" class="icon mt-0"/>`);
         $('#searchFailedDescription').html(texts[lang].alerts.descriptions.searchFailedDescription);
         $('#sessionExpired').html(`<img src="images/circle-info-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.sessionExpired}</strong>`);
@@ -533,11 +509,6 @@ document.addEventListener('DOMContentLoaded', function() {
         $('[data-bs-toggle="tooltip"]').tooltip({ html: true });
     }
 
-    // Save lock state in local storage
-    function saveLock(isLocked) {
-        localStorage.setItem('isLocked', JSON.stringify(isLocked));
-    }
-
     // Show all different alerts
     function showAlert(alert) {
         new bootstrap.Toast(document.getElementById(alert)).show();
@@ -563,14 +534,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function isValidDNS(dns) {
         const dnsPattern = /^(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.[A-Za-z]{2,})+$/;
         return dnsPattern.test(dns);
-    }
-
-    // Adapt name, normalize
-    function encodeName(name) {
-        return name
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .replace(/[^a-zA-Z0-9-_ ]/g, '');
     }
 
     // Replace space with underscore
@@ -1435,10 +1398,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const response = await fetch('/list');
             const cert = await response.json();
             return cert.some(cert => cert.id === commonName);
-        } catch (error) {
-            console.error('Erreur lors de la récupération des certificats:', error);
-            return false;
-        }
+        } catch (error) { return false; }
     }
 
     // Handle button clicks and input events
@@ -1510,7 +1470,6 @@ document.addEventListener('DOMContentLoaded', function() {
             passwordSubmit.disabled = false;
             passwordInput.classList.add('is-invalid');
         }
-        saveLock(isLocked);
         updateInterface();
     });
 
@@ -1551,6 +1510,5 @@ document.addEventListener('DOMContentLoaded', function() {
     if (tags.includes("revoked")) document.getElementById("tagRevoked").classList.add("opacity-75");
     if (tags.includes("disabled")) document.getElementById("tagDisabled").classList.add("opacity-75");
 
-    loadPassword();
     loadCertData(searchTerm, tags);
 });
