@@ -486,21 +486,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Update URL parameters
-    function updateUrlAndLoadData(searchTerm, tags) {
+    function updateUrl(searchTerm, tags) {
         const params = new URLSearchParams();
-        if (searchTerm) params.append("s", searchTerm);
-        if (tags.length > 0) params.append("tags", tags.join(","));
-        history.pushState({}, "", `${location.pathname}?${params}`);
+        if (searchTerm) params.append('s', searchTerm);
+        if (tags.length > 0) params.append('tags', tags.join(','));
+        history.pushState({}, '', `${location.pathname}?${params}`);
         loadCertData(searchTerm, tags);
     }
 
     // Get selected tags
     function getSelectedTags() {
         const tags = [];
-        if (document.getElementById("tagValid").classList.contains("active")) tags.push("valid");
-        if (document.getElementById("tagExpired").classList.contains("active")) tags.push("expired");
-        if (document.getElementById("tagRevoked").classList.contains("active")) tags.push("revoked");
-        if (document.getElementById("tagDisabled").classList.contains("active")) tags.push("disabled");
+        if (!document.getElementById('tagValid').classList.contains('opacity-25')) tags.push('valid');
+        if (!document.getElementById('tagExpired').classList.contains('opacity-25')) tags.push('expired');
+        if (!document.getElementById('tagRevoked').classList.contains('opacity-25')) tags.push('revoked');
+        if (!document.getElementById('tagDisabled').classList.contains('opacity-25')) tags.push('disabled');
         return tags;
     }
 
@@ -796,7 +796,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Hide popovers on outside click
                 document.addEventListener('click', function() { popoverList.forEach(popover => { popover.hide(); }); });
 
-                if (searchTerm !== '' && !anyMatchFound) showAlert('searchAlert');
+                if ((searchTerm !== '' || tags.length !== 0) && !anyMatchFound) showAlert('searchAlert');
                 else hideAlert('searchAlert');
 
                 initializeTooltips();
@@ -1410,7 +1410,7 @@ document.addEventListener('DOMContentLoaded', function() {
     certSearchInput.addEventListener("input", () => {
         const searchTerm = certSearchInput.value;
         const tags = getSelectedTags();
-        updateUrlAndLoadData(searchTerm, tags);
+        updateUrl(searchTerm, tags);
     });
 
     // Open modal & load password
@@ -1493,21 +1493,21 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Tags toggle
-    document.querySelectorAll(".btn-ssm").forEach(button => {
-        button.addEventListener("click", () => {
-            button.classList.toggle("active");
+    document.querySelectorAll('.btn-ssm').forEach(button => {
+        button.addEventListener('click', () => {
+            button.classList.toggle('opacity-25');
             const searchTerm = certSearchInput.value;
             const tags = getSelectedTags();
-            updateUrlAndLoadData(searchTerm, tags);
+            updateUrl(searchTerm, tags);
         });
     });
 
     if (searchTerm) certSearchInput.value = searchTerm;
     if (tagsParam) tags = tagsParam.split(',').map(tag => tag.trim());
-    if (tags.includes("valid")) document.getElementById("tagValid").classList.add("opacity-75");
-    if (tags.includes("expired")) document.getElementById("tagExpired").classList.add("opacity-75");
-    if (tags.includes("revoked")) document.getElementById("tagRevoked").classList.add("opacity-75");
-    if (tags.includes("disabled")) document.getElementById("tagDisabled").classList.add("opacity-75");
+    if (!tags.includes('valid')) document.getElementById('tagValid').classList.add('opacity-25');
+    if (!tags.includes('expired')) document.getElementById('tagExpired').classList.add('opacity-25');
+    if (!tags.includes('revoked')) document.getElementById('tagRevoked').classList.add('opacity-25');
+    if (!tags.includes('disabled')) document.getElementById('tagDisabled').classList.add('opacity-25');
 
     loadCertData(searchTerm, tags);
 });
