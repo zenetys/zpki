@@ -84,37 +84,26 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Route to get all available profiles
+// Route to get all available profiles & get current profile
 app.get('/profiles', async (req, res) => {
     try {
         const result = await safeExec(caFolders);
         const profiles = result.stdout
             .split('\n')
             .filter(line => line.trim().length > 0);
-        res.json(profiles);
-    } catch (error) {
-        console.error('Error executing ca-folders:', error);
-        res.status(500).json({ error: 'Unable to retrieve profiles.' });
-    }
-});
-
-// Route to get current profile
-app.get('/current-profile', async (req, res) => {
-    const currentProfile = req.session.currentProfile;
-    if (!currentProfile) {
-        try {
-            const result = await safeExec(caFolders);
-            const profiles = result.stdout
-                .split('\n')
-                .filter(line => line.trim().length > 0);
-            if (profiles.length === 0) return res.status(404).json({ error: 'No profiles available.' });
-            req.session.srcFolder = profiles[0];
-            res.json({ currentProfile: req.session.srcFolder });
-        } catch (error) {
-            console.error('Error executing ca-folders:', error);
-            res.status(500).json({ error: 'Unable to retrieve current profile.' });
+        if (profiles.length === 0) return res.status(404).json({ error: 'No profiles available.' });
+        let currentProfile = req.session.currentProfile;
+        if (!currentProfile) {
+            currentProfile = profiles[0];
+            const defaultPath = await getProfilePath(currentProfile);
+            req.session.srcFolder = defaultPath;
+            req.session.currentProfile = currentProfile;
         }
-    } else res.json({ currentProfile });
+        res.json({ profiles, currentProfile });
+    } catch (error) {
+        console.error('Error retrieving profiles and current profile:', error);
+        res.status(500).json({ error: 'Unable to retrieve profiles and current profile.' });
+    }
 });
 
 // Route to get the list of certificates
