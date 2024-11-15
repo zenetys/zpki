@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
 
             if (Array.isArray(data.profiles)) {
-                console.log(data.profiles);
                 switchMenu.innerHTML = '';
 
                 data.profiles.forEach(profile => {
