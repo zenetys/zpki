@@ -539,11 +539,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         return dnsPattern.test(dns);
     }
 
-    // Replace space with underscore
-    function replaceSpaces(str) {
-        return str.replace(/\s+/g, '_');
-    }
-
     // Format date to YYYY/MM/DD from ISO format
     function formatDate(isoDateString) {
         const date = new Date(isoDateString);
