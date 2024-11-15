@@ -25,6 +25,22 @@ const checkCommonName = (name) => {
     return regex.test(name) && name.length > 0 && name.length < 64;
 };
 
+// Verify if profile exists & select it
+const getProfilePath = async (profile) => {
+    try {
+        const result = await safeExec(caFolders);
+        const validProfiles = result.stdout
+            .split('\n')
+            .filter(line => line.trim().length > 0);
+
+        if (!validProfiles.includes(profile)) throw new Error('Invalid profile.');
+        const currentPath = path.join(caBaseDir, profile);
+        return currentPath;
+    } catch (err) {
+        throw new Error(`Error checking profile: ${err.message}`);
+    }
+};
+
 // Safe command execution
 function shQuote(arg) {
     return "'" + arg.toString().replace(/\x27/g, "'\\''") + "'";
