@@ -66,10 +66,7 @@ app.use(session({
 
 // Route to serve main page & select a default profile
 app.get('/', (req, res) => {
-    if (req.session.currentProfile) {
-        req.session.srcFolder = path.join(caBaseDir, req.session.currentProfile);
-        res.sendFile(path.join(caBaseDir, 'index.html'));
-    }
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Route to get all available profiles
