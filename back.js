@@ -1,4 +1,3 @@
-const { spawn } = require('child_process');
 const fs = require('fs');
 const crypto = require('crypto');
 const child_process = require('child_process');
@@ -108,10 +107,10 @@ app.get('/list', async (req, res) => {
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     try {
         const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-list', '--json']);
-        if (output instanceof Error) { return res.status(500).json({ error: 'Error while listing certificates.' }); }
-        res.json(JSON.parse(output));
+        res.json(JSON.parse(output.stdout));
     } catch (error) {
-        res.status(400).json({ error: 'Error while listing certificates.' });
+        console.log(error);
+        res.status(500).json({ error: 'Error while listing certificates.' });
     }
 });
 
@@ -126,11 +125,9 @@ app.get('/download-crt', async (req, res) => {
     try {
         const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-dump-crt', commonName]);
 
-        if (output instanceof Error) { return res.status(500).json({ error: 'Certificate not found.' }); }
-
         res.setHeader('Content-Disposition', `attachment; filename=${commonName}.crt`);
         res.setHeader('Content-Type', 'application/x-x509-ca-cert');
-        res.end(output);
+        res.end(output.stdout);
     } catch (error) {
         console.error('Error executing command:', error);
         res.status(500).json({ error: 'Certificate not found.' });
@@ -148,11 +145,9 @@ app.get('/download-csr', async (req, res) => {
     try {
         const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-dump-csr', commonName]);
 
-        if (output instanceof Error) { return res.status(500).json({ error: 'Certificate not found.' }); }
-
         res.setHeader('Content-Disposition', `attachment; filename=${commonName}.csr`);
         res.setHeader('Content-Type', 'application/x-x509-ca-cert');
-        res.end(output);
+        res.end(output.stdout);
     } catch (error) {
         console.error('Error executing command:', error);
         res.status(500).json({ error: 'Certificate not found.' });
@@ -170,11 +165,9 @@ app.get('/download-key', async (req, res) => {
     try {
         const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-dump-key', commonName]);
 
-        if (output instanceof Error) { return res.status(500).json({ error: 'Certificate not found.' }); }
-
         res.setHeader('Content-Disposition', `attachment; filename=${commonName}.key`);
         res.setHeader('Content-Type', 'application/x-x509-ca-cert');
-        res.end(output);
+        res.end(output.stdout);
     } catch (error) {
         console.error('Error executing command:', error);
         res.status(500).json({ error: 'Certificate not found.' });
@@ -192,9 +185,7 @@ app.get('/subject-alt', async (req, res) => {
     try {
         const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-display-crt', commonName, '--json']);
 
-        if (output instanceof Error) { return res.status(500).json({ error: 'Certificate not found.' }); }
-
-        const jsonOutput = JSON.parse(output);
+        const jsonOutput = JSON.parse(output.stdout);
         const san = jsonOutput["X509v3 Subject Alternative Name"];
         if (!san) return res.json({ error: 'SAN not found.' });
 
@@ -206,7 +197,8 @@ app.get('/subject-alt', async (req, res) => {
         });
 
         res.json({ dns, ip });
-    } catch (e) {
+    } catch (error) {
+        console.log(error);
         res.status(500).json({ error: 'Certificate not found.' });
     }
 });
@@ -217,15 +209,10 @@ app.get('/is-locked', async (req, res) => {
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
 
     try {
-        const output = await safeExec(`
-            CA_PASSWORD=${req.session.caPassword} \
-            ${zpkiCmd} \
-            -C "${req.session.srcFolder}" \
-            ca-test-password
-        `);
-        if (output instanceof Error) { return res.json({ response: true }); }
+        await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-test-password'], { env: { ...process.env, CA_PASSWORD: req.session.caPassword } });
         return res.json({ response: false });
     } catch (error) {
+        console.log(error);
         res.json({ response: true });
     }
 });
@@ -247,6 +234,7 @@ app.post('/switch-profile', async (req, res) => {
         req.session.currentProfile = profile;
         return res.json({ response: `Profile switched to ${profile}.` });
     } catch (err) {
+        console.log(err);
         return res.status(400).json({ error: 'Invalid profile.' });
     }
 });
@@ -263,20 +251,18 @@ app.post('/create', async (req, res) => {
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
 
     try {
-        const output = await safeExec(`
-            CA_PASSWORD=${req.session.caPassword} \
-            PASSWORD=${password === '' ? '' : password} \
-            EXT=${type} \
-            ${zpkiCmd} \
-            -C "${req.session.srcFolder}" \
-            -y ${password === '' ? '-c none' : ''} \
-            ca-create-crt "${subject === '' ? commonName : subject}" \
-            ${sanIP && sanIP.length > 0 ? sanIP.map(ip => `IP:${ip}`).join(' ') : ''} \
-            ${sanDNS && sanDNS.length > 0 ? sanDNS.map(dns => `DNS:${dns}`).join(' ') : ''}
-        `);
-        if (output instanceof Error) { return res.status(500).json({ error: 'Certificate creation error.' }); }
+        let args = ['-C', req.session.srcFolder, '-y', ];
+        if (password === '') args.push('-c', 'none');
+        args.push('ca-create-crt', subject === '' ? commonName : subject);
+        if (sanIP && sanIP.length > 0) args.push(...sanIP.map(ip => `IP:${ip}`));
+        if (sanDNS && sanDNS.length > 0) args.push(...sanDNS.map(dns => `DNS:${dns}`));
+
+        await safeExec(zpkiCmd, args, { env: { ...process.env,
+            CA_PASSWORD: req.session.caPassword,
+            PASSWORD: password === '' ? '' : password, EXT: type } });
         res.json({ response: 'Certificate created successfully!' });
     } catch (error) {
+        console.log(error);
         res.status(400).json({ error: 'Certificate creation error.' });
     }
 });
@@ -291,16 +277,11 @@ app.post('/renew', async (req, res) => {
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
 
     try {
-        const output = await safeExec(`
-            CA_PASSWORD=${req.session.caPassword} \
-            ${zpkiCmd} \
-            -C "${req.session.srcFolder}" \
-            -y -c none \
-            ca-update-crt "${commonName}"
-        `);
-        if (output instanceof Error) { return res.status(500).json({ error: 'Certificate renewal error.' }); }
+        await safeExec(zpkiCmd, ['-C', req.session.srcFolder, '-y', '-c', 'none',
+            'ca-update-crt', commonName], { env: { ...process.env, CA_PASSWORD: req.session.caPassword } });
         res.json({ response: 'Certificate renewed successfully!' });
     } catch (error) {
+        console.log(error);
         res.status(400).json({ error: 'Certificate renewal error.' });
     }
 });
@@ -315,16 +296,11 @@ app.post('/revoke', async (req, res) => {
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
 
     try {
-        const output = await safeExec(`
-            CA_PASSWORD=${req.session.caPassword} \
-            ${zpkiCmd} \
-            -C "${req.session.srcFolder}" \
-            -y -c none \
-            ca-revoke-crt "${commonName}"
-        `);
-        if (output instanceof Error) { return res.status(500).json({ error: 'Certificate revocation error.' }); }
+        await safeExec(zpkiCmd, ['-C', req.session.srcFolder, '-y', '-c', 'none',
+            'ca-revoke-crt', commonName], { env: { ...process.env, CA_PASSWORD: req.session.caPassword } });
         res.json({ response: 'Certificate revoked successfully!' });
     } catch (error) {
+        console.log(error);
         res.status(400).json({ error: 'Certificate revocation error.' });
     }
 });
@@ -339,16 +315,11 @@ app.post('/disable', async (req, res) => {
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
 
     try {
-        const output = await safeExec(`
-            CA_PASSWORD=${req.session.caPassword} \
-            ${zpkiCmd} \
-            -C "${req.session.srcFolder}" \
-            -y -c none \
-            ca-disable-crt "${commonName}"
-        `);
-        if (output instanceof Error) { return res.status(500).json({ error: 'Certificate deactivation error.' }); }
+        await safeExec(zpkiCmd, ['-C', req.session.srcFolder, '-y', '-c', 'none',
+            'ca-disable-crt', commonName], { env: { ...process.env, CA_PASSWORD: req.session.caPassword } });
         res.json({ response: 'Certificate disabled successfully!' });
     } catch (error) {
+        console.log(error);
         res.status(400).json({ error: 'Certificate deactivation error.' });
     }
 });
@@ -364,17 +335,13 @@ app.post('/set-password', async (req, res) => {
     }
 
     try {
-        const output = await safeExec(`
-            CA_PASSWORD=${ca_password} \
-            ${zpkiCmd} \
-            -C "${req.session.srcFolder}" \
-            ca-test-password
-        `);
-        if (output instanceof Error) { return res.status(500).json({ error: 'Incorrect passphrase.' }); }
+        await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-test-password' ],
+            { env: { ...process.env, CA_PASSWORD: ca_password } });
         req.session.caPassword = ca_password;
         setTimeout(() => { req.session.caPassword = null }, 600000);
         return res.json({ response: 'Passphrase saved!' });
     } catch (error) {
+        console.log(error);
         res.status(400).json({ error: 'Incorrect passphrase.' });
     }
 });
