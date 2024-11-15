@@ -770,15 +770,20 @@ function ca-dump-pkcs12() {
 
 #X-ACTION ca-test-password: Test if CA passphrase is correct
 function ca-test-password() {
-  PASSWORD=$CA_PASSWORD password-ready || return
-
-  PARAMS=(
-    -in  "$CA_KEYFILE"
-    -noout
-    ${CA_PASSWORD:+-passin env:CA_PASSWORD}
-  )
-  $OPENSSL rsa "${PARAMS[@]}"
-  is-error "Incorrect password" || return
+  [[ -r $CA_KEYFILE ]] || { echo 'ERROR: Cannot read key' >&2; return 2; }
+  awk '
+    # status 0: encrypted, status 1: plain
+    /^-----BEGIN / { if (/ENCRYPTED/) { exit 0 }; inside = NR }
+    inside && NR == inside + 1 && /^Proc-Type: / && /ENCRYPTED/ { exit 0; }
+    inside && /^-----END / { inside = 0; exit 1; }
+  ' "$CA_KEYFILE"
+  local check_enc=$?
+  [[ $check_enc == 0 && -z $CA_PASSWORD ]] && { echo 'ERROR: Bad password' >&2; return 1; }
+  [[ $check_enc == 1 && -n $CA_PASSWORD ]] && { echo 'ERROR: Bad password' >&2; return 1; }
+  # make sure the passin env variable is exported
+  CA_PASSWORD="$CA_PASSWORD" \
+    $OPENSSL rsa -in "$CA_KEYFILE" -noout -passin env:CA_PASSWORD
+  is-error 'Bad password' || return 1
 }
 
 function usage() {
