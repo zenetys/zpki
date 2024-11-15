@@ -1,6 +1,7 @@
 const { spawn } = require('child_process');
 const fs = require('fs');
 const crypto = require('crypto');
+const child_process = require('child_process');
 const cors = require('cors');
 const express = require('express');
 const session = require('express-session');
@@ -26,26 +27,21 @@ const checkCommonName = (name) => {
 };
 
 // Safe command execution
-const safeExec = (command, args = []) => {
-    return new Promise((resolve) => {
-        const process = spawn(command, args, { stdio: 'pipe' });
-        let output = '';
-        let errorOutput = '';
-
-        process.stdout.on('data', (data) => {
-            output += data;
-        });
-
-        process.stderr.on('data', (data) => {
-            errorOutput += data;
-        });
-
-        process.on('close', (code) => {
-            if (code === 0) {
-                resolve(output.trim());
-            } else {
-                resolve(new Error(errorOutput.trim() || `Command failed with code ${code}`));
+function shQuote(arg) {
+    return "'" + arg.toString().replace(/\x27/g, "'\\''") + "'";
+}
+function safeExec(unsafeCmd, args = [], execOptions = {}) {
+    let cmd = '';
+    cmd += (unsafeCmd ?? '') + ' ';
+    args.forEach((a) => { cmd += shQuote(a) + ' ' });
+    return new Promise((resolve, reject) => {
+        child_process.exec(cmd, execOptions, (error, stdout, stderr) => {
+            if (error) {
+                error.stdout = stdout;
+                error.stderr = stderr;
+                return reject(error);
             }
+            return resolve({ stdout, stderr });
         });
     });
 };
