@@ -12,6 +12,7 @@ const app = express();
 const port = 3000;
 
 const caBaseDir = process.env.CA_BASEDIR || __dirname;
+const caFolders = process.env.CA_FOLDERS || __dirname + '/ca-folders';
 const zpkiCmd = process.env.PKI_CMD || __dirname + '/zpki';
 
 // Centralized error handling middleware
@@ -70,38 +71,36 @@ app.get('/', (req, res) => {
 });
 
 // Route to get all available profiles
-app.get('/profiles', (req, res) => {
-    fs.readdir(caBaseDir, { withFileTypes: true }, (err, files) => {
-        if (err) {
-            return res.status(500).json({ error: 'Unable to scan directory: ' + err });
-        }
-        const profiles = files
-            .filter(file => file.isDirectory() && file.name !== '.git' 
-                && file.name !== 'images' && file.name !== 'node_modules')
-            .map(file => file.name);
+app.get('/profiles', async (req, res) => {
+    try {
+        const result = await safeExec(caFolders);
+        const profiles = result.stdout
+            .split('\n')
+            .filter(line => line.trim().length > 0);
         res.json(profiles);
-    });
+    } catch (error) {
+        console.error('Error executing ca-folders:', error);
+        res.status(500).json({ error: 'Unable to retrieve profiles.' });
+    }
 });
 
 // Route to get current profile
-app.get('/current-profile', (req, res) => {
+app.get('/current-profile', async (req, res) => {
     const currentProfile = req.session.currentProfile;
     if (!currentProfile) {
-        fs.readdir(caBaseDir, { withFileTypes: true }, (err, files) => { 
-            if (err) {
-                return res.status(500).json({ error: 'Unable to scan directory: ' + err });
-            } else {
-                req.session.srcFolder = path.join(caBaseDir, files
-                    .filter(file => file.isDirectory() && file.name !== '.git' 
-                        && file.name !== 'images' && file.name !== 'node_modules')
-                    .map(file => file.name)[0])
-                    .split('/').pop()
-                res.json({ currentProfile: req.session.srcFolder });
-            }
-        });
-    }
-    else if (currentProfile) res.json({ currentProfile });
-    else return 'Select a profile';
+        try {
+            const result = await safeExec(caFolders);
+            const profiles = result.stdout
+                .split('\n')
+                .filter(line => line.trim().length > 0);
+            if (profiles.length === 0) return res.status(404).json({ error: 'No profiles available.' });
+            req.session.srcFolder = profiles[0];
+            res.json({ currentProfile: req.session.srcFolder });
+        } catch (error) {
+            console.error('Error executing ca-folders:', error);
+            res.status(500).json({ error: 'Unable to retrieve current profile.' });
+        }
+    } else res.json({ currentProfile });
 });
 
 // Route to get the list of certificates
