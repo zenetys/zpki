@@ -192,7 +192,7 @@ function fatal() {
     [[ $1 == --usage ]] && usage=1 && shift
     info --${FUNCNAME[0]} "$@"
     (( $usage )) && usage
-    exit 127
+    exit 2
 }
 
 function error() {
