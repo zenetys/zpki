@@ -696,7 +696,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                                 <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-crt?cert=${cert.id}' download><img src='images/certificate-solid.svg' class='icon me-1'/>.crt</a>
                                 <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-csr?cert=${cert.id}' download><img src='images/lock-solid.svg' class='icon me-1'/>.csr</a>
                                 <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-key?cert=${cert.id}' download><img src='images/key-solid.svg' class='icon me-1'/>.key</a>
-                                <a class='btn btn-light btn-sm d-block text-start exportP12 ${cert.keyStatus === 'encrypted' ? '' : 'disabled'}'><img src='images/file-export-solid.svg' class='icon me-1'/>.pkcs12</a>
+                                <a class='btn btn-light btn-sm d-block text-start exportP12 ${cert.keyStatus === 'encrypted' ? '' : 'disabled'}'><img src='images/file-export-solid.svg' class='icon me-1'/>.p12</a>
                             ">
                                 <img src="images/file-arrow-down-solid.svg" class="icon"/>
                             </button>
@@ -1019,7 +1019,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                                             <img src="images/key-solid.svg" class="icon me-1"/>.key
                                         </a>
                                         <a class="btn btn-light btn-sm mb-1 exportP12 ${certData.keyStatus === 'encrypted' ? '' : 'disabled'}">
-                                            <img src="images/file-export-solid.svg" class="icon me-1"/>.pkcs12
+                                            <img src="images/file-export-solid.svg" class="icon me-1"/>.p12
                                         </a>
                                     </span>
                                 </p>
