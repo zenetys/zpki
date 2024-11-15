@@ -1439,16 +1439,19 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Tags toggle
     document.querySelectorAll('.btn-ssm').forEach(button => {
         button.addEventListener('click', () => {
+            let tags = getSelectedTags();
+            if (button.id === 'tagValid' && tags.length === 1 && tags.includes('valid')) return;
             button.classList.toggle('opacity-25');
             const searchTerm = certSearchInput.value;
-            const tags = getSelectedTags();
+            tags = getSelectedTags();
             updateUrl(searchTerm, tags);
+            if (!tags.includes('valid') && !tags.length > 0) document.getElementById('tagValid').classList.remove('opacity-25');
         });
     });
 
     if (searchTerm) certSearchInput.value = searchTerm;
     if (tagsParam) tags = tagsParam.split(',').map(tag => tag.trim());
-    if (!tags.includes('valid')) document.getElementById('tagValid').classList.add('opacity-25');
+    if (!tags.includes('valid') && tags.length > 0) document.getElementById('tagValid').classList.add('opacity-25');
     if (!tags.includes('expired')) document.getElementById('tagExpired').classList.add('opacity-25');
     if (!tags.includes('revoked')) document.getElementById('tagRevoked').classList.add('opacity-25');
     if (!tags.includes('disabled')) document.getElementById('tagDisabled').classList.add('opacity-25');
