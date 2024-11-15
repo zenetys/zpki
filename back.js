@@ -226,20 +226,15 @@ app.get('/is-locked', async (req, res) => {
 // Route to switch profile
 app.post('/switch-profile', async (req, res) => {
     const { profile } = req.body;
-    const currentPath = path.join(caBaseDir, profile);
-
     try {
-        const stats = await fs.promises.stat(currentPath);
-        if (!stats.isDirectory()) {
-            return res.status(400).json({ error: 'Invalid profile.' });
-        }
+        const currentPath = await getProfilePath(profile);
         req.session.caPassword = null;
         req.session.srcFolder = currentPath;
         req.session.currentProfile = profile;
         return res.json({ response: `Profile switched to ${profile}.` });
     } catch (err) {
-        console.log(err);
-        return res.status(400).json({ error: 'Invalid profile.' });
+        console.error('Error switching profile:', err);
+        return res.status(400).json({ error: err.message });
     }
 });
 
