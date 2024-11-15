@@ -617,20 +617,10 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Function to load data & update table
     function loadCertData(searchTerm = '', tags = []) {
-        let profile;
-        fetch(`${API_BASE_URL}/current-profile`)
+        fetch(`${API_BASE_URL}/profiles`)
             .then(response => {
                 if (!response.ok) {
                     showAlert('basicAlert');
-                    certTableBody.innerHTML = '';
-                    return Promise.reject();
-                }
-                return response.json();
-            })
-            .then(profileData => {
-                profile = profileData.currentProfile;
-                if (profile === 'Select a profile') {
-                    showAlert('profileAlert');
                     certTableBody.innerHTML = '';
                     return Promise.reject();
                 }
