@@ -1,4 +1,3 @@
-const fs = require('fs');
 const crypto = require('crypto');
 const child_process = require('child_process');
 const cors = require('cors');
