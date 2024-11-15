@@ -3,37 +3,45 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fonction to show all available profiles
     const createProfileMenu = async () => {
-        const response = await fetch('/profiles');
-        const profiles = await response.json();
+        try {
+            const response = await fetch('/profiles');
+            const data = await response.json();
 
-        switchMenu.innerHTML = '';
+            if (Array.isArray(data.profiles)) {
+                console.log(data.profiles);
+                switchMenu.innerHTML = '';
 
-        profiles.forEach(profile => {
-            const item = document.createElement('a');
-            item.className = 'dropdown-item text-truncate';
-            item.id = profile;
-            item.textContent = profile.charAt(0).toUpperCase() + profile.slice(1);
+                data.profiles.forEach(profile => {
+                    const item = document.createElement('a');
+                    item.className = 'dropdown-item text-truncate';
+                    item.id = profile;
+                    item.textContent = profile.charAt(0).toUpperCase() + profile.slice(1);
 
-            item.addEventListener('click', async () => {
-                document.getElementById('switchCurrentCA').innerHTML = profile.charAt(0).toUpperCase() + profile.slice(1);
+                    item.addEventListener('click', async () => {
+                        document.getElementById('switchCurrentCA').innerHTML = profile.charAt(0).toUpperCase() + profile.slice(1);
 
-                await fetch('/switch-profile', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ profile })
+                        await fetch('/switch-profile', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ profile })
+                        });
+                        [...switchMenu.children].forEach(el => el.classList.remove('active'));
+                        item.classList.add('active');
+                    });
+                    switchMenu.appendChild(item);
                 });
-                [...switchMenu.children].forEach(el => el.classList.remove('active'));
-                item.classList.add('active');
-            });
-
-            switchMenu.appendChild(item);
-        });
+            } else {
+                console.error('La réponse des profils n\'est pas un tableau:', data.profiles);
+            }
+        } catch (error) {
+            console.error('Erreur lors de la récupération des profils:', error);
+        }
     };
 
     createProfileMenu().then(() => {
-        fetch('/current-profile')
+        fetch('/profiles')
             .then(response => response.json())
             .then(data => {
                 const currentButton = document.getElementById('switchCurrentCA');
