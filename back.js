@@ -10,6 +10,7 @@ const app = express();
 const port = 3000;
 
 const passwordExpireMs = parseInt(process.env.PASSWORD_EXPIRE_MS) || 600000;
+const cookieMaxAgeMs = parseInt(process.env.COOKIE_MAX_AGE_MS) || 86400000;
 const caBaseDir = process.env.CA_BASEDIR || __dirname;
 const caFolders = process.env.CA_FOLDERS || __dirname + '/ca-folders';
 const zpkiCmd = process.env.PKI_CMD || __dirname + '/zpki';
@@ -75,7 +76,9 @@ app.use(session({
     secret: crypto.randomBytes(16).toString('hex'),
     resave: false,
     saveUninitialized: false,
-    cookie: {}
+    cookie: {
+        maxAge: cookieMaxAgeMs,
+    }
 }));
 
 // ----------- ----------- GET REQUESTS ----------- ----------- //
