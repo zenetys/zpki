@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
 
+const passwordExpireMs = parseInt(process.env.PASSWORD_EXPIRE_MS) || 600000;
 const caBaseDir = process.env.CA_BASEDIR || __dirname;
 const caFolders = process.env.CA_FOLDERS || __dirname + '/ca-folders';
 const zpkiCmd = process.env.PKI_CMD || __dirname + '/zpki';
@@ -338,7 +339,20 @@ app.post('/set-password', async (req, res) => {
         await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-test-password' ],
             { env: { ...process.env, CA_PASSWORD: ca_password } });
         req.session.caPassword = ca_password;
-        setTimeout(() => { req.session.caPassword = undefined }, 600000);
+
+        // Note this is most likely racy if a request modifies session data at same time.
+        setTimeout(() => {
+            req.sessionStore.get(req.sessionID, (error, sessionData) => {
+                if (error)
+                    console.log('Failed to expire password for session', req.sessionID, error);
+                else if (sessionData) {
+                    console.log('Password expired for session', req.sessionID);
+                    delete sessionData.caPassword;
+                    req.sessionStore.set(req.sessionID, sessionData);
+                }
+            });
+        }, passwordExpireMs);
+
         return res.json({ response: 'Passphrase saved!' });
     } catch (error) {
         console.log(error);
