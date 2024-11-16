@@ -213,7 +213,8 @@ app.get('/is-locked', async (req, res) => {
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
 
     try {
-        await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-test-password'], { env: { ...process.env, CA_PASSWORD: req.session.caPassword } });
+        await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-test-password'],
+            { env: { ...process.env, CA_PASSWORD: req.session.caPassword } });
         return res.json({ response: false });
     } catch (error) {
         console.log(error);
