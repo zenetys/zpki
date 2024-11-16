@@ -12,6 +12,7 @@ const listenAddress = process.env.LISTEN_ADDRESS || '0.0.0.0';
 const listenPort = parseInt(process.env.LISTEN_PORT) || 3000;
 const passwordExpireMs = parseInt(process.env.PASSWORD_EXPIRE_MS) || 600000;
 const cookieMaxAgeMs = parseInt(process.env.COOKIE_MAX_AGE_MS) || 86400000;
+const logHttpRequests = Boolean(parseInt(process.env.LOG_HTTP_REQUESTS ?? '1'));
 const caBaseDir = process.env.CA_BASEDIR || __dirname;
 const caFolders = process.env.CA_FOLDERS || __dirname + '/ca-folders';
 const zpkiCmd = process.env.PKI_CMD || __dirname + '/zpki';
@@ -64,6 +65,28 @@ function safeExec(unsafeCmd, args = [], execOptions = {}) {
     });
 };
 
+function rfc3339LocalDate(d) {
+    d ||= new Date();
+    var out = d.getFullYear() +
+        '-' + (d.getMonth() + 1).toString().padStart(2, '0') +
+        '-' + d.getDate().toString().padStart(2, '0') +
+        'T' + d.getHours().toString().padStart(2, '0') +
+        ':' + d.getMinutes().toString().padStart(2, '0') +
+        ':' + d.getSeconds().toString().padStart(2, '0') +
+        '.' + d.getMilliseconds().toString().padStart(3, '0');
+    var tzOffset = d.getTimezoneOffset() * -1;
+    if (tzOffset == 0)
+        out += 'Z'
+    else {
+        let tzOffsetHours = Math.floor(tzOffset / 60);
+        let tzOffsetMinutes = tzOffset % 60;
+        out += (tzOffset >= 0 ? '+' : '-') +
+            tzOffsetHours.toString().padStart(2, '0') + ':' +
+            tzOffsetMinutes.toString().padStart(2, '0');
+    }
+    return out;
+};
+
 // ----------- ----------- APP SETUP ----------- ----------- //
 
 app.use(cors({ methods: ['GET', 'POST'] }));
@@ -81,6 +104,18 @@ app.use(session({
         maxAge: cookieMaxAgeMs,
     }
 }));
+logHttpRequests && app.use((req, res, next) => {
+    let reqDate = new Date();
+    res.on('finish', () => {
+        let accessLog = `${(req.ips?.join('/') || req.socket.remoteAddress || '-')} ` +
+            `- - [${rfc3339LocalDate(reqDate)}] ` +
+            `"${req.method || '-'} ${req.originalUrl || req.url || '-'} HTTP/${req.httpVersion || '-'}" ` +
+            `${(res.headersSent && res.statusCode) || '-'} ${res.getHeader('content-length') || '-'} ` +
+            `${(new Date()) - reqDate}`;
+        console.log(accessLog);
+    });
+    next();
+});
 
 // ----------- ----------- GET REQUESTS ----------- ----------- //
 
