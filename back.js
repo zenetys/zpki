@@ -209,7 +209,7 @@ app.get('/subject-alt', async (req, res) => {
 
 // Route to get session passphrase
 app.get('/is-locked', async (req, res) => {
-    if (!req.session.caPassword) return res.json({ response: true });
+    if (req.session.caPassword === undefined) return res.json({ response: true });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
 
     try {
@@ -229,7 +229,7 @@ app.post('/switch-profile', async (req, res) => {
     const { profile } = req.body;
     try {
         const currentPath = await getProfilePath(profile);
-        req.session.caPassword = null;
+        delete req.session.caPassword;
         req.session.srcFolder = currentPath;
         req.session.currentProfile = profile;
         return res.json({ response: `Profile switched to ${profile}.` });
@@ -245,7 +245,7 @@ app.post('/create', async (req, res) => {
     const type = 'server_ext';
     const password = '';
 
-    if (!req.session.caPassword) return res.status(400).json({ error: 'Session expired.' });
+    if (req.session.caPassword === undefined) return res.status(400).json({ error: 'Password expired.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
@@ -271,7 +271,7 @@ app.post('/create', async (req, res) => {
 app.post('/renew', async (req, res) => {
     const { commonName } = req.body;
 
-    if (!req.session.caPassword) return res.status(400).json({ error: 'Session expired.' });
+    if (req.session.caPassword === undefined) return res.status(400).json({ error: 'Password expired.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
@@ -290,7 +290,7 @@ app.post('/renew', async (req, res) => {
 app.post('/revoke', async (req, res) => {
     const { commonName } = req.body;
 
-    if (!req.session.caPassword) return res.status(400).json({ error: 'Session expired.' });
+    if (req.session.caPassword === undefined) return res.status(400).json({ error: 'Password expired.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
@@ -309,7 +309,7 @@ app.post('/revoke', async (req, res) => {
 app.post('/disable', async (req, res) => {
     const { commonName } = req.body;
 
-    if (!req.session.caPassword) return res.status(400).json({ error: 'Session expired.' });
+    if (req.session.caPassword === undefined) return res.status(400).json({ error: 'Password expired.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
@@ -330,7 +330,7 @@ app.post('/set-password', async (req, res) => {
 
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (ca_password === null) {
-        req.session.caPassword = null;
+        delete req.session.caPassword;
         return res.json({ response: 'Passphrase removed.' });
     }
 
@@ -338,7 +338,7 @@ app.post('/set-password', async (req, res) => {
         await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-test-password' ],
             { env: { ...process.env, CA_PASSWORD: ca_password } });
         req.session.caPassword = ca_password;
-        setTimeout(() => { req.session.caPassword = null }, 600000);
+        setTimeout(() => { req.session.caPassword = undefined }, 600000);
         return res.json({ response: 'Passphrase saved!' });
     } catch (error) {
         console.log(error);
