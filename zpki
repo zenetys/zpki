@@ -370,6 +370,7 @@ function create-ca() {
   [[ -d crl ]]        || mkdir crl
   [[ -d private ]]    || mkdir private
   [[ -e ca.idx ]]     || touch ca.idx
+  [[ -e ca.idz ]]     || touch ca.idz
   [[ -s ca.srl ]]     || printf "%016X\n" $SERIAL > ca.srl
   [[ -s ca.crlnum ]]  || echo 01 > ca.crlnum
   return 0
