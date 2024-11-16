@@ -7,8 +7,9 @@ const path = require('path');
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const app = express();
-const port = 3000;
 
+const listenAddress = process.env.LISTEN_ADDRESS || '0.0.0.0';
+const listenPort = parseInt(process.env.LISTEN_PORT) || 3000;
 const passwordExpireMs = parseInt(process.env.PASSWORD_EXPIRE_MS) || 600000;
 const cookieMaxAgeMs = parseInt(process.env.COOKIE_MAX_AGE_MS) || 86400000;
 const caBaseDir = process.env.CA_BASEDIR || __dirname;
@@ -363,6 +364,6 @@ app.post('/set-password', async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`Server started: http://localhost:${port}`);
+app.listen(listenPort, listenAddress, () => {
+    console.log(`Server listening on ${listenAddress}:${listenPort}`);
 });
