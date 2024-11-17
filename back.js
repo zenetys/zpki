@@ -33,7 +33,7 @@ const checkCommonName = (name) => {
 // Verify if profile exists & select it
 const getProfilePath = async (profile) => {
     try {
-        const result = await safeExec(caFoldersCmd);
+        const result = await safeExec(caFoldersCmd, [ caBaseDir ]);
         const validProfiles = result.stdout
             .split('\n')
             .filter(line => line.trim().length > 0);
@@ -129,7 +129,7 @@ app.get('/', (req, res) => {
 // Route to get all available profiles & get current profile
 app.get('/profiles', async (req, res) => {
     try {
-        const result = await safeExec(caFoldersCmd);
+        const result = await safeExec(caFoldersCmd, [ caBaseDir ]);
         const profiles = result.stdout
             .split('\n')
             .filter(line => line.trim().length > 0);
