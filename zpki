@@ -420,6 +420,7 @@ function ca-update-db() {
     ${CA_PASSWORD:+-passin env:CA_PASSWORD}
   )
   $OPENSSL ca "${PARAMS[@]}"
+  is-error "Cannot update database" || return
 
   local IFS=$'\n'
   if [[ -n $crtfile ]]; then
