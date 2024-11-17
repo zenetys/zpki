@@ -23,6 +23,7 @@
 # zpki ca-dump-pkcs12 "KEYFILE"
 # zpki ca-update-dump-crt "CRTFILE"
 # zpki ca-update-db
+# zpki ca-update-crl
 # zpki ca-list
 
 # Directory tree:
@@ -373,6 +374,7 @@ function create-ca() {
   [[ -e ca.idz ]]     || touch ca.idz
   [[ -s ca.srl ]]     || printf "%016X\n" $SERIAL > ca.srl
   [[ -s ca.crlnum ]]  || echo 01 > ca.crlnum
+  ca-update-crl || return
   return 0
 }
 
@@ -407,6 +409,19 @@ function ca-create-crt() {
   $OPENSSL ca "${PARAMS[@]}"
   is-error "Cannot sign request '$CSRFILE' to '$CRTFILE'" || return
   ca-update-db "$CRTFILE"
+}
+
+#X-ACTION ca-update-crl: Generate the CRL
+function ca-update-crl() {
+  local PARAMS=(
+    -gencrl
+    -config "$CA_CNFFILE"
+    -out "$CA_CRLFILE"
+    -batch
+    ${CA_PASSWORD:+-passin env:CA_PASSWORD}
+  )
+  $OPENSSL ca "${PARAMS[@]}"
+  is-error "Cannot generate CRL" || return
 }
 
 #X-ACTION ca-update-db: Reload all certificates in the ca.idz file
@@ -597,11 +612,11 @@ function ca-revoke-crt() {
     -config "$CA_CNFFILE"
     -batch
     -revoke "$CRTFILE"
-    -gencrl
     ${CA_PASSWORD:+-passin env:CA_PASSWORD}
   )
   $OPENSSL ca "${PARAMS[@]}"
   is-error "Cannot revoke certificate '$SUBJECT'" || return
+  ca-update-crl || return
 }
 
 #X-ACTION ca-disable-crt [CN|SUBJ|CRTFILE]: Definitly disable a certificate
@@ -628,11 +643,11 @@ function ca-disable-crt() {
       -config "$CA_CNFFILE"
       -batch
       -revoke "$CRTFILE"
-      -gencrl
       ${CA_PASSWORD:+-passin env:CA_PASSWORD}
     )
     $OPENSSL ca "${PARAMS[@]}"
     is-error "Cannot revoke certificate '$SUBJECT'" || return
+    ca-update-crl || return
   fi
   chmod -w "$CRTFILE"
   sed -i -re "s/^R(\s\w+\s\w+\s$SERIAL\s)/D\1/" ca.idx || return
@@ -890,6 +905,7 @@ fi
 
 CA_KEYFILE=ca.key
 CA_CRTFILE=ca.crt
+CA_CRLFILE=ca.crl
 CA_CNFFILE=ca.cnf
 
 if [[ -r ${ARGS[0]} ]]; then
