@@ -14,7 +14,7 @@ const passwordExpireMs = parseInt(process.env.PASSWORD_EXPIRE_MS) || 600000;
 const cookieMaxAgeMs = parseInt(process.env.COOKIE_MAX_AGE_MS) || 86400000;
 const logHttpRequests = Boolean(parseInt(process.env.LOG_HTTP_REQUESTS ?? '1'));
 const caBaseDir = process.env.CA_BASEDIR || __dirname;
-const caFolders = process.env.CA_FOLDERS || __dirname + '/ca-folders';
+const caFoldersCmd = process.env.CA_FOLDERS || __dirname + '/ca-folders';
 const zpkiCmd = process.env.ZPKI_CMD || __dirname + '/zpki';
 
 // Centralized error handling middleware
@@ -32,7 +32,7 @@ const checkCommonName = (name) => {
 // Verify if profile exists & select it
 const getProfilePath = async (profile) => {
     try {
-        const result = await safeExec(caFolders);
+        const result = await safeExec(caFoldersCmd);
         const validProfiles = result.stdout
             .split('\n')
             .filter(line => line.trim().length > 0);
@@ -127,7 +127,7 @@ app.get('/', (req, res) => {
 // Route to get all available profiles & get current profile
 app.get('/profiles', async (req, res) => {
     try {
-        const result = await safeExec(caFolders);
+        const result = await safeExec(caFoldersCmd);
         const profiles = result.stdout
             .split('\n')
             .filter(line => line.trim().length > 0);
