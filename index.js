@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     const urlParams = new URLSearchParams(window.location.search);
     const searchTerm = urlParams.get('s') ? urlParams.get('s') : '';
     const tagsParam = urlParams.get('tags');
-    const API_BASE_URL = '.';
     const texts = {
         en: {
             actions: {

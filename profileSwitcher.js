@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fonction to show all available profiles
     const createProfileMenu = async () => {
         try {
-            const response = await fetch('/profiles');
+            const response = await fetch(API_BASE_URL + '/profiles');
             const data = await response.json();
 
             if (Array.isArray(data.profiles)) {
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     item.addEventListener('click', async () => {
                         document.getElementById('switchCurrentCA').innerHTML = profile.charAt(0).toUpperCase() + profile.slice(1);
 
-                        await fetch('/switch-profile', {
+                        await fetch(API_BASE_URL + '/switch-profile', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     createProfileMenu().then(() => {
-        fetch('/profiles')
+        fetch(API_BASE_URL + '/profiles')
             .then(response => response.json())
             .then(data => {
                 const currentButton = document.getElementById('switchCurrentCA');
