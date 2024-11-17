@@ -108,7 +108,8 @@ app.use(session({
 logHttpRequests && app.use((req, res, next) => {
     let reqDate = new Date();
     res.on('finish', () => {
-        let accessLog = `${(req.ips?.join('/') || req.socket.remoteAddress || '-')} ` +
+        let accessLog =
+            `${(req?.ips?.length > 0 && req.ips.join('/') + '/' + req.socket.remoteAddress) || req.socket.remoteAddress || '-'} ` +
             `- - [${rfc3339LocalDate(reqDate)}] ` +
             `"${req.method || '-'} ${req.originalUrl || req.url || '-'} HTTP/${req.httpVersion || '-'}" ` +
             `${(res.headersSent && res.statusCode) || '-'} ${res.getHeader('content-length') || '-'} ` +
