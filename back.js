@@ -26,7 +26,7 @@ const handleError = (err, req, res, next) => {
 
 // Validate certificate name
 const checkCommonName = (name) => {
-    const regex = /^[a-zA-Z0-9-_ ]+$/;
+    const regex = /^[a-zA-Z0-9-_ .*]+$/;
     return regex.test(name) && name.length > 0 && name.length < 64;
 };
 
