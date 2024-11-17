@@ -14,7 +14,7 @@ const passwordExpireMs = parseInt(process.env.PASSWORD_EXPIRE_MS) || 600000;
 const cookieMaxAgeMs = parseInt(process.env.COOKIE_MAX_AGE_MS) || 86400000;
 const logHttpRequests = Boolean(parseInt(process.env.LOG_HTTP_REQUESTS ?? '1'));
 const caBaseDir = process.env.CA_BASEDIR || __dirname;
-const caFoldersCmd = process.env.CA_FOLDERS || __dirname + '/ca-folders';
+const caFoldersCmd = process.env.CA_FOLDERS_CMD || __dirname + '/ca-folders';
 const zpkiCmd = process.env.ZPKI_CMD || __dirname + '/zpki';
 
 // Centralized error handling middleware
