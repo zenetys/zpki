@@ -972,7 +972,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         formContent.innerHTML = `
                             <div id="certDetails">
                                 <p><strong>${texts[lang].modals.CA}:</strong> ${caValue}</p>
-                                <p><strong>${texts[lang].modals.CN}:</strong> ${certData.id ? certData.id : `${texts[lang].undefined}`}</p>
+                                <p><strong>${texts[lang].modals.CN}:</strong> ${commonName ? commonName : `${texts[lang].undefined}`}</p>
                                 <p><strong>${texts[lang].modals.SUBJ}:</strong> ${splitSubject}</p>
 
                                 <p><strong>${texts[lang].headers.serial}:</strong> ${certData.serial ? certData.serial : `${texts[lang].undefined}`}</p>
@@ -995,13 +995,13 @@ document.addEventListener('DOMContentLoaded', async function() {
                                 <p class="text-wrap">
                                     <strong class="me-2">${texts[lang].headers.downloads}:</strong>
                                     <span class="d-inline-block mt-1">
-                                        <a class="btn btn-light btn-sm mb-1 me-1" href='download-crt?cert=${certData.id}' download>
+                                        <a class="btn btn-light btn-sm mb-1 me-1" href='download-crt?cert=${commonName}' download>
                                             <img src="images/certificate-solid.svg" class="icon me-1"/>.crt
                                         </a>
-                                        <a class="btn btn-light btn-sm mb-1 me-1" href='download-csr?cert=${certData.id}' download>
+                                        <a class="btn btn-light btn-sm mb-1 me-1" href='download-csr?cert=${commonName}' download>
                                             <img src="images/lock-solid.svg" class="icon me-1"/>.csr
                                         </a>
-                                        <a class="btn btn-light btn-sm mb-1 me-1" href='download-key?cert=${certData.id}' download>
+                                        <a class="btn btn-light btn-sm mb-1 me-1" href='download-key?cert=${commonName}' download>
                                             <img src="images/key-solid.svg" class="icon me-1"/>.key
                                         </a>
                                         <a class="btn btn-light btn-sm mb-1 exportP12 ${certData.keyStatus === 'encrypted' ? '' : 'disabled'}">
