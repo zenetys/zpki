@@ -950,7 +950,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                             showAlert('basicAlert');
                             return Promise.reject();
                         }
-                        const subjAlt = response.json();
+                        return response.json();
+                    })
+                    .then(subjAlt => {
                         const dnsList = subjAlt.dns || [];
                         const ipList = subjAlt.ip || [];
 
