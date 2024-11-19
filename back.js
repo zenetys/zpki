@@ -51,9 +51,10 @@ function shQuote(arg) {
     return "'" + arg.toString().replace(/\x27/g, "'\\''") + "'";
 }
 function safeExec(unsafeCmd, args = [], execOptions = {}) {
-    let cmd = '';
+    let cmd = '{ ';
     cmd += (unsafeCmd ?? '') + ' ';
     args.forEach((a) => { cmd += shQuote(a) + ' ' });
+    cmd += '; } < /dev/null'
     return new Promise((resolve, reject) => {
         child_process.exec(cmd, execOptions, (error, stdout, stderr) => {
             if (error) {

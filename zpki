@@ -212,8 +212,10 @@ function debug() {
 function yesno() {
   local QUESTION="$1" ; shift
   [[ $YES == 1 ]] && return 0
+  [[ $HAS_TTY == 1 ]] || fatal "Need YES=1 or stdin, abort"
   while : ; do
     echo -n "$QUESTION (y/n): " && read
+    (( $? == 0 )) || fatal "Read on stdin failed, abort"
     case $REPLY in
       [Yy]|[Yy][Ee]|[Yy][Ee][Ss]) return 0 ;;
       [Nn]|[Nn][Oo]) return 1 ;;
