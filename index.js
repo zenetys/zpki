@@ -405,6 +405,16 @@ document.addEventListener('DOMContentLoaded', async function() {
         loadCertData(searchTerm, tags);
     });
 
+    // Focus first non-readonly input on modal opening
+    const modals = document.querySelectorAll('[id$="Modal"]');
+    modals.forEach(function (m) {
+        m.addEventListener('shown.bs.modal', function () {
+            let firstInput = m.querySelector('input[type="text"]:not(:read-only), input[type="password"]:not(:read-only)')
+            if (firstInput)
+                firstInput.focus();
+        });
+    });
+
     // Update the language
     function updateLanguage(lang) {
         // Search Bar
