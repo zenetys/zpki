@@ -688,15 +688,16 @@ document.addEventListener('DOMContentLoaded', async function() {
                     `;
                     certTableBody.appendChild(row);
 
+                    const searchTermNorm = searchTerm.toLowerCase();
                     const matchTags = tags.length === 0 || tags.includes(textKey);
-                    const matchSearch = searchTerm === '' || row.textContent.includes(searchTerm);
+                    const matchSearch = searchTermNorm === '' || row.textContent.toLowerCase().includes(searchTermNorm);
 
                     if (matchTags && matchSearch) {
                         anyMatchFound = true;
                         row.style.display = '';
-                        if (searchTerm !== '') {
+                        if (searchTermNorm !== '') {
                             row.querySelectorAll('td').forEach(cell => {
-                                if (cell.textContent.includes(searchTerm)) cell.classList.add('highlight');
+                                if (cell.textContent.toLowerCase().includes(searchTermNorm)) cell.classList.add('highlight');
                                 else cell.classList.remove('highlight');
                             });
                         }
