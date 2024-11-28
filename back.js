@@ -15,6 +15,7 @@ const cookieMaxAgeMs = parseInt(process.env.COOKIE_MAX_AGE_MS) || 86400000;
 const logHttpRequests = Boolean(parseInt(process.env.LOG_HTTP_REQUESTS ?? '1'));
 const caBaseDir = process.env.CA_BASEDIR || __dirname;
 const caFoldersCmd = process.env.CA_FOLDERS_CMD || __dirname + '/ca-folders';
+const caFoldersCacheMs = process.env.CA_FOLDERS_CACHE_MS || 300000;
 const zpkiCmd = process.env.ZPKI_CMD || __dirname + '/zpki';
 app.set('trust proxy', process.env.TRUST_PROXY || false);
 
@@ -30,21 +31,27 @@ const checkCommonName = (name) => {
     return regex.test(name) && name.length > 0 && name.length < 64;
 };
 
-// Verify if profile exists & select it
-const getProfilePath = async (profile) => {
-    try {
+// Get available CA folders, with cache
+var caFoldersCache;
+async function getCaFolders(forceRefresh = false) {
+    if (!caFoldersCache || forceRefresh) {
         const result = await safeExec(caFoldersCmd, [ caBaseDir ]);
-        const validProfiles = result.stdout
-            .split('\n')
-            .filter(line => line.trim().length > 0);
-
-        if (!validProfiles.includes(profile)) throw new Error('Invalid profile.');
-        const currentPath = path.join(caBaseDir, profile);
-        return currentPath;
-    } catch (err) {
-        throw new Error(`Error checking profile: ${err.message}`);
+        let folders = result.stdout.replace(/\r?\n$/, '');
+        caFoldersCache = folders.length > 0 ? folders.split('\n') : [];
+        setTimeout(() => { caFoldersCache = undefined }, caFoldersCacheMs);
     }
-};
+    return caFoldersCache;
+}
+
+// Adjust session variables to change profile
+async function switchProfile(req, wantedProfile) {
+    let caFolders = await getCaFolders();
+    if (!caFolders.includes(wantedProfile))
+        throw new Error('Invalid profile.');
+    delete req.session.caPassword;
+    req.session.currentProfile = wantedProfile;
+    req.session.srcFolder = path.join(caBaseDir, wantedProfile);
+}
 
 // Safe command execution
 function shQuote(arg) {
@@ -130,19 +137,12 @@ app.get('/', (req, res) => {
 // Route to get all available profiles & get current profile
 app.get('/profiles', async (req, res) => {
     try {
-        const result = await safeExec(caFoldersCmd, [ caBaseDir ]);
-        const profiles = result.stdout
-            .split('\n')
-            .filter(line => line.trim().length > 0);
-        if (profiles.length === 0) return res.status(404).json({ error: 'No profiles available.' });
-        let currentProfile = req.session.currentProfile;
-        if (!currentProfile) {
-            currentProfile = profiles[0];
-            const defaultPath = await getProfilePath(currentProfile);
-            req.session.srcFolder = defaultPath;
-            req.session.currentProfile = currentProfile;
-        }
-        res.json({ profiles, currentProfile });
+        let profiles = await getCaFolders();
+        if (profiles.length === 0)
+            return res.status(404).json({ error: 'No profiles available.' });
+        if (!req.session.currentProfile)
+            await switchProfile(req, profiles[0]);
+        res.json({ profiles, currentProfile: req.session.currentProfile });
     } catch (error) {
         console.error('Error retrieving profiles and current profile:', error);
         res.status(500).json({ error: 'Unable to retrieve profiles and current profile.' });
@@ -271,10 +271,7 @@ app.get('/is-locked', async (req, res) => {
 app.post('/switch-profile', async (req, res) => {
     const { profile } = req.body;
     try {
-        const currentPath = await getProfilePath(profile);
-        delete req.session.caPassword;
-        req.session.srcFolder = currentPath;
-        req.session.currentProfile = profile;
+        await switchProfile(req, profile);
         return res.json({ response: `Profile switched to ${profile}.` });
     } catch (err) {
         console.error('Error switching profile:', err);
