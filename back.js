@@ -10,7 +10,7 @@ const app = express();
 
 const listenAddress = process.env.LISTEN_ADDRESS || '0.0.0.0';
 const listenPort = parseInt(process.env.LISTEN_PORT) || 3000;
-const passwordExpireMs = parseInt(process.env.PASSWORD_EXPIRE_MS) || 600000;
+const passwordExpireMs = parseInt(process.env.ZPKI_PASSWORD_EXPIRE_MS) || 600000;
 const cookieMaxAgeMs = parseInt(process.env.COOKIE_MAX_AGE_MS) || 86400000;
 const logHttpRequests = Boolean(parseInt(process.env.LOG_HTTP_REQUESTS ?? '1'));
 const caBaseDir = process.env.CA_BASEDIR || __dirname;
@@ -257,7 +257,7 @@ app.get('/is-locked', async (req, res) => {
 
     try {
         await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-test-password'],
-            { env: { ...process.env, CA_PASSWORD: req.session.caPassword } });
+            { env: { ...process.env, ZPKI_CA_PASSWORD: req.session.caPassword } });
         return res.json({ response: false });
     } catch (error) {
         console.log(error);
@@ -298,8 +298,8 @@ app.post('/create', async (req, res) => {
         if (sanDNS && sanDNS.length > 0) args.push(...sanDNS.map(dns => `DNS:${dns}`));
 
         await safeExec(zpkiCmd, args, { env: { ...process.env,
-            CA_PASSWORD: req.session.caPassword,
-            PASSWORD: password === '' ? '' : password, EXT: type } });
+            ZPKI_CA_PASSWORD: req.session.caPassword,
+            ZPKI_PASSWORD: password === '' ? '' : password, ZPKI_EXT: type } });
         res.json({ response: 'Certificate created successfully!' });
     } catch (error) {
         console.log(error);
@@ -318,7 +318,7 @@ app.post('/renew', async (req, res) => {
 
     try {
         await safeExec(zpkiCmd, ['-C', req.session.srcFolder, '-y', '-c', 'none',
-            'ca-update-crt', commonName], { env: { ...process.env, CA_PASSWORD: req.session.caPassword } });
+            'ca-update-crt', commonName], { env: { ...process.env, ZPKI_CA_PASSWORD: req.session.caPassword } });
         res.json({ response: 'Certificate renewed successfully!' });
     } catch (error) {
         console.log(error);
@@ -337,7 +337,7 @@ app.post('/revoke', async (req, res) => {
 
     try {
         await safeExec(zpkiCmd, ['-C', req.session.srcFolder, '-y', '-c', 'none',
-            'ca-revoke-crt', commonName], { env: { ...process.env, CA_PASSWORD: req.session.caPassword } });
+            'ca-revoke-crt', commonName], { env: { ...process.env, ZPKI_CA_PASSWORD: req.session.caPassword } });
         res.json({ response: 'Certificate revoked successfully!' });
     } catch (error) {
         console.log(error);
@@ -356,7 +356,7 @@ app.post('/disable', async (req, res) => {
 
     try {
         await safeExec(zpkiCmd, ['-C', req.session.srcFolder, '-y', '-c', 'none',
-            'ca-disable-crt', commonName], { env: { ...process.env, CA_PASSWORD: req.session.caPassword } });
+            'ca-disable-crt', commonName], { env: { ...process.env, ZPKI_CA_PASSWORD: req.session.caPassword } });
         res.json({ response: 'Certificate disabled successfully!' });
     } catch (error) {
         console.log(error);
@@ -376,7 +376,7 @@ app.post('/set-password', async (req, res) => {
 
     try {
         await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-test-password' ],
-            { env: { ...process.env, CA_PASSWORD: ca_password } });
+            { env: { ...process.env, ZPKI_CA_PASSWORD: ca_password } });
         req.session.caPassword = ca_password;
 
         // Note this is most likely racy if a request modifies session data at same time.
