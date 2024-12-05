@@ -148,6 +148,16 @@
     border: 1px solid #5264ff;
     background: #5264ff;
 }
+.btn-expiration {
+    color: #fff;
+    border: 1px solid #5c9b49;
+    background: #5c9b49;
+}
+.btn-expiration:hover {
+    color: #fff;
+    border: 1px solid #4e853d;
+    background: #4e853d;
+}
 .btn-action {
     justify-content: center;
     align-items: center;
