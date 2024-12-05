@@ -276,7 +276,7 @@ function create-cnf() {
 }
 
 function password-ready() {
-  if [[ -n $CIPHER && -z $PASSWORD && $HAS_TTY == 0 ]]; then
+  if [[ -n $CIPHER && -z $ZPKI_PASSWORD && $HAS_TTY == 0 ]]; then
     fatal "Need password or stdin with cipher enabled"
   fi
 }
@@ -294,7 +294,7 @@ function create-key() {
   PARAMS=(
     -out "$KEYFILE"
     ${CIPHER:+-$CIPHER}
-    ${PASSWORD:+-passout env:PASSWORD}
+    ${ZPKI_PASSWORD:+-passout env:ZPKI_PASSWORD}
     $NUMBITS
   )
   $OPENSSL genrsa "${PARAMS[@]}"
@@ -321,7 +321,7 @@ function create-csr() {
     -key "$KEYFILE"
     ${SUBJECT:+-subj "$SUBJECT"}
     ${SUBJALT:+-addext "subjectAltName=$SUBJALT"}
-    ${PASSWORD:+-passin env:PASSWORD}
+    ${ZPKI_PASSWORD:+-passin env:ZPKI_PASSWORD}
   )
   $OPENSSL req "${PARAMS[@]}"
   is-error "Cannot create certificate request '$CSRFILE'" || return
@@ -348,8 +348,8 @@ function create-self() {
     -key "$KEYFILE"
     ${SUBJECT:+-subj "$SUBJECT"}
     ${SUBJALT:+-addext "subjectAltName=$SUBJALT"}
-    -config "$CNFFILE" -extensions ${EXT:-server_ext}
-    ${PASSWORD:+-passin env:PASSWORD}
+    -config "$CNFFILE" -extensions ${ZPKI_EXT:-server_ext}
+    ${ZPKI_PASSWORD:+-passin env:ZPKI_PASSWORD}
   )
   $OPENSSL req "${PARAMS[@]}"
   is-error "Cannot create auto-signed '$CRTFILE'" || return
@@ -366,8 +366,8 @@ function create-ca() {
   
   [[ $SUBJECT ]] || fatal "Cannot create CA with empty subject"
   create-cnf  "$CNFFILE" || return
-  PASSWORD=$CA_PASSWORD create-key "$KEYFILE" || return
-  PASSWORD=$CA_PASSWORD EXT="ca_ext" create-self "$CRTFILE" || return
+  ZPKI_PASSWORD=$ZPKI_CA_PASSWORD create-key "$KEYFILE" || return
+  ZPKI_PASSWORD=$ZPKI_CA_PASSWORD ZPKI_EXT="ca_ext" create-self "$CRTFILE" || return
   [[ -d certs ]]      || mkdir certs
   [[ -d certs.new ]]  || mkdir certs.new
   [[ -d crl ]]        || mkdir crl
@@ -397,7 +397,7 @@ function ca-create-crt() {
   yesno "Create certificate '$SUBJECT' ($CRTFILE) ?" || return
   create-csr "$CSRFILE" || return
 
-  PASSWORD=$CA_PASSWORD password-ready || return
+  ZPKI_PASSWORD=$ZPKI_CA_PASSWORD password-ready || return
 
   PARAMS=(
     -config "$CA_CNFFILE"
@@ -405,8 +405,8 @@ function ca-create-crt() {
     -in  "$CSRFILE"
     -out "$CRTFILE"
     -days "$NUMDAYS"
-    -extensions ${EXT:-server_ext}
-    ${CA_PASSWORD:+-passin env:CA_PASSWORD}
+    -extensions ${ZPKI_EXT:-server_ext}
+    ${ZPKI_CA_PASSWORD:+-passin env:ZPKI_CA_PASSWORD}
   )
   $OPENSSL ca "${PARAMS[@]}"
   is-error "Cannot sign request '$CSRFILE' to '$CRTFILE'" || return
@@ -420,7 +420,7 @@ function ca-update-crl() {
     -config "$CA_CNFFILE"
     -out "$CA_CRLFILE"
     -batch
-    ${CA_PASSWORD:+-passin env:CA_PASSWORD}
+    ${ZPKI_CA_PASSWORD:+-passin env:ZPKI_CA_PASSWORD}
   )
   $OPENSSL ca "${PARAMS[@]}"
   is-error "Cannot generate CRL" || return
@@ -434,7 +434,7 @@ function ca-update-db() {
     -updatedb
     -config "$CA_CNFFILE"
     -batch
-    ${CA_PASSWORD:+-passin env:CA_PASSWORD}
+    ${ZPKI_CA_PASSWORD:+-passin env:ZPKI_CA_PASSWORD}
   )
   $OPENSSL ca "${PARAMS[@]}"
   is-error "Cannot update database" || return
@@ -614,7 +614,7 @@ function ca-revoke-crt() {
     -config "$CA_CNFFILE"
     -batch
     -revoke "$CRTFILE"
-    ${CA_PASSWORD:+-passin env:CA_PASSWORD}
+    ${ZPKI_CA_PASSWORD:+-passin env:ZPKI_CA_PASSWORD}
   )
   $OPENSSL ca "${PARAMS[@]}"
   is-error "Cannot revoke certificate '$SUBJECT'" || return
@@ -636,7 +636,7 @@ function ca-disable-crt() {
   SERIAL=${SERIAL#serial=}
   yesno "Disable certificate (couldn't be restored) '$SUBJECT' ($CRTFILE)" || return
 
-  PASSWORD=$CA_PASSWORD password-ready || return
+  ZPKI_PASSWORD=$ZPKI_CA_PASSWORD password-ready || return
 
   if grep -q -E "^D(\s\w+\s\w+\s$SERIAL\s)" ca.idx; then
     info "'$SUBJECT' already disabled"
@@ -645,7 +645,7 @@ function ca-disable-crt() {
       -config "$CA_CNFFILE"
       -batch
       -revoke "$CRTFILE"
-      ${CA_PASSWORD:+-passin env:CA_PASSWORD}
+      ${ZPKI_CA_PASSWORD:+-passin env:ZPKI_CA_PASSWORD}
     )
     $OPENSSL ca "${PARAMS[@]}"
     is-error "Cannot revoke certificate '$SUBJECT'" || return
@@ -773,14 +773,14 @@ function ca-dump-pkcs12() {
   local args
   [[ -z ${ARGS[0]} ]] && fatal "Function needs an argument : FILE" && return
 
-  PASSWORD=$EXPORT_PASSWORD password-ready || return
+  ZPKI_PASSWORD=$EXPORT_PASSWORD password-ready || return
 
   [[ -e $KEYFILE ]] || fatal "Cannot get $KEYFILE"
   [[ -e $CRTFILE ]] || fatal "Cannot get $CRTFILE"
   args=(
     -export
     -in "$CRTFILE"
-    -inkey "$KEYFILE" ${KEYPASS:+-passin "env:$PASSWORD"}
+    -inkey "$KEYFILE" ${KEYPASS:+-passin "env:$ZPKI_PASSWORD"}
     -CAfile "$CAFILE"
     -passout "env:EXPORT_PASSWORD"
   )
@@ -797,11 +797,11 @@ function ca-test-password() {
     inside && /^-----END / { inside = 0; exit 1; }
   ' "$CA_KEYFILE"
   local check_enc=$?
-  [[ $check_enc == 0 && -z $CA_PASSWORD ]] && { echo 'ERROR: Bad password' >&2; return 1; }
-  [[ $check_enc == 1 && -n $CA_PASSWORD ]] && { echo 'ERROR: Bad password' >&2; return 1; }
+  [[ $check_enc == 0 && -z $ZPKI_CA_PASSWORD ]] && { echo 'ERROR: Bad password' >&2; return 1; }
+  [[ $check_enc == 1 && -n $ZPKI_CA_PASSWORD ]] && { echo 'ERROR: Bad password' >&2; return 1; }
   # make sure the passin env variable is exported
-  CA_PASSWORD="$CA_PASSWORD" \
-    $OPENSSL rsa -in "$CA_KEYFILE" -noout -passin env:CA_PASSWORD
+  ZPKI_CA_PASSWORD="$ZPKI_CA_PASSWORD" \
+    $OPENSSL rsa -in "$CA_KEYFILE" -noout -passin env:ZPKI_CA_PASSWORD
   is-error 'Bad password' || return 1
 }
 
@@ -890,8 +890,8 @@ declare -f "$ACTION" > /dev/null || fatal "Undefined action '$ACTION'"
 
 ## FIXME - smart detection of action wanted
 
-[[ $PASSWORD ]] && export PASSWORD
-[[ $CA_PASSWORD ]] && export CA_PASSWORD
+[[ $ZPKI_PASSWORD ]] && export ZPKI_PASSWORD
+[[ $ZPKI_CA_PASSWORD ]] && export ZPKI_CA_PASSWORD
 
 # get tty info
 tty > /dev/null 2>&1 && HAS_TTY=1 || HAS_TTY=0
