@@ -623,8 +623,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Sorting by date (startDate, endDate)
             if (sortKey === 'startDate' || sortKey === 'endDate') {
                 const parseDate = (dateStr) => {
-                    const [day, month, year] = dateStr.split('/').map(Number);
-                    return new Date(year, month - 1, day);
+                    return new Date(dateStr.trim());
                 };
 
                 const dateA = parseDate(cellA.textContent.trim());
