@@ -418,27 +418,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     let lang = localStorage.getItem('language') || 'en';
 
     // Language dropdown interactions
-    $('#languageMenu .dropdown-item').removeClass('active');
+    $('#languageMenu .dropdown-item').removeClass('active').find('.checkmark').hide();
     $(`#languageMenu .dropdown-item[data-lang="${lang}"]`).addClass('active').find('.checkmark').show();
-    $('#languageMenu .dropdown-item').not(`[data-lang="${lang}"]`).find('.checkmark').hide();
-    $('#languageMenu .dropdown-item').click(() => {
-        $('#languageMenu .dropdown-item').removeClass('active');
-        $('#languageMenu .dropdown-item').find('.checkmark').hide();
-        $(this).addClass('active');
-        $(this).find('.checkmark').show();
+    $('#languageMenu .dropdown-item').click(function() {
+        $('#languageMenu .dropdown-item').removeClass('active').find('.checkmark').hide();
+        $(this).addClass('active').find('.checkmark').show();
         lang = $(this).data('lang');
         localStorage.setItem('language', lang);
         updateLanguage(lang);
-        loadCertData(searchTerm, tags);
+        loadCertData();
     });
 
     // Focus first non-readonly input on modal opening
-    const modals = document.querySelectorAll('[id$="Modal"]');
-    modals.forEach(function (m) {
-        m.addEventListener('shown.bs.modal', () => {
-            let firstInput = m.querySelector('input[type="text"]:not(:read-only), input[type="password"]:not(:read-only)')
-            if (firstInput)
-                firstInput.focus();
+    document.querySelectorAll('[id$="Modal"]').forEach(modal => {
+        modal.addEventListener('shown.bs.modal', () => {
+            modal.querySelector('input[type="text"]:not(:read-only), input[type="password"]:not(:read-only)')?.focus();
         });
     });
 
