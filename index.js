@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    // const selectBoxHeader = document.querySelector('[data-sort="selectBox"]');
     const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
-    const selectBoxHeader = document.querySelector('[data-sort="selectBox"]');
     const passwordForm = document.getElementById('passwordForm');
     const passwordInput = document.getElementById('passwordInput');
     const wrongPassword = document.getElementById('wrongPassword');
@@ -463,23 +463,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Update lock / unlock buttons
     function updateInterface() {
-        const checkboxes = document.querySelectorAll('.cert-checkbox');
+        // const checkboxes = document.querySelectorAll('.cert-checkbox');
         if (!locked) {
-            checkboxes.forEach(checkbox => { checkbox.disabled = false; });
             createBtn.classList.remove('disabled');
             createBtn.classList.remove('btn-secondary');
             createBtn.classList.add('btn-primary');
             lockInterface.classList.remove('btn-danger');
             lockInterface.classList.add('btn-success');
             lockInterface.innerHTML = `<img src="images/unlock-solid.svg" class="icon"/>`;
+            // checkboxes.forEach(checkbox => { checkbox.disabled = false; });
         } else {
-            checkboxes.forEach(checkbox => { checkbox.disabled = true; });
             createBtn.classList.add('disabled');
             createBtn.classList.remove('btn-primary');
             createBtn.classList.add('btn-secondary');
             lockInterface.classList.remove('btn-success');
             lockInterface.classList.add('btn-danger');
             lockInterface.innerHTML = `<img src="images/lock-white-solid.svg" class="icon"/>`;
+            // checkboxes.forEach(checkbox => { checkbox.disabled = true; });
         }
     }
 
@@ -666,7 +666,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <!--
                         <td class="text-center check-container"><input type="checkbox" class="cert-checkbox" data-id="${cert.id}" ${status === 'D' ? 'disabled' : ''}></td>
+                        -->
                         <td class="status-container" data-sort="status">
                             <div class="button-container">
                                 <button class="btn btn-ssm btn-status btn-${statusColor} rounded-pill" data-id="${cert.id}">${statusBtn}</button>
@@ -730,10 +732,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                         if (!locked) {
                             const btn = row.querySelector('.btn-status');
                             const actionButtons = row.querySelector('.action-buttons');
-                            const checkboxes = document.querySelectorAll('.cert-checkbox');
-                            const isAnyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+                            // const checkboxes = document.querySelectorAll('.cert-checkbox');
+                            // const isAnyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
 
-                            if (status === 'D' || isAnyChecked) return;
+                            // if (status === 'D' || isAnyChecked) return; <<<=== Use this when checkboxes activated
+                            if (status === 'D') return;
 
                             btn.style.display = 'none';
                             actionButtons.style.display = 'flex';
@@ -751,32 +754,32 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
 
                 // Shift + click checkboxes
-                let lastChecked = null;
-                const checkboxes = document.querySelectorAll('.cert-checkbox');
-                checkboxes.forEach(checkbox => {
-                    checkbox.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        if (!lastChecked) {
-                            lastChecked = this;
-                            return;
-                        }
+                // let lastChecked = null;
+                // const checkboxes = document.querySelectorAll('.cert-checkbox');
+                // checkboxes.forEach(checkbox => {
+                //     checkbox.addEventListener('click', function(event) {
+                //         event.stopPropagation();
+                //         if (!lastChecked) {
+                //             lastChecked = this;
+                //             return;
+                //         }
 
-                        if (e.shiftKey) {
-                            let inBetween = false;
-                            checkboxes.forEach(cb => {
-                                if (cb === this || cb === lastChecked) inBetween = !inBetween;
-                                if (inBetween && !cb.disabled) cb.checked = this.checked;
-                            });
-                        }
-                        lastChecked = this;
-                    });
-                });
+                //         if (event.shiftKey) {
+                //             let inBetween = false;
+                //             checkboxes.forEach(cb => {
+                //                 if (cb === this || cb === lastChecked) inBetween = !inBetween;
+                //                 if (inBetween && !cb.disabled) cb.checked = this.checked;
+                //             });
+                //         }
+                //         lastChecked = this;
+                //     });
+                // });
 
                 // Select all checkboxes on header click
-                    const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked || checkbox.disabled);
-                    checkboxes.forEach(checkbox => { if (!checkbox.disabled) checkbox.checked = !allChecked; });
-                });
                 // selectBoxHeader.addEventListener('click', () => {
+                //     const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked || checkbox.disabled);
+                //     checkboxes.forEach(checkbox => { if (!checkbox.disabled) checkbox.checked = !allChecked; });
+                // });
 
                 // Tooltips
                 var tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
