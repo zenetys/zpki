@@ -20,7 +20,7 @@
         <form id="certForm">
             <div class="form-group">
                 <!-- Lock interface button -->
-                <button type="button" class="btn btn-danger rounded-3 float-end me-2" id="lockInterface">
+                <button type="button" class="btn btn-danger rounded-3 float-end me-2" id="lockBtn">
                     <img src="images/lock-white-solid.svg" class="icon"/>
                 </button>
 
@@ -31,7 +31,7 @@
 
                 <!-- Search Bar -->
                 <div class="position-relative d-flex w-100 text-truncate">
-                    <input type="text" id="certSearch" class="form-control border-light shadow-sm rounded-3 me-2" placeholder="Search for a certificate">
+                    <input type="text" id="searchInput" class="form-control border-light shadow-sm rounded-3 me-2" placeholder="Search for a certificate">
 
                     <!-- Status buttons (quick access) -->
                     <div class="button-container position-absolute" style="top: 50%; right: 20px; transform: translateY(-50%);">
@@ -51,10 +51,10 @@
                 </div>
 
                 <!-- See current CA & switch -->
-                <button class="btn btn-primary rounded-3 me-2 text-truncate" id="switchCurrentCA" style="min-width: 200px;" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button class="btn btn-primary rounded-3 me-2 text-truncate" id="switchBtn" style="min-width: 200px;" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <!-- Dropdown title (dynamic) --> &nbsp;
                 </button>
-                <div class="dropdown-menu dropdown-menu-left mt-1" aria-labelledby="switchCurrentCA" id="switchMenu">
+                <div class="dropdown-menu dropdown-menu-left mt-1" aria-labelledby="switchBtn" id="switchMenu">
                     <!-- Dropdown content (dynamic) -->
                 </div>
 
@@ -111,7 +111,7 @@
                     </th>
                 </tr>
             </thead>
-            <tbody id="certTableBody">
+            <tbody id="tableContent">
                 <!-- Certificates Data -->
             </tbody>
         </table>
@@ -299,7 +299,7 @@
             if (dragOldIndex !== -1 && dragNewIndex !== -1 && dragNewIndex !== dragOldIndex) {
                 arrayMove(headers, dragOldIndex, dragNewIndex);
 
-                const rows = [...document.querySelectorAll('#certTableBody tr')];
+                const rows = [...document.querySelectorAll('#tableContent tr')];
                 rows.forEach(row => {
                     const cells = [...row.children];
                     arrayMove(cells, dragOldIndex, dragNewIndex);

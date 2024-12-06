@@ -2,12 +2,12 @@ document.addEventListener('DOMContentLoaded', async function() {
     const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
     const selectBoxHeader = document.querySelector('[data-sort="selectBox"]');
     const wrongPassword = document.getElementById('wrongPassword');
-    const certSearchInput = document.getElementById('certSearch');
-    const certTableBody = document.getElementById('certTableBody');
-    const lockInterface = document.getElementById('lockInterface');
     const passwordForm = document.getElementById('passwordForm');
-    const passwordInput = document.getElementById('password');
+    const passwordInput = document.getElementById('passwordInput');
+    const tableContent = document.getElementById('tableContent');
+    const searchInput = document.getElementById('searchInput');
     const createBtn = document.getElementById('createBtn');
+    const lockBtn = document.getElementById('lockBtn');
     const urlParams = new URLSearchParams(window.location.search);
     const searchTerm = urlParams.get('s') ? urlParams.get('s') : '';
     const tagsParam = urlParams.get('tags');
