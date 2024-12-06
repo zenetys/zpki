@@ -755,26 +755,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                     // On line hover, show / hide action buttons
                     row.addEventListener('mouseover', () => {
                         if (!locked) {
-                            const btn = row.querySelector('.btn-status');
-                            const actionButtons = row.querySelector('.action-buttons');
                             // const checkboxes = document.querySelectorAll('.cert-checkbox');
                             // const isAnyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
 
                             // if (status === 'D' || isAnyChecked) return; <<<=== Use this when checkboxes activated
                             if (status === 'D') return;
 
-                            btn.style.display = 'none';
-                            actionButtons.style.display = 'flex';
+                            row.querySelector('.btn-status').style.display = 'none';
+                            row.querySelector('.action-buttons').style.display = 'flex';
                         }
                     });
-                        if (!locked) {
-                            const btn = row.querySelector('.btn-status');
-                            const actionButtons = row.querySelector('.action-buttons');
-
-                            btn.style.display = '';
-                            actionButtons.style.display = 'none';
-                        }
                     row.addEventListener('mouseout', () => {
+                        row.querySelector('.btn-status').style.display = '';
+                        row.querySelector('.action-buttons').style.display = 'none';
                     });
                 });
 
@@ -831,7 +824,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Hide popovers on outside click
                 document.addEventListener('click', () => { popoverList.forEach(popover => { popover.hide(); }); });
 
-                if ((searchTerm !== '' || tags.length !== 0) && !anyMatchFound) showAlert('searchAlert');
+                if ((searchTerm || tags.length) && !anyMatchFound) showAlert('searchAlert');
                 else hideAlert('searchAlert');
 
                 initializeTooltips();
@@ -978,9 +971,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             showAlert('passphraseAlert');
                             confirmAction.disabled = false;
                         }
-                    } catch (error) {
-                        console.error('Creation error:', error);
-                    }
+                    } catch (error) { console.error('Creation error:', error); }
                 };
                 break;
             case 'view':
@@ -1170,9 +1161,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             showAlert('passphraseAlert');
                             confirmAction.disabled = false;
                         }
-                    } catch (error) {
-                        console.error('Renewal error:', error);
-                    }
+                    } catch (error) { console.error('Renewal error:', error); }
                 };
                 break;
             case 'revoke':
@@ -1218,9 +1207,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             showAlert('passphraseAlert');
                             confirmAction.disabled = false;
                         }
-                    } catch (error) {
-                        console.error('Revocation error:', error);
-                    }
+                    } catch (error) { console.error('Revocation error:', error); }
                 };
                 break;
             case 'disable':
@@ -1264,9 +1251,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             showAlert('passphraseAlert');
                             confirmAction.disabled = false;
                         }
-                    } catch (error) {
-                        console.error('Deactivation error:', error);
-                    }
+                    } catch (error) { console.error('Deactivation error:', error); }
                 };
                 break;
         }
@@ -1371,8 +1356,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Handle button clicks and input events
-    createBtn.addEventListener('click', (e) => {
-        e.preventDefault();
         showModal('create');
     });
 
@@ -1433,6 +1416,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             passwordSubmit.disabled = false;
             passwordSubmit.className = 'btn btn-primary float-end mt-3';
         }
+    createBtn.addEventListener('click', (event) => {
+        event.preventDefault();
     });
 
     // Reload interface on profile switch
@@ -1459,8 +1444,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Toggle eye on password modal
-    document.getElementById('togglePassword').addEventListener('click', function (e) {
-        e.preventDefault();
+    document.getElementById('togglePassword').addEventListener('click', function (event) {
+        event.preventDefault();
         const toggleIcon = document.getElementById('togglePasswordIcon');
         const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         passwordInput.setAttribute('type', type);
