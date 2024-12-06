@@ -670,12 +670,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let anyMatchFound = false;
 
                 const filteredData = tags.length === 0 ? data.filter(cert => cert.status === 'V') : data;
-                filteredData.sort((a, b) => {
-                    const dateA = new Date(a.endDate);
-                    const dateB = new Date(b.endDate);
-                    return dateA - dateB;
-                });
+                filteredData.sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
+
+                const expSoon = new Date();
+                expSoon.setDate(expSoon.getDate() + 30);
+
                 filteredData.forEach(cert => {
+                    const certEnd = new Date(cert.endDate);
                     const status = cert.status;
                     const statusMap = {
                         V: { color: 'success', icon: 'circle-check-solid.svg', textKey: 'valid' },
@@ -685,9 +686,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                         default: { color: 'secondary', icon: 'question-solid.svg', textKey: 'unknown' }
                     };
 
-                    const { color: statusColor, icon, textKey } = statusMap[status] || statusMap.default;
+                    const { color, icon, textKey } = statusMap[status] || statusMap.default;
                     const statusText = texts[lang].status[textKey];
                     const statusBtn = `<img src="images/${icon}" class="icon me-1"/> ${statusText}`;
+                    const statusColor = certEnd <= expSoon && certEnd > new Date() ? 'expiration' : color;
 
                     const row = document.createElement('tr');
                     row.innerHTML = `
