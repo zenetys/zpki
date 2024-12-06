@@ -96,6 +96,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 disabled: "Disabled",
                 unknown: "Unknown"
             },
+            tags: {
+                valid: "Valid certificates",
+                expired: "Expired certificates",
+                revoked: "Revoked certificates",
+                disabled: "Disabled certificates",
+            },
             titles: {
                 searchBar: "Search for a certificate",
                 selectProfile: "Select a profile",
@@ -188,6 +194,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 revoked: "Révoqué",
                 disabled: "Désactivé",
                 unknown: "Inconnu"
+            },
+            tags: {
+                valid: "Certificats valides",
+                expired: "Certificats expirés",
+                revoked: "Certificats révoqués",
+                disabled: "Certificats désactivés",
             },
             titles: {
                 searchBar: "Rechercher un certificat",
@@ -282,6 +294,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 disabled: "Deshabilitado",
                 unknown: "Desconocido"
             },
+            tags: {
+                valid: "Certificados válidos",
+                expired: "Certificados caducados",
+                revoked: "Certificados revocados",
+                disabled: "Certificados desactivados",
+            },
             titles: {
                 searchBar: "Buscar un certificado",
                 selectProfile: "Seleccionar un perfil",
@@ -375,6 +393,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 disabled: "Deaktiviert",
                 unknown: "Unbekannt"
             },
+            tags: {
+                valid: "Gültige Zertifikate",
+                expired: "Abgelaufene Zertifikate",
+                revoked: "Widerrufene Zertifikate",
+                disabled: "Deaktivierte Zertifikate",
+            },            
             titles: {
                 searchBar: "Nach einem Zertifikat suchen",
                 selectProfile: "Profil auswählen",
@@ -386,8 +410,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 disableCert: "Zertifikat deaktivieren",
             },
             undefined: "Undefiniert",
-        },        
+        },
     };
+
     let tags = [];
     let locked;
     let lang = localStorage.getItem('language') || 'en';
@@ -446,6 +471,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         $('#searchFailedDescription').html(texts[lang].alerts.descriptions.searchFailedDescription);
         $('#sessionExpired').html(`<img src="images/circle-info-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.sessionExpired}</strong>`);
         $('#sessionExpiredDescription').html(texts[lang].alerts.descriptions.sessionExpiredDescription);        
+
+        // Tags tooltips
+        $('#tagValid').closest('span').attr('data-bs-title', `${texts[lang].tags.valid}`);
+        $('#tagExpired').closest('span').attr('data-bs-title', `${texts[lang].tags.expired}`);
+        $('#tagRevoked').closest('span').attr('data-bs-title', `${texts[lang].tags.revoked}`);
+        $('#tagDisabled').closest('span').attr('data-bs-title', `${texts[lang].tags.disabled}`);
 
         // Languages dropdown
         $('#english').html(`${texts[lang].lang.english} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
