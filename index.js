@@ -439,11 +439,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Update the language
     function updateLanguage(lang) {
         // Search Bar
-        $('#certSearch').attr('placeholder', texts[lang].titles.searchBar);
+        $('#searchInput').attr('placeholder', texts[lang].titles.searchBar);
 
         // Password modal
+        $('#passwordInput').attr('placeholder', texts[lang].modals.enterPass);
         $('#passwordModalTitle').html(texts[lang].titles.enterPass);
-        $('#password').attr('placeholder', texts[lang].modals.enterPass);
         $('#passwordSubmit').html(texts[lang].actions.confirm);
 
         // Alerts
@@ -583,7 +583,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Sorting columns
     function sortTable(sortKey, order) {
-        const rows = Array.from(certTableBody.querySelectorAll('tr'));
+        const rows = Array.from(tableContent.querySelectorAll('tr'));
 
         if (!sortKey || sortKey === 'selectBox' || sortKey === 'downloads') return;
 
@@ -643,7 +643,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             return order === 'asc' ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
         });
-        rows.forEach(row => certTableBody.appendChild(row));
+        rows.forEach(row => tableContent.appendChild(row));
     }
 
     // Function to load data & update table
@@ -660,13 +660,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             .then(response => {
                 if (!response.ok) {
                     showAlert('listAlert');
-                    certTableBody.innerHTML = '';
+                    tableContent.innerHTML = '';
                     return Promise.reject();
                 }
                 return response.json();
             })
             .then(data => {
-                certTableBody.innerHTML = '';
+                tableContent.innerHTML = '';
                 let anyMatchFound = false;
 
                 const filteredData = tags.length === 0 ? data.filter(cert => cert.status === 'V') : data;
@@ -725,7 +725,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             </button>
                         </td>
                     `;
-                    certTableBody.appendChild(row);
+                    tableContent.appendChild(row);
 
                     const searchTermNorm = searchTerm.toLowerCase();
                     const matchTags = tags.length === 0 || tags.includes(textKey);
@@ -1484,14 +1484,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             let tags = getSelectedTags();
             if (button.id === 'tagValid' && tags.length === 1 && tags.includes('valid')) return;
             button.classList.toggle('opacity-25');
-            const searchTerm = certSearchInput.value;
+            const searchTerm = searchInput.value;
             tags = getSelectedTags();
             updateUrl(searchTerm, tags);
             if (!tags.includes('valid') && !tags.length > 0) document.getElementById('tagValid').classList.remove('opacity-25');
         });
     });
 
-    if (searchTerm) certSearchInput.value = searchTerm;
+    if (searchTerm) searchInput.value = searchTerm;
     if (tagsParam) tags = tagsParam.split(',').map(tag => tag.trim());
     if (!tags.includes('valid') && tags.length > 0) document.getElementById('tagValid').classList.add('opacity-25');
     if (!tags.includes('expired')) document.getElementById('tagExpired').classList.add('opacity-25');
