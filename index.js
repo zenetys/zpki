@@ -1,11 +1,13 @@
 document.addEventListener('DOMContentLoaded', async function() {
     const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
     const selectBoxHeader = document.querySelector('[data-sort="selectBox"]');
-    const wrongPassword = document.getElementById('wrongPassword');
     const passwordForm = document.getElementById('passwordForm');
     const passwordInput = document.getElementById('passwordInput');
+    const wrongPassword = document.getElementById('wrongPassword');
     const tableContent = document.getElementById('tableContent');
     const searchInput = document.getElementById('searchInput');
+    const switchMenu = document.getElementById('switchMenu');
+    const switchBtn = document.getElementById('switchBtn');
     const createBtn = document.getElementById('createBtn');
     const lockBtn = document.getElementById('lockBtn');
     const urlParams = new URLSearchParams(window.location.search);
