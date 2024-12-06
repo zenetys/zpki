@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', async () => {
     const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
     const selectBoxHeader = document.querySelector('[data-sort="selectBox"]');
     const passwordForm = document.getElementById('passwordForm');
@@ -396,7 +396,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     $('#languageMenu .dropdown-item').removeClass('active');
     $(`#languageMenu .dropdown-item[data-lang="${lang}"]`).addClass('active').find('.checkmark').show();
     $('#languageMenu .dropdown-item').not(`[data-lang="${lang}"]`).find('.checkmark').hide();
-    $('#languageMenu .dropdown-item').click(function () {
+    $('#languageMenu .dropdown-item').click(() => {
         $('#languageMenu .dropdown-item').removeClass('active');
         $('#languageMenu .dropdown-item').find('.checkmark').hide();
         $(this).addClass('active');
@@ -410,7 +410,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Focus first non-readonly input on modal opening
     const modals = document.querySelectorAll('[id$="Modal"]');
     modals.forEach(function (m) {
-        m.addEventListener('shown.bs.modal', function () {
+        m.addEventListener('shown.bs.modal', () => {
             let firstInput = m.querySelector('input[type="text"]:not(:read-only), input[type="password"]:not(:read-only)')
             if (firstInput)
                 firstInput.focus();
@@ -726,7 +726,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     });
 
                     // On line hover, show / hide action buttons
-                    row.addEventListener('mouseover', function() {
+                    row.addEventListener('mouseover', () => {
                         if (!locked) {
                             const btn = row.querySelector('.btn-status');
                             const actionButtons = row.querySelector('.action-buttons');
@@ -739,7 +739,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                             actionButtons.style.display = 'flex';
                         }
                     });
-                    row.addEventListener('mouseout', function() {
                         if (!locked) {
                             const btn = row.querySelector('.btn-status');
                             const actionButtons = row.querySelector('.action-buttons');
@@ -747,6 +746,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                             btn.style.display = '';
                             actionButtons.style.display = 'none';
                         }
+                    row.addEventListener('mouseout', () => {
                     });
                 });
 
@@ -773,17 +773,17 @@ document.addEventListener('DOMContentLoaded', async function() {
                 });
 
                 // Select all checkboxes on header click
-                selectBoxHeader.addEventListener('click', function() {
                     const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked || checkbox.disabled);
                     checkboxes.forEach(checkbox => { if (!checkbox.disabled) checkbox.checked = !allChecked; });
                 });
+                // selectBoxHeader.addEventListener('click', () => {
 
                 // Tooltips
                 var tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
                 var tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
                 // Hide tooltips on mouse out
-                document.addEventListener('mouseout', function() { tooltipList.forEach(tooltip => { tooltip.hide(); }); });
+                document.addEventListener('mouseout', () => { tooltipList.forEach(tooltip => { tooltip.hide(); }); });
 
                 // Popovers
                 var popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
@@ -801,7 +801,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 });
 
                 // Hide popovers on outside click
-                document.addEventListener('click', function() { popoverList.forEach(popover => { popover.hide(); }); });
+                document.addEventListener('click', () => { popoverList.forEach(popover => { popover.hide(); }); });
 
                 if ((searchTerm !== '' || tags.length !== 0) && !anyMatchFound) showAlert('searchAlert');
                 else hideAlert('searchAlert');
@@ -902,7 +902,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 `;
 
                 // Confirm certificate creation
-                document.getElementById('confirmAction').onclick = async function() {
+                document.getElementById('confirmAction').onclick = async () => {
                     let commonName = document.getElementById('commonName').value;
                     // const org = document.getElementById('org').value.trim();
                     // const orgUnit = document.getElementById('orgunit').value.trim();
@@ -1100,7 +1100,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 `;
                 
                 // Confirm certificate renewal
-                document.getElementById('confirmAction').onclick = async function() {
+                document.getElementById('confirmAction').onclick = async () => {
                     const commonName = document.getElementById('commonName').value;
                     // const org = document.getElementById('org').value.trim();
                     // const orgUnit = document.getElementById('orgunit').value.trim();
@@ -1170,7 +1170,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 `;
 
                 // Confirm certificate revocation
-                document.getElementById('confirmAction').onclick = async function() {
+                document.getElementById('confirmAction').onclick = async () => {
                     let commonName = document.getElementById('commonName').value;
                     const confirmAction = document.getElementById('confirmAction');
 
@@ -1218,7 +1218,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 `;
                 
                 // Confirm certificate deactivation
-                document.getElementById('confirmAction').onclick = async function() {
+                document.getElementById('confirmAction').onclick = async () => {
                     const commonName = document.getElementById('commonName').value;
                     const confirmAction = document.getElementById('confirmAction');
                     confirmAction.disabled = true;
@@ -1258,7 +1258,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             startDate.value = new Date(now.getTime() - offset).toISOString().slice(0, 16);
             endDate.value = new Date(now.setFullYear(now.getFullYear() + 1, now.getMonth(), now.getDate() + 1) - offset).toISOString().slice(0, 16);
 
-            addIpButton.onclick = function() {
+            addIpButton.onclick = () => {
                 const ipValue = document.getElementById('sanIP').value;
                 const ipList = document.getElementById('addedSanIP');
                 const ipExists = Array.from(ipList.children).some(item => item.textContent.trim() === ipValue);
@@ -1271,7 +1271,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                             ${ipValue}
                             <button class="btn btn-sm btn-close" aria-label="Close"></button>
                         `;
-                        ipItem.querySelector('.btn-close').onclick = function() {
+                        ipItem.querySelector('.btn-close').onclick = () => {
                             ipList.removeChild(ipItem);
                         };
                         ipList.appendChild(ipItem);
@@ -1280,7 +1280,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 } else if (ipExists) showAlert('IPAlert');
             };
 
-            addDnsButton.onclick = function() {
+            addDnsButton.onclick = () => {
                 const dnsValue = document.getElementById('sanDNS').value;
                 const dnsList = document.getElementById('addedDnsNames');
                 const dnsExists = Array.from(dnsList.children).some(item => item.textContent.trim() === dnsValue);
@@ -1293,7 +1293,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                             ${dnsValue}
                             <button class="btn btn-sm btn-close" aria-label="Close"></button>
                         `;
-                        dnsItem.querySelector('.btn-close').onclick = function() {
+                        dnsItem.querySelector('.btn-close').onclick = () => {
                             dnsList.removeChild(dnsItem);
                         };
                         dnsList.appendChild(dnsItem);
