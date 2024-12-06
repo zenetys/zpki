@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
     // const selectBoxHeader = document.querySelector('[data-sort="selectBox"]');
     const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
     const passwordForm = document.getElementById('passwordForm');
@@ -491,21 +492,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     function updateInterface() {
         // const checkboxes = document.querySelectorAll('.cert-checkbox');
         if (!locked) {
-            createBtn.classList.remove('disabled');
-            createBtn.classList.remove('btn-secondary');
-            createBtn.classList.add('btn-primary');
-            lockInterface.classList.remove('btn-danger');
-            lockInterface.classList.add('btn-success');
-            lockInterface.innerHTML = `<img src="images/unlock-solid.svg" class="icon"/>`;
             // checkboxes.forEach(checkbox => { checkbox.disabled = false; });
+            if (createBtn.disabled) {
+                createBtn.disabled = false;
+                createBtn.classList.replace('btn-secondary', 'btn-primary');
+            }
+            if (!lockBtn.classList.contains('btn-success')) {
+                lockBtn.classList.replace('btn-danger', 'btn-success');
+                lockBtn.innerHTML = `<img src="images/unlock-solid.svg" class="icon"/>`;
+            }
         } else {
-            createBtn.classList.add('disabled');
-            createBtn.classList.remove('btn-primary');
-            createBtn.classList.add('btn-secondary');
-            lockInterface.classList.remove('btn-success');
-            lockInterface.classList.add('btn-danger');
-            lockInterface.innerHTML = `<img src="images/lock-white-solid.svg" class="icon"/>`;
             // checkboxes.forEach(checkbox => { checkbox.disabled = true; });
+            if (!createBtn.disabled) {
+                createBtn.disabled = true;
+                createBtn.classList.replace('btn-primary', 'btn-secondary');
+            }
+            if (!lockBtn.classList.contains('btn-danger')) {
+                lockBtn.classList.replace('btn-success', 'btn-danger');
+                lockBtn.innerHTML = `<img src="images/lock-white-solid.svg" class="icon"/>`;
+            }
         }
     }
 
@@ -650,25 +655,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Function to load data & update table
     function loadCertData(searchTerm = '', tags = []) {
-        fetch(`${API_BASE_URL}/profiles`)
-            .then(response => {
-                if (!response.ok) {
-                    showAlert('basicAlert');
-                    certTableBody.innerHTML = '';
-                    return Promise.reject();
-                }
-                return fetch(`${API_BASE_URL}/list`)
-            })
-            .then(response => {
+        loadCertificateAuthorities()
+            .then(async () => {
+                const response = await fetch(`${API_BASE_URL}/list`);
                 if (!response.ok) {
                     showAlert('listAlert');
                     tableContent.innerHTML = '';
                     return Promise.reject();
                 }
-                return response.json();
-            })
-            .then(data => {
+
                 tableContent.innerHTML = '';
+
+                const data = await response.json();
                 let anyMatchFound = false;
 
                 const filteredData = tags.length === 0 ? data.filter(cert => cert.status === 'V') : data;
@@ -831,6 +829,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 initializeTooltips();
                 updateInterface();
+            })
+            .catch(() => {
+                showAlert('profileAlert');
+                return Promise.reject();
             });
     }
 
@@ -1338,35 +1340,79 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (error) { return false; }
     }
 
-    // Open modal & load password
-    lockInterface.addEventListener('click', async (e) => {
-        e.preventDefault();
+    // Load profiles in dropdown
+    async function loadCertificateAuthorities() {
         try {
-            if (await isLocked()) passwordModal.show();
-            else if (!await isLocked()) {
+            const { profiles, currentProfile } = await (await fetch(`${API_BASE_URL}/profiles`)).json();
+            if (!Array.isArray(profiles)) throw new Error('Invalid profiles response');
+
+            switchBtn.innerHTML = capitalize(currentProfile);
+            switchMenu.innerHTML = profiles.map(profile => 
+                `<a id="${profile}" class="dropdown-item text-truncate ${profile === currentProfile ? 'active' : ''}">${capitalize(profile)}</a>`
+            ).join('');
+
+            switchMenu.querySelectorAll('.dropdown-item').forEach(item => item.addEventListener('click', () => switchProfile(item.id, currentProfile)));
+        } catch (error) { console.error(error); }
+    }
+
+    // Switch profile, update password, interface and search
+    async function switchProfile(profile, currentProfile) {
+        if (profile === currentProfile) return;
+
+        try {
+            await fetch(`${API_BASE_URL}/switch-profile`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ profile }),
+            });
+    
+            switchBtn.innerHTML = capitalize(profile);
+            switchMenu.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(profile).classList.add('active');
+            
+            hideAlert('profileAlert');
+
+            passwordInput.value = '';
+            passwordInput.classList.remove('is-invalid');
+            wrongPassword.style.display = 'none';
+            passwordSubmit.className = 'btn btn-primary float-end mt-3';
+            passwordSubmit.disabled = false;
+            
+            const response = await fetch(`${API_BASE_URL}/set-password`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ca_password: null }),
+            });
+
+            locked = true;
+            updateInterface();
+            
+            if (response.ok) loadCertData(searchInput.value, getSelectedTags());
+            else showAlert('basicAlert');
+        } catch (error) { showAlert('basicAlert'); }
+    }
+
+    // Open modal or lock interface
+    async function handleLock() {
+        try {
+            if (await isLocked()) {
+                passwordModal.show();
+            } else {
                 const response = await fetch(`${API_BASE_URL}/set-password`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ ca_password: null }),
                 });
+
                 if (response.ok) locked = true;
-                else showAlert('basicAlert');
+                updateInterface();
             }
         } catch (error) { showAlert('basicAlert'); }
-        updateInterface();
-        loadCertData();
-    });
+    }
 
-    // Handle button clicks and input events
-        showModal('create');
-    });
-
-    });
-
-    // Handle password form submission
-    passwordForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const passwordSubmit = document.getElementById('passwordSubmit');
+    // Password submit form
+    async function handlePasswordSubmit(event) {
+        event.preventDefault();
         passwordSubmit.disabled = true;
         try {
             if (await isLocked()) {
@@ -1380,64 +1426,42 @@ document.addEventListener('DOMContentLoaded', async () => {
                     locked = false;
                     passwordModal.hide();
                     passwordInput.value = '';
-                    passwordSubmit.disabled = false;
-                }
-                else {
-                    passwordSubmit.className = `btn ${locked ? 'btn-danger' : ''} float-end mt-3`;
-                    passwordInput.classList.toggle('is-invalid', locked);
-                    wrongPassword.textContent = `${texts[lang].inputs.wrongPass}`;
-                    wrongPassword.style.display = 'block';
-                    showAlert('passphraseAlert');
-                }
+                    updateInterface();
+                } else showPasswordError();
             }
         } catch (error) { showAlert('basicAlert'); }
-        updateInterface();
-        loadCertData();
-    });
+    }
 
-    // Check if the input password is valid
-    passwordForm.addEventListener('input', function() {
-        const passwordSubmit = document.getElementById('passwordSubmit');
-
-        passwordInput.classList.remove('is-invalid');
-        wrongPassword.style.display = 'none';
-
+    // Styling password input on typing
+    function handlePasswordInput() {
+        passwordSubmit.disabled = passwordInput.value.length < 4;
+        passwordSubmit.className = passwordSubmit.disabled ? 'btn btn-danger float-end mt-3' : 'btn btn-primary float-end mt-3';
         if (passwordInput.value.length < 4 && passwordInput.value.length > 0) {
             wrongPassword.textContent = `${texts[lang].inputs.wrongPassLength}`;
             wrongPassword.style.display = 'block';
             passwordInput.classList.add('is-invalid');
-            passwordSubmit.className = 'btn btn-danger float-end mt-3';
-            passwordSubmit.disabled = true;
-            return;
         } else {
-            passwordSubmit.disabled = false;
-            passwordSubmit.className = 'btn btn-primary float-end mt-3';
+            wrongPassword.style.display = 'none';
+            passwordInput.classList.remove('is-invalid');
         }
+    }
+
+    // Show password error
+    function showPasswordError() {
+        passwordSubmit.className = `btn ${locked ? 'btn-danger' : ''} float-end mt-3`;
+        passwordInput.classList.toggle('is-invalid', locked);
+        wrongPassword.textContent = `${texts[lang].inputs.wrongPass}`;
+        wrongPassword.style.display = 'block';
+        showAlert('passphraseAlert');
+    }
+
+    // Create button modal opening
     createBtn.addEventListener('click', (event) => {
+        if (createBtn.disabled) return;
         event.preventDefault();
+        showModal('create');
     });
 
-    // Reload interface on profile switch
-    document.getElementById('switchMenu').addEventListener('click', async function() {
-        hideAlert('profileAlert');
-        passwordInput.value = '';
-        passwordInput.classList.remove('is-invalid');
-        wrongPassword.style.display = 'none';
-        passwordSubmit.className = 'btn btn-primary float-end mt-3';
-        passwordSubmit.disabled = false;
-        try {
-            if (!await isLocked()) {
-                const response = await fetch(`${API_BASE_URL}/set-password`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ca_password: null }),
-                });
-                if (response.ok) locked = true;
-                else showAlert('basicAlert');
-            }
-        } catch (error) { showAlert('basicAlert'); }
-        updateInterface();
-        loadCertData();
     // Update url on searchbar input
     searchInput.addEventListener('input', () => updateUrl(searchInput.value, getSelectedTags()));
     searchInput.addEventListener('keydown', (event) => {
@@ -1446,6 +1470,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             updateUrl(searchInput.value, getSelectedTags());
         }
     });
+
+    // Lock interface button
+    lockBtn.addEventListener('click', handleLock);
+    lockBtn.addEventListener('keydown', (event) => { if (event.key === 'Enter') event.preventDefault(); });
+
+    // Password form events
+    passwordForm.addEventListener('submit', handlePasswordSubmit);
+    passwordForm.addEventListener('input', handlePasswordInput);
 
     // Toggle eye on password modal
     document.getElementById('togglePassword').addEventListener('click', function (event) {
@@ -1477,6 +1509,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             tags = getSelectedTags();
             updateUrl(searchTerm, tags);
             if (!tags.includes('valid') && !tags.length > 0) document.getElementById('tagValid').classList.remove('opacity-25');
+        });
+    });
+
+    // Prevent mouseover event on action buttons
+    document.querySelectorAll('.btn-action').forEach(button => {
+        button.addEventListener('mouseover', (event) => {
+            event.preventDefault();
         });
     });
 
