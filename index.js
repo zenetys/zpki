@@ -415,6 +415,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let tags = [];
     let locked;
+    let searchTimeout;
     let lang = localStorage.getItem('language') || 'en';
 
     // Language dropdown interactions
@@ -530,7 +531,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (searchTerm) params.append('s', searchTerm);
         if (tags.length > 0) params.append('tags', tags.join(','));
         history.pushState({}, '', `${location.pathname}?${params}`);
-        loadCertData(searchTerm, tags);
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => loadCertData(searchTerm, tags), 1000);
     }
 
     // Get selected tags
@@ -1359,11 +1361,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         showModal('create');
     });
 
-    // Filter certificates by name & show tags
-    certSearchInput.addEventListener("input", () => {
-        const searchTerm = certSearchInput.value;
-        const tags = getSelectedTags();
-        updateUrl(searchTerm, tags);
     });
 
     // Handle password form submission
@@ -1441,6 +1438,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (error) { showAlert('basicAlert'); }
         updateInterface();
         loadCertData();
+    // Update url on searchbar input
+    searchInput.addEventListener('input', () => updateUrl(searchInput.value, getSelectedTags()));
+    searchInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            updateUrl(searchInput.value, getSelectedTags());
+        }
     });
 
     // Toggle eye on password modal
