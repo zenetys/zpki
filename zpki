@@ -475,7 +475,9 @@ function ca-list() {
 
   [[ ! -s $CA_IDXFILE || ! -s $CA_IDZFILE ]] && { fatal "No certficate found"; return; }
 
-  TZ=UTC gawk -v "FORMAT_$FORMAT=1" -v IDZFILE=ca.idz < $CA_IDXFILE '
+  cat $CA_IDXFILE |
+    while read -r ; do echo -e "$REPLY"; done |
+    TZ=UTC gawk -v "FORMAT_$FORMAT=1" -v IDZFILE=ca.idz '
   BEGIN {
     FS="\t";
 
