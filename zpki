@@ -928,12 +928,13 @@ CA_CNFFILE=ca.cnf
 if [[ -r ${ARGS[0]} ]]; then
   # ARGS[0] is a filename
   FILENAME=${ARGS[0]}
-elif [[ ${ARGS[0]} == "/" ]]; then
+elif [[ ${ARGS[0]:0:1} == "/" ]]; then
   # if ARGS[0] begin with /, it is a subject
   shopt -s nocasematch
   SUBJECT="${ARGS[0]}"
   COMMON_NAME="${SUBJECT##*/CN=}"
-  [[ -z ${COMMON_NAME//[^/=]} ]] ||
+  shopt -u nocasematch
+  [[ -z $COMMON_NAME || $COMMON_NAME != ${COMMON_NAME//[/=]} ]] &&
     fatal "Empty or bad Common Name (CN)"
 elif [[ ${ARGS[0]} ]]; then
   # it's a non empty common name
