@@ -736,7 +736,7 @@ function ca-update-dump-crt() {
   for A in $(openssl x509 -in "$CRTFILE" -noout -hash -serial -email \
         -startdate -enddate -subject -issuer -nameopt oneline |
         sed -re '1s,^,hash=,;t; 3{/=/!s,^,email=,;t}; /^[^=]+=/!s,^,skip=,;t' \
-            -e '/^(subject|issuer)=/{s!((^[^=]+=)|,) ([^=]+) = !\2/\3=!g}'); do
+            -e '/^(subject|issuer)=/{s!((^[^=]+=) ?|, )([^=]+) = !\2/\3=!g}'); do
     declare "x509_$A"
   done
   if [[ ! -e $KEYFILE ]]; then
