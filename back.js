@@ -309,7 +309,7 @@ app.post('/create', async (req, res) => {
 
 // Route to renew certificates
 app.post('/renew', async (req, res) => {
-    const { commonName } = req.body;
+    const { commonName, sanIP, sanDNS } = req.body;
 
     if (req.session.caPassword === undefined) return res.status(400).json({ error: 'Password expired.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
@@ -317,8 +317,12 @@ app.post('/renew', async (req, res) => {
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
 
     try {
-        await safeExec(zpkiCmd, ['-C', req.session.srcFolder, '-y', '-c', 'none',
-            'ca-update-crt', commonName], { env: { ...process.env, ZPKI_CA_PASSWORD: req.session.caPassword } });
+        let args = ['-C', req.session.srcFolder, '-y', '-c', 'none', 'ca-update-crt', commonName];
+        if (sanIP && sanIP.length > 0) args.push(...sanIP.map(ip => `IP:${ip}`));
+        if (sanDNS && sanDNS.length > 0) args.push(...sanDNS.map(dns => `DNS:${dns}`));
+
+        await safeExec(zpkiCmd, args, { env: { ...process.env,
+            ZPKI_CA_PASSWORD: req.session.caPassword } });
         res.json({ response: 'Certificate renewed successfully!' });
     } catch (error) {
         console.log(error);
