@@ -805,7 +805,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 var tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
                 // Hide tooltips on mouse out
-                document.addEventListener('mouseout', () => { tooltipList.forEach(tooltip => { tooltip.hide(); }); });
+                document.addEventListener('click', () => { tooltipList.forEach(tooltip => { tooltip.hide(); }); });
 
                 // Popovers
                 var popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
