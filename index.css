@@ -154,9 +154,9 @@
     background: #5c9b49;
 }
 .btn-expiration:hover {
-    color: #fff;
-    border: 1px solid #4e853d;
-    background: #4e853d;
+    color: #fff !important;
+    border: 1px solid #4e853d !important;
+    background: #4e853d !important;
 }
 .btn-action {
     justify-content: center;
