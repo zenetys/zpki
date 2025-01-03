@@ -428,7 +428,7 @@ function ca-update-crl() {
 
 #X-ACTION ca-update-db: Reload all certificates in the ca.idz file
 function ca-update-db() {
-  local crtfile=$1; shift
+  local CRTFILE=$1; shift
   local serial keyfile
   PARAMS=(
     -updatedb
@@ -440,8 +440,8 @@ function ca-update-db() {
   is-error "Cannot update database" || return
 
   local IFS=$'\n'
-  if [[ -n $crtfile ]]; then
-    echo "$crtfile"
+  if [[ -n $CRTFILE ]]; then
+    echo "$CRTFILE"
   else
     find certs -maxdepth 1 -type f -name "*.crt"
   fi |while read -r; do
@@ -454,9 +454,9 @@ function ca-update-db() {
     fi
   done
 
-  if [[ -n $crtfile ]]; then
+  if [[ -n $CRTFILE ]]; then
     cp -a ca.idz ca.idz.new
-    echo "$crtfile"
+    echo "$CRTFILE"
   else
     > ca.idz.new
     find certs.new -maxdepth 1 -type f -name "*.pem" |
@@ -726,9 +726,9 @@ function ca-update-dump-crt() {
   # hash and email do not have <key>= in output
   # force subject/issuer oneline output as default format varies in openssl versions
   for A in $(openssl x509 -in "$CRTFILE" -noout -hash -serial -email \
-                -startdate -enddate -subject -issuer -nameopt oneline |
-                sed -re '1s,^,hash=,;t; 3{/=/!s,^,email=,;t}; /^[^=]+=/!s,^,skip=,;t' \
-                    -e '/^(subject|issuer)=/{s!((^[^=]+=)|,) ([^=]+) = !\2/\3=!g}'); do
+        -startdate -enddate -subject -issuer -nameopt oneline |
+        sed -re '1s,^,hash=,;t; 3{/=/!s,^,email=,;t}; /^[^=]+=/!s,^,skip=,;t' \
+            -e '/^(subject|issuer)=/{s!((^[^=]+=)|,) ([^=]+) = !\2/\3=!g}'); do
     declare "x509_$A"
   done
   if [[ ! -e $KEYFILE ]]; then
