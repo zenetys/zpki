@@ -523,7 +523,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             commonName.oninput = () => {
                 confirmAction.classList.remove('btn-success', 'btn-danger');
                 confirmAction.disabled = !commonName.value;
-    
+
                 if (!commonName.value) confirmAction.classList.add('btn-danger');
                 else confirmAction.classList.add('btn-primary');
             };
@@ -534,8 +534,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     function updateUrl(searchTerm, tags) {
         const params = new URLSearchParams();
         if (searchTerm) params.append('s', searchTerm);
-        if (tags.length > 0) params.append('tags', tags.join(','));
-        history.pushState({}, '', `${location.pathname}?${params}`);
+        if (tags.length) params.append('tags', tags.join(','));
+        history.pushState({}, '', `${location.pathname}${params.toString() ? `?${params}` : ''}`);
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => loadCertData(searchTerm, tags), 1000);
     }
@@ -968,7 +968,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(data)
                         });
-    
+
                         if (response.ok) {
                             loadCertData();
                             modal.hide();
@@ -1003,7 +1003,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             : `${texts[lang].undefined}`;
 
                         if (subjectArray.length === 1) splitSubject = `<span>${subjectArray[0]}</span>`;
-                        else splitSubject = `<br>${splitSubject}`;        
+                        else splitSubject = `<br>${splitSubject}`;
 
                         modalTitle.textContent = `${texts[lang].titles.viewCert}`;
                         formContent.innerHTML = `
@@ -1122,7 +1122,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].actions.cancel}</button>
                     <button type="button" class="btn btn-primary" id="confirmAction">${texts[lang].actions.renew}</button>
                 `;
-                
+
                 // Confirm certificate renewal
                 document.getElementById('confirmAction').onclick = async () => {
                     const commonName = document.getElementById('commonName').value;
@@ -1158,7 +1158,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(data)
                         });
-                
+
                         if (response.ok) {
                             loadCertData();
                             modal.hide();
@@ -1236,7 +1236,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].actions.cancel}</button>
                     <button type="button" class="btn btn-primary" id="confirmAction">${texts[lang].actions.disable}</button>
                 `;
-                
+
                 // Confirm certificate deactivation
                 document.getElementById('confirmAction').onclick = async () => {
                     const commonName = document.getElementById('commonName').value;
@@ -1248,7 +1248,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ commonName: commonName })
                         });
-                
+
                         if (response.ok) {
                             loadCertData();
                             modal.hide();
@@ -1366,7 +1366,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ profile }),
             });
-    
+
             switchBtn.innerHTML = capitalize(profile);
             switchMenu.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove('active'));
             document.getElementById(profile).classList.add('active');
@@ -1378,7 +1378,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             wrongPassword.style.display = 'none';
             passwordSubmit.className = 'btn btn-primary float-end mt-3';
             passwordSubmit.disabled = false;
-            
+
             const response = await fetch(`${API_BASE_URL}/set-password`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
