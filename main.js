@@ -939,8 +939,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const sanIP = Array.from(document.getElementById('addedIPAdresses').children).map(el => el.innerText);
                     const sanDNS = Array.from(document.getElementById('addedDNSNames').children).map(el => el.innerText);
                     const type = document.getElementById('type').value + '_ext';
-                    const startDate = document.getElementById('startDate').value;
-                    const endDate = document.getElementById('endDate').value;
+                    const startDate = formatDateOpenSSL(document.getElementById('startDate').value);
+                    const endDate = formatDateOpenSSL(document.getElementById('endDate').value);
                     const confirmAction = document.getElementById('confirmAction');
 
                     confirmAction.disabled = true;
@@ -1116,8 +1116,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const sanIP = Array.from(document.getElementById('addedIPAdresses').children).map(el => el.innerText);
                     const sanDNS = Array.from(document.getElementById('addedDNSNames').children).map(el => el.innerText);
                     const type = document.getElementById('type').value + '_ext';
-                    const startDate = document.getElementById('startDate').value;
-                    const endDate = document.getElementById('endDate').value;
+                    const startDate = formatDateOpenSSL(document.getElementById('startDate').value);
+                    const endDate = formatDateOpenSSL(document.getElementById('endDate').value);
                     const confirmAction = document.getElementById('confirmAction');
 
                     confirmAction.disabled = true;
