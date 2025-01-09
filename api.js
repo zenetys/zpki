@@ -299,7 +299,9 @@ app.post('/create', async (req, res) => {
         await safeExec(zpkiCmd, args, { env: { ...process.env,
             ZPKI_CA_PASSWORD: req.session.caPassword,
             ZPKI_PASSWORD: password === '' ? '' : password,
-            ZPKI_EXT: type
+            ZPKI_EXT: type,
+            ZPKI_START_DATE: startDate,
+            ZPKI_END_DATE: endDate,
         }});
         res.json({ response: 'Certificate created successfully!' });
     } catch (error) {
@@ -328,7 +330,9 @@ app.post('/renew', async (req, res) => {
         await safeExec(zpkiCmd, args, { env: { ...process.env,
             ZPKI_CA_PASSWORD: req.session.caPassword,
             ZPKI_PASSWORD: password === '' ? '' : password,
-            ZPKI_EXT: type
+            ZPKI_EXT: type,
+            ZPKI_START_DATE: startDate,
+            ZPKI_END_DATE: endDate,
         }});
         res.json({ response: 'Certificate renewed successfully!' });
     } catch (error) {
