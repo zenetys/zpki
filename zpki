@@ -490,6 +490,7 @@ function ca-list() {
       issuer[$1]=$6;
       email[$1]=$7;
       keyStatus[$1]=$8;
+      type[$1]=$9;
     }
     if (FORMAT_JSON) {
       printf("[");
@@ -505,7 +506,8 @@ function ca-list() {
       printf("%s\t", "issuer");
       printf("%s\t", "email");
       printf("%s\t", "hash");
-      printf("%s\n", "keyStatus");
+      printf("%s\t", "keyStatus");
+      printf("%s\n", "type");
       # printf("%s\t", "filename");
     }
   }
@@ -540,6 +542,7 @@ function ca-list() {
     if (notBefore[$4]) printf(",\"startDate\":\"%s\"", notBefore[$4]);
     printf(",\"endDate\":\"%s\"", rfc3339($2));
     printf(",\"keyStatus\":\"%s\"", keyStatus[$4]);
+    if (type[$4]) printf(",\"type\":\"%s\"", type[$4]);
     # printf(",\"filename\":\"%s\"", $5);
     printf("}");
   }
@@ -554,7 +557,8 @@ function ca-list() {
     printf("%s\t", issuer[$4]);
     printf("%s\t", email[$4]);
     printf("%s\t", hash[$4]);
-    printf("%s\n", keyStatus[$4]);
+    printf("%s\t", keyStatus[$4]);
+    printf("%s\n", type[$4]);
     # printf("%s\t", "filename");
   }
   {
@@ -740,10 +744,10 @@ function ca-update-dump-crt() {
   else
     keyStatus="plain"
   fi
-  printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "$x509_serial" "$x509_hash" \
+  printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "$x509_serial" "$x509_hash" \
       "$(date -ud "$x509_notBefore" +%Y-%m-%dT%H:%M:%SZ)" \
       "$(date -ud "$x509_notAfter" +%Y-%m-%dT%H:%M:%SZ)" \
-      "$x509_subject" "$x509_issuer" "$x509_email" "$keyStatus"
+      "$x509_subject" "$x509_issuer" "$x509_email" "$keyStatus" "$ZPKI_EXT"
 }
 
 #X-ACTION ca-dump-crt [CRTFILE]: Dump the content of a certificate (.crt) file
