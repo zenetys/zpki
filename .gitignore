@@ -2,6 +2,7 @@
 ca.cnf
 ca.crlnum
 ca.crlnum.old
+ca.crl
 ca.crt
 ca.idx
 ca.idx.attr
