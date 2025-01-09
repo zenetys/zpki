@@ -894,17 +894,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <div id="sanContainer">
                             <div class="input-group mb-2">
                                 <input type="text" class="form-control" placeholder="IP" id="sanIP">
-                                <button class="btn btn border" type="button" id="addIpButton">+</button>
+                                <button class="btn btn border" type="button" id="addIPButton">+</button>
                             </div>
-                            <div id="addedSanIP" class="mt-2"></div>
+                            <div id="addedIPAdresses" class="mt-2"></div>
                             <div class="input-group mb-2">
                                 <input type="text" class="form-control" placeholder="DNS" id="sanDNS">
-                                <button class="btn btn border" type="button" id="addDnsButton">+</button>
+                                <button class="btn btn border" type="button" id="addDNSButton">+</button>
                             </div>
-                            <div id="addedDnsNames" class="mt-2"></div>
+                            <div id="addedDNSNames" class="mt-2"></div>
                         </div>
                     </div>
-                    <!--
                     <div class="mb-3">
                         <label for="type" class="form-label">${texts[lang].modals.type}</label>
                         <select class="form-select" id="type" name="type">
@@ -912,7 +911,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <option value="user">${texts[lang].modals.selector.select2}</option>
                         </select>
                     </div>
-                    -->
                     <div class="mb-3">
                         <label for="startDate" class="form-label">${texts[lang].headers.startDate}</label>
                         <input type="datetime-local" class="form-control" id="startDate" value="">
@@ -932,9 +930,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     let commonName = document.getElementById('commonName').value;
                     // const org = document.getElementById('org').value.trim();
                     // const orgUnit = document.getElementById('orgunit').value.trim();
-                    const sanIP = Array.from(document.getElementById('addedSanIP').children).map(el => el.innerText);
-                    const sanDNS = Array.from(document.getElementById('addedDnsNames').children).map(el => el.innerText);
-                    // const type = document.getElementById('type').value;
+                    const sanIP = Array.from(document.getElementById('addedIPAdresses').children).map(el => el.innerText);
+                    const sanDNS = Array.from(document.getElementById('addedDNSNames').children).map(el => el.innerText);
+                    const type = document.getElementById('type').value + '_ext';
                     const startDate = document.getElementById('startDate').value;
                     const endDate = document.getElementById('endDate').value;
                     const confirmAction = document.getElementById('confirmAction');
@@ -953,20 +951,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     // if ((org && orgUnit) || org || orgUnit) subject += `/CN=${commonName}`;
 
                     try {
-                        const data = {
-                            commonName: commonName,
-                            subject: subject,
-                            sanIP: sanIP,
-                            sanDNS: sanDNS,
-                            // type: type + '_ext',
-                            startDate: startDate,
-                            endDate: endDate,
-                        };
-
                         const response = await fetch(`${API_BASE_URL}/create`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(data)
+                            body: JSON.stringify({ commonName, subject, sanIP, sanDNS, type, startDate, endDate })
                         });
 
                         if (response.ok) {
@@ -1081,19 +1069,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 <input type="text" class="form-control" placeholder="IP" id="sanIP" value="${certData.ip && certData.ip.length > 0 
                                     ? certData.ip.map(ip => `<span>${ip}</span>`).join(', ') 
                                     : ''}">
-                                <button class="btn btn border" type="button" id="addIpButton">+</button>
+                                <button class="btn btn border" type="button" id="addIPButton">+</button>
                             </div>
-                            <div id="addedSanIP" class="mt-2"></div>
+                            <div id="addedIPAdresses" class="mt-2"></div>
                             <div class="input-group mb-2">
                                 <input type="text" class="form-control" placeholder="DNS" id="sanDNS" value="${certData.dns && certData.dns.length > 0 
                                     ? certData.dns.map(dns => `<span>${dns}</span>`).join(', ') 
                                     : ''}">
-                                <button class="btn btn border" type="button" id="addDnsButton">+</button>
+                                <button class="btn btn border" type="button" id="addDNSButton">+</button>
                             </div>
-                            <div id="addedDnsNames" class="mt-2"></div>
+                            <div id="addedDNSNames" class="mt-2"></div>
                         </div>
                     </div>
-                    <!--
                     <div class="mb-3">
                         <label for="type" class="form-label">${texts[lang].modals.type}</label>
                         <select class="form-select" id="type" name="type">
@@ -1101,7 +1088,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <option value="user">${texts[lang].modals.selector.select2}</option>
                         </select>
                     </div>
-                    -->
                     <div class="mb-3">
                         <label for="startDate" class="form-label">${texts[lang].headers.startDate}</label>
                         <input type="datetime-local" class="form-control" id="startDate" value="">
@@ -1121,9 +1107,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const commonName = document.getElementById('commonName').value;
                     // const org = document.getElementById('org').value.trim();
                     // const orgUnit = document.getElementById('orgunit').value.trim();
-                    const sanIP = Array.from(document.getElementById('addedSanIP').children).map(el => el.innerText);
-                    const sanDNS = Array.from(document.getElementById('addedDnsNames').children).map(el => el.innerText);
-                    // const type = document.getElementById('type').value;
+                    const sanIP = Array.from(document.getElementById('addedIPAdresses').children).map(el => el.innerText);
+                    const sanDNS = Array.from(document.getElementById('addedDNSNames').children).map(el => el.innerText);
+                    const type = document.getElementById('type').value + '_ext';
                     const startDate = document.getElementById('startDate').value;
                     const endDate = document.getElementById('endDate').value;
                     const confirmAction = document.getElementById('confirmAction');
@@ -1136,20 +1122,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     // if ((org && orgUnit) || org || orgUnit) subject += `/CN=${commonName}`;
 
                     try {
-                        const data = {
-                            commonName: commonName,
-                            subject: subject,
-                            sanIP: sanIP,
-                            sanDNS: sanDNS,
-                            // type: type + '_ext',
-                            startDate: startDate,
-                            endDate: endDate,
-                        };
 
                         const response = await fetch(`${API_BASE_URL}/renew`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(data)
+                            body: JSON.stringify({ commonName, subject, sanIP, sanDNS, type, startDate, endDate })
                         });
 
                         if (response.ok) {
@@ -1195,7 +1172,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         const response = await fetch(`${API_BASE_URL}/revoke`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ commonName: commonName })
+                            body: JSON.stringify({ commonName })
                         });
                 
                         if (response.ok) {
@@ -1239,7 +1216,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         const response = await fetch(`${API_BASE_URL}/disable`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ commonName: commonName })
+                            body: JSON.stringify({ commonName })
                         });
 
                         if (response.ok) {
