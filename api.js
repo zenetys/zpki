@@ -281,8 +281,7 @@ app.post('/switch-profile', async (req, res) => {
 
 // Route to create certificates
 app.post('/create', async (req, res) => {
-    const { commonName, subject, sanIP, sanDNS } = req.body;
-    const type = 'server_ext';
+    const { commonName, subject, sanIP, sanDNS, type } = req.body;
     const password = '';
 
     if (req.session.caPassword === undefined) return res.status(400).json({ error: 'Password expired.' });
@@ -299,7 +298,9 @@ app.post('/create', async (req, res) => {
 
         await safeExec(zpkiCmd, args, { env: { ...process.env,
             ZPKI_CA_PASSWORD: req.session.caPassword,
-            ZPKI_PASSWORD: password === '' ? '' : password, ZPKI_EXT: type } });
+            ZPKI_PASSWORD: password === '' ? '' : password,
+            ZPKI_EXT: type
+        }});
         res.json({ response: 'Certificate created successfully!' });
     } catch (error) {
         console.log(error);
@@ -309,7 +310,8 @@ app.post('/create', async (req, res) => {
 
 // Route to renew certificates
 app.post('/renew', async (req, res) => {
-    const { commonName, sanIP, sanDNS } = req.body;
+    const { commonName, subject, sanIP, sanDNS, type } = req.body;
+    const password = '';
 
     if (req.session.caPassword === undefined) return res.status(400).json({ error: 'Password expired.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
@@ -317,12 +319,17 @@ app.post('/renew', async (req, res) => {
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
 
     try {
-        let args = ['-C', req.session.srcFolder, '-y', '-c', 'none', 'ca-update-crt', commonName];
+        let args = ['-C', req.session.srcFolder, '-y', ];
+        if (password === '') args.push('-c', 'none');
+        args.push('ca-create-crt', subject === '' ? commonName : subject);
         if (sanIP && sanIP.length > 0) args.push(...sanIP.map(ip => `IP:${ip}`));
         if (sanDNS && sanDNS.length > 0) args.push(...sanDNS.map(dns => `DNS:${dns}`));
 
         await safeExec(zpkiCmd, args, { env: { ...process.env,
-            ZPKI_CA_PASSWORD: req.session.caPassword } });
+            ZPKI_CA_PASSWORD: req.session.caPassword,
+            ZPKI_PASSWORD: password === '' ? '' : password,
+            ZPKI_EXT: type
+        }});
         res.json({ response: 'Certificate renewed successfully!' });
     } catch (error) {
         console.log(error);
@@ -340,8 +347,10 @@ app.post('/revoke', async (req, res) => {
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
 
     try {
-        await safeExec(zpkiCmd, ['-C', req.session.srcFolder, '-y', '-c', 'none',
-            'ca-revoke-crt', commonName], { env: { ...process.env, ZPKI_CA_PASSWORD: req.session.caPassword } });
+        let args = ['-C', req.session.srcFolder, '-y', '-c', 'none', 'ca-revoke-crt', commonName];
+        await safeExec(zpkiCmd, args, { env: { ...process.env,
+            ZPKI_CA_PASSWORD: req.session.caPassword
+        }});
         res.json({ response: 'Certificate revoked successfully!' });
     } catch (error) {
         console.log(error);
@@ -359,8 +368,10 @@ app.post('/disable', async (req, res) => {
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
 
     try {
-        await safeExec(zpkiCmd, ['-C', req.session.srcFolder, '-y', '-c', 'none',
-            'ca-disable-crt', commonName], { env: { ...process.env, ZPKI_CA_PASSWORD: req.session.caPassword } });
+        let args = ['-C', req.session.srcFolder, '-y', '-c', 'none', 'ca-disable-crt', commonName];
+        await safeExec(zpkiCmd, args, { env: { ...process.env,
+            ZPKI_CA_PASSWORD: req.session.caPassword
+        }});
         res.json({ response: 'Certificate disabled successfully!' });
     } catch (error) {
         console.log(error);
@@ -379,8 +390,10 @@ app.post('/set-password', async (req, res) => {
     }
 
     try {
-        await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-test-password' ],
-            { env: { ...process.env, ZPKI_CA_PASSWORD: ca_password } });
+        let args = ['-C', req.session.srcFolder, 'ca-test-password' ];
+        await safeExec(zpkiCmd, args, { env: { ...process.env,
+            ZPKI_CA_PASSWORD: ca_password
+        }});
         req.session.caPassword = ca_password;
 
         // Note this is most likely racy if a request modifies session data at same time.
