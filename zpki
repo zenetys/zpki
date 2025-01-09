@@ -343,6 +343,8 @@ function create-self() {
     -batch
     -new -x509
     -days "$NUMDAYS"
+    ${ZPKI_START_DATE:+-startdate "$ZPKI_START_DATE"}
+    ${ZPKI_END_DATE:+-enddate "$ZPKI_END_DATE"}
     ${UTF8:+-utf8}
     -out "$CRTFILE"
     -key "$KEYFILE"
@@ -405,6 +407,8 @@ function ca-create-crt() {
     -in  "$CSRFILE"
     -out "$CRTFILE"
     -days "$NUMDAYS"
+    ${ZPKI_START_DATE:+-startdate "$ZPKI_START_DATE"}
+    ${ZPKI_END_DATE:+-enddate "$ZPKI_END_DATE"}
     -extensions ${ZPKI_EXT:-server_ext}
     ${ZPKI_CA_PASSWORD:+-passin env:ZPKI_CA_PASSWORD}
   )
@@ -898,6 +902,11 @@ declare -f "$ACTION" > /dev/null || fatal "Undefined action '$ACTION'"
 
 [[ $ZPKI_PASSWORD ]] && export ZPKI_PASSWORD
 [[ $ZPKI_CA_PASSWORD ]] && export ZPKI_CA_PASSWORD
+
+[ -n "$ZPKI_START_DATE" ] && [ -z "$ZPKI_END_DATE" ] && \
+  ZPKI_END_DATE=$(date -u -d "$(
+      sed 's/^\(....\)\(..\)\(..\)\(..\)\(..\)\(..\)Z$/\1-\2-\3 \4:\5:\6 UTC/' <<< "$ZPKI_START_DATE"
+  ) +$NUMDAYS days" +"%Y%m%d%H%M%SZ")
 
 # get tty info
 tty > /dev/null 2>&1 && HAS_TTY=1 || HAS_TTY=0
