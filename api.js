@@ -321,7 +321,7 @@ app.post('/renew', async (req, res) => {
     try {
         let args = ['-C', req.session.srcFolder, '-y', ];
         if (password === '') args.push('-c', 'none');
-        args.push('ca-create-crt', subject === '' ? commonName : subject);
+        args.push('ca-update-crt', subject === '' ? commonName : subject);
         if (sanIP && sanIP.length > 0) args.push(...sanIP.map(ip => `IP:${ip}`));
         if (sanDNS && sanDNS.length > 0) args.push(...sanDNS.map(dns => `DNS:${dns}`));
 
