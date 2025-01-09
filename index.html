@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Certificates Manager</title>
-    <link rel="icon" href="images/logo.ico"/>
+    <link rel="icon" href="icons/logo.ico"/>
     <!-- CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="main.css"/>
@@ -21,12 +21,12 @@
             <div class="form-group">
                 <!-- Lock interface button -->
                 <button type="button" class="btn btn-danger rounded-3 float-end me-2" id="lockBtn">
-                    <img src="images/lock-white-solid.svg" class="icon"/>
+                    <img src="icons/lock-white-solid.svg" class="icon"/>
                 </button>
 
                 <!-- Create a certificate -->
                 <button type="button" class="btn btn-secondary rounded-3 me-2" id="createBtn" disabled>
-                    <img src="images/plus-solid.svg" class="icon"/>
+                    <img src="icons/plus-solid.svg" class="icon"/>
                 </button>
 
                 <!-- Search Bar -->
@@ -36,16 +36,16 @@
                     <!-- Status buttons (quick access) -->
                     <div class="button-container position-absolute" style="top: 50%; right: 20px; transform: translateY(-50%);">
                         <span class="tooltip-container" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" data-bs-title="Valid certificates">
-                            <button type="button" class="btn btn-ssm btn-success rounded-pill" id="tagValid" style="width: 70px;"><img src="images/circle-check-solid.svg" class="icon"/></button>
+                            <button type="button" class="btn btn-ssm btn-success rounded-pill" id="tagValid" style="width: 70px;"><img src="icons/circle-check-solid.svg" class="icon"/></button>
                         </span>
                         <span class="tooltip-container" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" data-bs-title='Expired certificates'>
-                            <button type="button" class="btn btn-ssm btn-warning rounded-pill" id="tagExpired" style="width: 70px;"><img src="images/triangle-exclamation-solid.svg" class="icon"/></button>
+                            <button type="button" class="btn btn-ssm btn-warning rounded-pill" id="tagExpired" style="width: 70px;"><img src="icons/triangle-exclamation-solid.svg" class="icon"/></button>
                         </span>
                         <span class="tooltip-container" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" data-bs-title='Revoked certificates'>
-                            <button type="button" class="btn btn-ssm btn-danger rounded-pill" id="tagRevoked" style="width: 70px;"><img src="images/circle-xmark-solid.svg" class="icon"/></button>
+                            <button type="button" class="btn btn-ssm btn-danger rounded-pill" id="tagRevoked" style="width: 70px;"><img src="icons/circle-xmark-solid.svg" class="icon"/></button>
                         </span>
                         <span class="tooltip-container" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" data-bs-title='Disabled certificates'>
-                            <button type="button" class="btn btn-ssm btn-dark rounded-pill" id="tagDisabled" style="width: 70px;"><img src="images/circle-minus-solid.svg" class="icon"/></button>
+                            <button type="button" class="btn btn-ssm btn-dark rounded-pill" id="tagDisabled" style="width: 70px;"><img src="icons/circle-minus-solid.svg" class="icon"/></button>
                         </span>
                     </div>
                 </div>
@@ -60,7 +60,7 @@
 
                 <!-- Language dropdown -->
                 <button class="btn btn-secondary rounded-3" id="settingsDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img src="images/gear-solid.svg" class="icon"/>
+                    <img src="icons/gear-solid.svg" class="icon"/>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="settingsDropdown" id="languageMenu">
                     <a class="dropdown-item d-flex justify-content-between" id="english" data-lang="en">English</a>
@@ -77,32 +77,32 @@
                 <tr>
                     <!-- <th class="text-center" width="50px" scope="col" data-sort="selectBox" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
                         <div class="sortable-handle">
-                            <img src="images/square-check-solid.svg" class="icon"/>
+                            <img src="icons/square-check-solid.svg" class="icon"/>
                         </div>
                     </th> -->
                     <th class="resizable" width="150px" scope="col" data-sort="status" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
                         <div class="sortable-handle">
-                            <img src="images/chart-simple-solid.svg" class="icon me-1"/> Status
+                            <img src="icons/chart-simple-solid.svg" class="icon me-1"/> Status
                         </div>
                     </th>
                     <th class="resizable" scope="col" data-sort="commonName" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
                         <div class="sortable-handle">
-                            <img src="images/file-lines-solid.svg" class="icon me-1"/> Common Name (CN)
+                            <img src="icons/file-lines-solid.svg" class="icon me-1"/> Common Name (CN)
                         </div>
                     </th>
                     <th class="resizable" scope="col" data-sort="serial" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
                         <div class="sortable-handle">
-                            <img src="images/hashtag-solid.svg" class="icon me-1"/> Serial
+                            <img src="icons/hashtag-solid.svg" class="icon me-1"/> Serial
                         </div>
                     </th>
                     <th class="resizable" scope="col" data-sort="startDate" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
                         <div class="sortable-handle">
-                            <img src="images/calendar-day-solid.svg" class="icon me-1"/> Start Date
+                            <img src="icons/calendar-day-solid.svg" class="icon me-1"/> Start Date
                         </div>
                     </th>
                     <th class="resizable" scope="col" data-sort="endDate" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
                         <div class="sortable-handle">
-                            <img src="images/calendar-days-solid.svg" class="icon me-1"/> End Date
+                            <img src="icons/calendar-days-solid.svg" class="icon me-1"/> End Date
                         </div>
                     </th>
                     <th class="text-center" width="1px" scope="col" data-sort="downloads" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragend="onDragEnd(event)">
@@ -119,7 +119,7 @@
     <!-- Alert for general errors -->
     <div class="toast bg-light border-light" id="basicAlert" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; width: max-content; z-index: 9999;">
         <div class="toast-header" id="errorFound">
-            <img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/>
+            <img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/>
             <strong class="me-auto">Error</strong>
         </div>
         <div class="toast-body" id="errorFoundDescription">
@@ -130,7 +130,7 @@
     <!-- Alert on missing certificates -->
     <div class="toast bg-light border-light" id="listAlert" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; width: max-content; z-index: 9999;">
         <div class="toast-header" id="missingCertificate">
-            <img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/>
+            <img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/>
             <strong class="me-auto">Missing certificates</strong>
         </div>
         <div class="toast-body" id="missingCertificateDescription">
@@ -141,7 +141,7 @@
     <!-- Alert if already used CN -->
     <div class="toast bg-light border-light" id="CNAlert" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; width: max-content; z-index: 9999;">
         <div class="toast-header" id="incorrectCN">
-            <img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/>
+            <img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/>
             <strong class="me-auto">Incorrect CN</strong>
         </div>
         <div class="toast-body" id="incorrectCNDescription">
@@ -152,7 +152,7 @@
     <!-- Alert if already selected DNS-->
     <div class="toast bg-light border-light" id="DNSAlert" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; width: max-content; z-index: 9999;">
         <div class="toast-header" id="incorrectDNS">
-            <img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/>
+            <img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/>
             <strong class="me-auto">Incorrect DNS</strong>
         </div>
         <div class="toast-body" id="incorrectDNSDescription">
@@ -163,7 +163,7 @@
     <!-- Alert if already selected IP-->
     <div class="toast bg-light border-light" id="IPAlert" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; width: max-content; z-index: 9999;">
         <div class="toast-header" id="incorrectIP">
-            <img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/>
+            <img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/>
             <strong class="me-auto">Incorrect IP</strong>
         </div>
         <div class="toast-body" id="incorrectIPDescription">
@@ -174,7 +174,7 @@
     <!-- Alert if incorrect DNS / IP format -->
     <div class="toast bg-light border-light" id="formatAlert" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; width: max-content; z-index: 9999;">
         <div class="toast-header" id="incorrectFormat">
-            <img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/>
+            <img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/>
             <strong class="me-auto">Incorrect Format</strong>
         </div>
         <div class="toast-body" id="incorrectFormatDescription">
@@ -185,7 +185,7 @@
     <!-- Alert if incorrect passphrase -->
     <div class="toast bg-light border-light" id="passphraseAlert" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; width: max-content; z-index: 9999;">
         <div class="toast-header" id="incorrectPassphrase">
-            <img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/>
+            <img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/>
             <strong class="me-auto">Incorrect Passphrase</strong>
         </div>
         <div class="toast-body" id="incorrectPassphraseDescription">
@@ -196,7 +196,7 @@
     <!-- Alert to select profile -->
     <div class="toast bg-light border-light" id="profileAlert" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false" style="position: fixed; top: 10px; left: 10px; width: max-content; z-index: 9999;">
         <div class="toast-header" id="sessionExpired">
-            <img src="images/circle-info-solid.svg" class="icon mt-0 me-2"/>
+            <img src="icons/circle-info-solid.svg" class="icon mt-0 me-2"/>
             <strong class="me-auto">Session Expired</strong>
         </div>
         <div class="toast-body" id="sessionExpiredDescription">
@@ -207,9 +207,9 @@
     <!-- Alert if search failed -->
     <div class="toast bg-light border-light text-center" id="searchAlert" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 50%; right: 50%; transform: translateX(50%); width: max-content; z-index: 9999;">
         <div class="toast-header" id="searchFailed">
-            <img src="images/circle-info-solid.svg" class="icon mt-0"/>
+            <img src="icons/circle-info-solid.svg" class="icon mt-0"/>
             <strong class="m-auto">No certificate found</strong>
-            <img src="images/circle-info-solid.svg" class="icon mt-0"/>
+            <img src="icons/circle-info-solid.svg" class="icon mt-0"/>
         </div>
         <div class="toast-body" id="searchFailedDescription">
             No certificate found, search another one.
@@ -229,7 +229,7 @@
                         <div class="input-group has-validation mb-3">
                             <input type="password" class="form-control shadow-sm" id="passwordInput" name="password" placeholder="CA Passphrase (can be empty)">
                             <button type="button" class="btn border rounded-end" id="togglePassword">
-                                <img src="images/eye-solid.svg" id="togglePasswordIcon" width="20" height="20"/>
+                                <img src="icons/eye-solid.svg" id="togglePasswordIcon" width="20" height="20"/>
                             </button>
                             <div class="valid-feedback" id="rightPassword"></div>
                             <div class="invalid-feedback" id="wrongPassword"></div>

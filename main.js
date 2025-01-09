@@ -449,23 +449,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         $('#passwordSubmit').html(texts[lang].actions.confirm);
 
         // Alerts
-        $('#errorFound').html(`<img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.errorFound}</strong>`);
+        $('#errorFound').html(`<img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.errorFound}</strong>`);
         $('#errorFoundDescription').html(texts[lang].alerts.descriptions.errorFoundDescription);
-        $('#incorrectCN').html(`<img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectCN}</strong>`);
+        $('#incorrectCN').html(`<img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectCN}</strong>`);
         $('#incorrectCNDescription').html(texts[lang].alerts.descriptions.incorrectCNDescription);
-        $('#incorrectDNS').html(`<img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectDNS}</strong>`);
+        $('#incorrectDNS').html(`<img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectDNS}</strong>`);
         $('#incorrectDNSDescription').html(texts[lang].alerts.descriptions.incorrectDNSDescription);
-        $('#incorrectFormat').html(`<img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectFormat}</strong>`);
+        $('#incorrectFormat').html(`<img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectFormat}</strong>`);
         $('#incorrectFormatDescription').html(texts[lang].alerts.descriptions.incorrectFormatDescription);
-        $('#incorrectIP').html(`<img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectIP}</strong>`);
+        $('#incorrectIP').html(`<img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectIP}</strong>`);
         $('#incorrectIPDescription').html(texts[lang].alerts.descriptions.incorrectIPDescription);
-        $('#incorrectPassphrase').html(`<img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectPassphrase}</strong>`);
+        $('#incorrectPassphrase').html(`<img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectPassphrase}</strong>`);
         $('#incorrectPassphraseDescription').html(texts[lang].alerts.descriptions.incorrectPassphraseDescription);
-        $('#missingCertificate').html(`<img src="images/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.missingCertificate}</strong>`);
+        $('#missingCertificate').html(`<img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.missingCertificate}</strong>`);
         $('#missingCertificateDescription').html(texts[lang].alerts.descriptions.missingCertificateDescription);
-        $('#searchFailed').html(`<img src="images/circle-info-solid.svg" class="icon mt-0"/> <strong class="m-auto">${texts[lang].alerts.errors.searchFailed}</strong> <img src="images/circle-info-solid.svg" class="icon mt-0"/>`);
+        $('#searchFailed').html(`<img src="icons/circle-info-solid.svg" class="icon mt-0"/> <strong class="m-auto">${texts[lang].alerts.errors.searchFailed}</strong> <img src="icons/circle-info-solid.svg" class="icon mt-0"/>`);
         $('#searchFailedDescription').html(texts[lang].alerts.descriptions.searchFailedDescription);
-        $('#sessionExpired').html(`<img src="images/circle-info-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.sessionExpired}</strong>`);
+        $('#sessionExpired').html(`<img src="icons/circle-info-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.sessionExpired}</strong>`);
         $('#sessionExpiredDescription').html(texts[lang].alerts.descriptions.sessionExpiredDescription);        
 
         // Tags tooltips
@@ -475,17 +475,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         $('#tagDisabled').closest('span').attr('data-bs-title', `${texts[lang].tags.disabled}`);
 
         // Languages dropdown
-        $('#english').html(`${texts[lang].lang.english} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
-        $('#french').html(`${texts[lang].lang.french} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
-        $('#spanish').html(`${texts[lang].lang.spanish} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
-        $('#german').html(`${texts[lang].lang.german} <span class="checkmark"><img src="images/check-solid.svg" class="icon ms-3"/></span>`);
+        $('#english').html(`${texts[lang].lang.english} <span class="checkmark"><img src="icons/check-solid.svg" class="icon ms-3"/></span>`);
+        $('#french').html(`${texts[lang].lang.french} <span class="checkmark"><img src="icons/check-solid.svg" class="icon ms-3"/></span>`);
+        $('#spanish').html(`${texts[lang].lang.spanish} <span class="checkmark"><img src="icons/check-solid.svg" class="icon ms-3"/></span>`);
+        $('#german').html(`${texts[lang].lang.german} <span class="checkmark"><img src="icons/check-solid.svg" class="icon ms-3"/></span>`);
 
         // Table headers
-        $('th[data-sort="status"]').html(`<img src="images/chart-simple-solid.svg" class="icon me-1"/> ${texts[lang].headers.status}`);
-        $('th[data-sort="commonName"]').html(`<img src="images/file-lines-solid.svg" class="icon me-1"/> ${texts[lang].headers.commonName}`);
-        $('th[data-sort="serial"]').html(`<img src="images/hashtag-solid.svg" class="icon me-1"/> ${texts[lang].headers.serial}`);
-        $('th[data-sort="startDate"]').html(`<img src="images/calendar-day-solid.svg" class="icon me-1"/> ${texts[lang].headers.startDate}`);
-        $('th[data-sort="endDate"]').html(`<img src="images/calendar-days-solid.svg" class="icon me-1"/> ${texts[lang].headers.endDate}`);
+        $('th[data-sort="status"]').html(`<img src="icons/chart-simple-solid.svg" class="icon me-1"/> ${texts[lang].headers.status}`);
+        $('th[data-sort="commonName"]').html(`<img src="icons/file-lines-solid.svg" class="icon me-1"/> ${texts[lang].headers.commonName}`);
+        $('th[data-sort="serial"]').html(`<img src="icons/hashtag-solid.svg" class="icon me-1"/> ${texts[lang].headers.serial}`);
+        $('th[data-sort="startDate"]').html(`<img src="icons/calendar-day-solid.svg" class="icon me-1"/> ${texts[lang].headers.startDate}`);
+        $('th[data-sort="endDate"]').html(`<img src="icons/calendar-days-solid.svg" class="icon me-1"/> ${texts[lang].headers.endDate}`);
     }
 
     // Update lock / unlock buttons
@@ -499,7 +499,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             if (!lockBtn.classList.contains('btn-success')) {
                 lockBtn.classList.replace('btn-danger', 'btn-success');
-                lockBtn.innerHTML = `<img src="images/unlock-solid.svg" class="icon"/>`;
+                lockBtn.innerHTML = `<img src="icons/unlock-solid.svg" class="icon"/>`;
             }
         } else {
             // checkboxes.forEach(checkbox => { checkbox.disabled = true; });
@@ -509,7 +509,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             if (!lockBtn.classList.contains('btn-danger')) {
                 lockBtn.classList.replace('btn-success', 'btn-danger');
-                lockBtn.innerHTML = `<img src="images/lock-white-solid.svg" class="icon"/>`;
+                lockBtn.innerHTML = `<img src="icons/lock-white-solid.svg" class="icon"/>`;
             }
         }
     }
@@ -687,7 +687,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     const { color, icon, textKey } = statusMap[status] || statusMap.default;
                     const statusText = texts[lang].status[textKey];
-                    const statusBtn = `<img src="images/${icon}" class="icon me-1"/> ${statusText}`;
+                    const statusBtn = `<img src="icons/${icon}" class="icon me-1"/> ${statusText}`;
                     const statusColor = certEnd <= expSoon && certEnd > new Date() ? 'expiration' : color;
 
                     const row = document.createElement('tr');
@@ -700,13 +700,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 <button class="btn btn-ssm btn-status btn-${statusColor} rounded-pill" data-id="${cert.id}">${statusBtn}</button>
                                 <div class="action-buttons" style="display: none;">
                                     <button class="btn btn-action renew">
-                                        <img src="images/rotate-right-solid.svg" class="icon rotate-icon" data-id="${cert.id}"/>
+                                        <img src="icons/rotate-right-solid.svg" class="icon rotate-icon" data-id="${cert.id}"/>
                                     </button>
                                     <button class="btn btn-action revoke" ${status === 'R' ? 'disabled' : ''}>
-                                        <img src="images/ban-solid.svg" class="icon cross-icon" data-id="${cert.id}"/>
+                                        <img src="icons/ban-solid.svg" class="icon cross-icon" data-id="${cert.id}"/>
                                     </button>
                                     <button class="btn btn-action disable disabled">
-                                        <img src="images/circle-minus-regular.svg" class="icon wobble-icon" data-id="${cert.id}"/>
+                                        <img src="icons/circle-minus-regular.svg" class="icon wobble-icon" data-id="${cert.id}"/>
                                     </button>
                                 </div>
                             </div>
@@ -717,12 +717,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <td data-sort="endDate"><span class="tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="${cert.endDate}">${formatDate(cert.endDate)}</span></td>
                         <td class="download-container">
                             <button type="button" class="btn btn-light btn-sm" data-bs-toggle="popover" data-bs-html="true" data-bs-content="
-                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-crt?cert=${cert.id}' download><img src='images/certificate-solid.svg' class='icon me-1'/>.crt</a>
-                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-csr?cert=${cert.id}' download><img src='images/lock-solid.svg' class='icon me-1'/>.csr</a>
-                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-key?cert=${cert.id}' download><img src='images/key-solid.svg' class='icon me-1'/>.key</a>
-                                <a class='btn btn-light btn-sm d-block text-start exportP12 ${cert.keyStatus === 'encrypted' ? '' : 'disabled'}'><img src='images/file-export-solid.svg' class='icon me-1'/>.p12</a>
+                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-crt?cert=${cert.id}' download><img src='icons/certificate-solid.svg' class='icon me-1'/>.crt</a>
+                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-csr?cert=${cert.id}' download><img src='icons/lock-solid.svg' class='icon me-1'/>.csr</a>
+                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-key?cert=${cert.id}' download><img src='icons/key-solid.svg' class='icon me-1'/>.key</a>
+                                <a class='btn btn-light btn-sm d-block text-start exportP12 ${cert.keyStatus === 'encrypted' ? '' : 'disabled'}'><img src='icons/file-export-solid.svg' class='icon me-1'/>.p12</a>
                             ">
-                                <img src="images/file-arrow-down-solid.svg" class="icon"/>
+                                <img src="icons/file-arrow-down-solid.svg" class="icon"/>
                             </button>
                         </td>
                     `;
@@ -1014,16 +1014,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                                     <strong class="me-2">${texts[lang].headers.downloads}:</strong>
                                     <span class="d-inline-block mt-1">
                                         <a class="btn btn-light btn-sm mb-1 me-1" href='download-crt?cert=${commonName}' download>
-                                            <img src="images/certificate-solid.svg" class="icon me-1"/>.crt
+                                            <img src="icons/certificate-solid.svg" class="icon me-1"/>.crt
                                         </a>
                                         <a class="btn btn-light btn-sm mb-1 me-1" href='download-csr?cert=${commonName}' download>
-                                            <img src="images/lock-solid.svg" class="icon me-1"/>.csr
+                                            <img src="icons/lock-solid.svg" class="icon me-1"/>.csr
                                         </a>
                                         <a class="btn btn-light btn-sm mb-1 me-1" href='download-key?cert=${commonName}' download>
-                                            <img src="images/key-solid.svg" class="icon me-1"/>.key
+                                            <img src="icons/key-solid.svg" class="icon me-1"/>.key
                                         </a>
                                         <a class="btn btn-light btn-sm mb-1 exportP12 ${certData.keyStatus === 'encrypted' ? '' : 'disabled'}">
-                                            <img src="images/file-export-solid.svg" class="icon me-1"/>.p12
+                                            <img src="icons/file-export-solid.svg" class="icon me-1"/>.p12
                                         </a>
                                     </span>
                                 </p>
@@ -1446,7 +1446,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const toggleIcon = document.getElementById('togglePasswordIcon');
         const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         passwordInput.setAttribute('type', type);
-        toggleIcon.src = toggleIcon.src.includes('images/eye-solid.svg') ? 'images/eye-slash-solid.svg' : 'images/eye-solid.svg';
+        toggleIcon.src = toggleIcon.src.includes('icons/eye-solid.svg') ? 'icons/eye-slash-solid.svg' : 'icons/eye-solid.svg';
     });
 
     // Sorting columns
