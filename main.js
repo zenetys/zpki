@@ -582,10 +582,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         return dnsPattern.test(dns);
     }
 
-    // Format date to YYYY/MM/DD from ISO format
+    // Format date to YYYY-MM-DD from ISO format
     function formatDate(isoDateString) {
         const date = new Date(isoDateString);
         return date.toISOString().split('T')[0];
+    }
+
+    // Format date to YYYYMMDDHHMMSSZ from ISO format
+    function formatDateOpenSSL(isoDateString) {
+        const date = new Date(isoDateString);
+        return date.toISOString().replace(/[-:T]/g, '').slice(0, 14) + 'Z';
     }
 
     // Sorting columns
