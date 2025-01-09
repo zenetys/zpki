@@ -281,7 +281,7 @@ app.post('/switch-profile', async (req, res) => {
 
 // Route to create certificates
 app.post('/create', async (req, res) => {
-    const { commonName, subject, sanIP, sanDNS, type } = req.body;
+    const { commonName, subject, sanIP, sanDNS, type, startDate, endDate } = req.body;
     const password = '';
 
     if (req.session.caPassword === undefined) return res.status(400).json({ error: 'Password expired.' });
@@ -310,7 +310,7 @@ app.post('/create', async (req, res) => {
 
 // Route to renew certificates
 app.post('/renew', async (req, res) => {
-    const { commonName, subject, sanIP, sanDNS, type } = req.body;
+    const { commonName, subject, sanIP, sanDNS, type, startDate, endDate } = req.body;
     const password = '';
 
     if (req.session.caPassword === undefined) return res.status(400).json({ error: 'Password expired.' });

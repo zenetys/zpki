@@ -1235,8 +1235,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Show modal & conditions for interactions
         const now = new Date(), offset = now.getTimezoneOffset() * 60000;
         const modal = new bootstrap.Modal(document.getElementById('dynamicModal'));
-        const startDate = document.getElementById("startDate");
-        const endDate = document.getElementById("endDate");
+        const startDate = document.getElementById('startDate');
+        const endDate = document.getElementById('endDate');
         const sanIPInput = document.getElementById('sanIP');
         const sanDNSInput = document.getElementById('sanDNS');
         const addIPButton = document.getElementById('addIPButton');
@@ -1244,40 +1244,42 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         modal.show();
 
-        startDate.value = new Date(now - offset).toISOString().slice(0, 16);
-        endDate.value = new Date(now.setFullYear(now.getFullYear() + 1, now.getMonth(), now.getDate() + 1) - offset).toISOString().slice(0, 16);
+        if (startDate && endDate && addIPButton && addDNSButton) {
+            startDate.value = new Date(now - offset).toISOString().slice(0, 16);
+            endDate.value = new Date(now.setFullYear(now.getFullYear() + 1, now.getMonth(), now.getDate() + 1) - offset).toISOString().slice(0, 16);
 
-        const handleInput = (inputId, listId, validFn, alertId) => {
-            const input = document.getElementById(inputId), list = document.getElementById(listId);
-            const value = input.value.trim(), exists = Array.from(list.children).some(e => e.textContent.trim() === value);
+            const handleInput = (inputId, listId, validFn, alertId) => {
+                const input = document.getElementById(inputId), list = document.getElementById(listId);
+                const value = input.value.trim(), exists = Array.from(list.children).some(e => e.textContent.trim() === value);
 
-            if (value && !exists) {
-                if (validFn(value)) {
-                    const item = document.createElement('div');
-                    item.className = 'alert alert-secondary fade show p-2 d-flex justify-content-between align-items-center';
-                    item.innerHTML = `${value}<button class="btn btn-sm btn-close" aria-label="Close"></button>`;
-                    item.querySelector('.btn-close').onclick = () => list.removeChild(item);
-                    list.appendChild(item);
-                    input.value = '';
-                } else showAlert('formatAlert');
-            } else if (exists) showAlert(alertId);
-        };
+                if (value && !exists) {
+                    if (validFn(value)) {
+                        const item = document.createElement('div');
+                        item.className = 'alert alert-secondary fade show p-2 d-flex justify-content-between align-items-center';
+                        item.innerHTML = `${value}<button class="btn btn-sm btn-close" aria-label="Close"></button>`;
+                        item.querySelector('.btn-close').onclick = () => list.removeChild(item);
+                        list.appendChild(item);
+                        input.value = '';
+                    } else showAlert('formatAlert');
+                } else if (exists) showAlert(alertId);
+            };
 
-        sanIPInput.addEventListener('keydown', e => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                handleInput('sanIP', 'addedIPAdresses', v => isValidIPv4(v) || isValidIPv6(v), 'IPAlert');
-            }
-        });
-        sanDNSInput.addEventListener('keydown', e => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                handleInput('sanDNS', 'addedDNSNames', isValidDNS, 'DNSAlert');
-            }
-        });
+            sanIPInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleInput('sanIP', 'addedIPAdresses', v => isValidIPv4(v) || isValidIPv6(v), 'IPAlert');
+                }
+            });
+            sanDNSInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleInput('sanDNS', 'addedDNSNames', isValidDNS, 'DNSAlert');
+                }
+            });
 
-        addIPButton.onclick = () => handleInput('sanIP', 'addedIPAdresses', v => isValidIPv4(v) || isValidIPv6(v), 'IPAlert');
-        addDNSButton.onclick = () => handleInput('sanDNS', 'addedDNSNames', isValidDNS, 'DNSAlert');
+            addIPButton.onclick = () => handleInput('sanIP', 'addedIPAdresses', v => isValidIPv4(v) || isValidIPv6(v), 'IPAlert');
+            addDNSButton.onclick = () => handleInput('sanDNS', 'addedDNSNames', isValidDNS, 'DNSAlert');
+        }
     }
 
     // Check if current interface has to be locked
