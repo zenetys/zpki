@@ -316,7 +316,7 @@ app.post('/renew', async (req, res) => {
     if (req.session.caPassword === undefined) return res.status(400).json({ error: 'Password expired.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
-    if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
+    if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
 
     try {
         let args = ['-C', req.session.srcFolder, '-y', ];
@@ -344,7 +344,7 @@ app.post('/revoke', async (req, res) => {
     if (req.session.caPassword === undefined) return res.status(400).json({ error: 'Password expired.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
-    if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
+    if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
 
     try {
         let args = ['-C', req.session.srcFolder, '-y', '-c', 'none', 'ca-revoke-crt', commonName];
@@ -365,7 +365,7 @@ app.post('/disable', async (req, res) => {
     if (req.session.caPassword === undefined) return res.status(400).json({ error: 'Password expired.' });
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
-    if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate ID (${commonName}).` });
+    if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
 
     try {
         let args = ['-C', req.session.srcFolder, '-y', '-c', 'none', 'ca-disable-crt', commonName];
