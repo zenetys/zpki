@@ -1015,17 +1015,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 <p><strong>${texts[lang].headers.serial}:</strong> ${certData.serial ? certData.serial : `${texts[lang].undefined}`}</p>
                                 <p><strong>${texts[lang].headers.signature}:</strong> ${certData.hash ? certData.hash : `${texts[lang].undefined}`}</p>
 
-                                <p><strong>IP:</strong> ${ipList.length > 0
-                                    ? ipList.map(ip => `<span>${ip}</span>`).join(', ')
-                                    : `${texts[lang].modals.missing.IP}`}
-                                </p>
+                                <p><strong>IP:</strong> ${ipList.length > 0 ? ipList.map(ip => `<span>${ip}</span>`).join(', ') : `${texts[lang].modals.missing.IP}`}</p>
+                                <p><strong>DNS:</strong> ${dnsList.length > 0 ? dnsList.map(dns => `<span>${dns}</span>`).join(', ') : `${texts[lang].modals.missing.DNS}`}</p>
 
-                                <p><strong>DNS:</strong> ${dnsList.length > 0
-                                    ? dnsList.map(dns => `<span>${dns}</span>`).join(', ')
-                                    : `${texts[lang].modals.missing.DNS}`}
-                                </p>
-
-                                <p><strong>${texts[lang].modals.type}:</strong> ${certData.type ? certData.type : `${texts[lang].modals.missing.type}`}</p>
+                                <p><strong>${texts[lang].modals.type}:</strong> ${certData.type === 'server_ext' ? texts[lang].modals.selector.select1 : certData.type === 'user_ext' ? texts[lang].modals.selector.select2 : certData.type || texts[lang].modals.missing.type}</p>
                                 <p><strong>${texts[lang].headers.startDate}:</strong> ${certData.startDate ? certData.startDate : `${texts[lang].undefined}`}</p>
                                 <p><strong>${texts[lang].headers.endDate}:</strong> ${certData.endDate ? certData.endDate : `${texts[lang].undefined}`}</p>
 
