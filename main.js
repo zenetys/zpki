@@ -694,7 +694,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const { color, icon, textKey } = statusMap[status] || statusMap.default;
                     const statusText = texts[lang].status[textKey];
                     const statusBtn = `<img src="icons/${icon}" class="icon me-1"/> ${statusText}`;
-                    const statusColor = certEnd <= expSoon && certEnd > new Date() ? 'expiration' : color;
+                    const statusColor = certEnd <= expSoon && certEnd > new Date() && status === 'V' ? 'expiration' : color;
 
                     const row = document.createElement('tr');
                     row.innerHTML = `
