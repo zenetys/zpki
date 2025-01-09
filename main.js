@@ -428,7 +428,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         lang = $(this).data('lang');
         localStorage.setItem('language', lang);
         updateLanguage(lang);
-        loadCertData();
+        loadCertData(searchTerm, tags);
     });
 
     // Focus first non-readonly input on modal opening
@@ -958,7 +958,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         });
 
                         if (response.ok) {
-                            loadCertData();
+                            loadCertData(searchTerm, tags);
                             modal.hide();
                         } else {
                             showAlert('passphraseAlert');
@@ -1130,7 +1130,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         });
 
                         if (response.ok) {
-                            loadCertData();
+                            loadCertData(searchTerm, tags);
                             modal.hide();
                         } else {
                             showAlert('passphraseAlert');
@@ -1176,7 +1176,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         });
                 
                         if (response.ok) {
-                            loadCertData();
+                            loadCertData(searchTerm, tags);
                             modal.hide();
                         } else {
                             showAlert('passphraseAlert');
@@ -1220,7 +1220,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         });
 
                         if (response.ok) {
-                            loadCertData();
+                            loadCertData(searchTerm, tags);
                             modal.hide();
                         } else {
                             showAlert('passphraseAlert');
