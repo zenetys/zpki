@@ -492,10 +492,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Table headers
         $('th[data-sort="status"]').html(`<img src="icons/chart-simple-solid.svg" class="icon me-1"/> ${texts[lang].headers.status}`);
-        $('th[data-sort="commonName"]').html(`<img src="icons/file-lines-solid.svg" class="icon me-1"/> ${texts[lang].headers.commonName}`);
-        $('th[data-sort="serial"]').html(`<img src="icons/hashtag-solid.svg" class="icon me-1"/> ${texts[lang].headers.serial}`);
-        $('th[data-sort="startDate"]').html(`<img src="icons/calendar-day-solid.svg" class="icon me-1"/> ${texts[lang].headers.startDate}`);
-        $('th[data-sort="endDate"]').html(`<img src="icons/calendar-days-solid.svg" class="icon me-1"/> ${texts[lang].headers.endDate}`);
+        $('th[data-sort="commonName"]').html(`<img src="icons/file-lines-solid.svg" class="icon me-1"/> ${texts[lang].headers.commonName} <img src="icons/arrow-down-solid.svg" class="icon arrow"/>`);
+        $('th[data-sort="serial"]').html(`<img src="icons/hashtag-solid.svg" class="icon me-1"/> ${texts[lang].headers.serial} <img src="icons/arrow-down-solid.svg" class="icon arrow"/>`);
+        $('th[data-sort="startDate"]').html(`<img src="icons/calendar-day-solid.svg" class="icon me-1"/> ${texts[lang].headers.startDate} <img src="icons/arrow-down-solid.svg" class="icon arrow"/>`);
+        $('th[data-sort="endDate"]').html(`<img src="icons/calendar-days-solid.svg" class="icon me-1"/> ${texts[lang].headers.endDate} <img src="icons/arrow-down-solid.svg" class="icon arrow"/>`);
     }
 
     // Update lock / unlock buttons
@@ -1504,6 +1504,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const currentOrder = this.classList.contains('desc') ? 'asc' : 'desc';
             this.classList.remove('asc', 'desc');
             this.classList.add(currentOrder || 'desc');
+            this.querySelector('.arrow').src = currentOrder === 'asc' ? 'icons/arrow-down-solid.svg' : 'icons/arrow-up-solid.svg';
             sortTable(sortKey, currentOrder);
         });
     });
