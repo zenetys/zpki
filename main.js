@@ -717,9 +717,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                                     <button class="btn btn-action revoke" ${status === 'R' ? 'disabled' : ''}>
                                         <img src="icons/ban-solid.svg" class="icon cross-icon" data-id="${cert.id}"/>
                                     </button>
-                                    <button class="btn btn-action disable disabled">
-                                        <img src="icons/circle-minus-regular.svg" class="icon wobble-icon" data-id="${cert.id}"/>
-                                    </button>
+                                    <span class="tooltip-container" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right" title="<div>${texts[lang].development}</div>">
+                                        <button class="btn btn-action disable disabled">
+                                            <img src="icons/circle-minus-regular.svg" class="icon wobble-icon" data-id="${cert.id}"/>
+                                        </button>
+                                    </span>
                                 </div>
                             </div>
                         </td>
