@@ -729,10 +729,34 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 </div>
                             </div>
                         </td>
-                        <td data-sort="commonName">${cert.id}</td>
-                        <td data-sort="serial"><span class="tooltip-container" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" title="<div>${texts[lang].headers.signature}: ${cert.hash}</div>">${cert.serial}</span></td>
-                        <td data-sort="startDate"><span class="tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="${cert.startDate}">${formatDate(cert.startDate)}</span></td>
-                        <td data-sort="endDate"><span class="tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="${cert.endDate}">${formatDate(cert.endDate)}</span></td>
+                        <td data-sort="commonName">${cert.id ? cert.id : `${texts[lang].undefined}`}</td>
+                        <td data-sort="serial">
+                            <span class="tooltip-container" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" title="
+                                <div>
+                                    ${texts[lang].headers.signature}: ${cert.hash ? cert.hash : `${texts[lang].undefined}`}<br>
+                                    ${texts[lang].modals.type}: ${
+                                        cert.type === 'server_ext' 
+                                        ? texts[lang].modals.selector.select1 
+                                        : cert.type === 'user_ext' 
+                                        ? texts[lang].modals.selector.select2 
+                                        : cert.type || texts[lang].modals.missing.type
+                                    }
+                                </div>">
+                                ${cert.serial ? cert.serial : `${texts[lang].undefined}`}
+                            </span>
+                        </td>
+                        <td data-sort="startDate">
+                            <span class="tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="
+                                ${cert.startDate ? cert.startDate : `${texts[lang].undefined}`}">
+                                ${formatDate(cert.startDate)}
+                            </span>
+                        </td>
+                        <td data-sort="endDate">
+                            <span class="tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="
+                                ${cert.endDate ? cert.endDate : `${texts[lang].undefined}`}">
+                                ${formatDate(cert.endDate)}
+                            </span>
+                        </td>
                         <td class="download-container">
                             <button type="button" class="btn btn-light btn-sm" data-bs-toggle="popover" data-bs-html="true" data-bs-content="
                                 <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-crt?cert=${cert.id}' download><img src='icons/certificate-solid.svg' class='icon me-1'/>.crt</a>
