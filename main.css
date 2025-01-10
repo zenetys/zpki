@@ -189,8 +189,7 @@
     background: #111;
     padding: 10px 15px;
     max-width: 500px;
-    line-height: 1.4em;
-    border-radius: 100px;
+    border-radius: 10px;
 }
 
 /* Table */
