@@ -436,6 +436,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         modal.addEventListener('shown.bs.modal', () => {
             modal.querySelector('input[type="text"]:not(:read-only), input[type="password"]:not(:read-only)')?.focus();
         });
+        modal.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                modal.querySelector('#confirmAction')?.click() || modal.querySelector('#passwordSubmit')?.click();
+            }
+        });
     });
 
     // Update the language
