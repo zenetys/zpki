@@ -223,7 +223,7 @@ app.get('/download-key', async (req, res) => {
 
 // Route to get DNS & IP data
 app.get('/subject-alt', async (req, res) => {
-    const commonName = req.query.cert;
+    const commonName = decodeURIComponent(req.query.cert || '');
 
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
@@ -232,15 +232,20 @@ app.get('/subject-alt', async (req, res) => {
     try {
         const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-display-crt', commonName, '--json']);
 
-        const jsonOutput = JSON.parse(output.stdout);
+        const formatOutput = output.stdout.replace(/\\[0-9A-Fa-f]{2}/g, (match) => 
+            String.fromCharCode(parseInt(match.replace('\\', ''), 16))
+        );
+        const jsonOutput = JSON.parse(formatOutput);
         const san = jsonOutput["X509v3 Subject Alternative Name"];
         if (!san) return res.json({ error: 'SAN not found.' });
 
         const dns = [], ip = [];
         san.split(',').forEach(part => {
             part = part.trim();
-            if (part.startsWith('DNS:')) dns.push(part.split(':')[1].trim());
-            else if (part.startsWith('IP Address:')) ip.push(part.split(':')[1].trim());
+            part.startsWith('DNS:') 
+                ? dns.push(part.split(':')[1].trim()) 
+                : part.startsWith('IP Address:') 
+                && ip.push(part.split(':')[1].trim());
         });
 
         res.json({ dns, ip });
