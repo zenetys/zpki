@@ -857,6 +857,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Function to manage all modals
     function showModal(action, certData) {
+        const modal = new bootstrap.Modal(document.getElementById('dynamicModal'));
         const modalTitle = document.getElementById('dynamicModalLabel');
         const formContent = document.getElementById('formContent');
         const footerContent = document.getElementById('footerContent');
@@ -984,6 +985,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         }
                     } catch (error) { console.error('Creation error:', error); }
                 };
+                loadModalData('create', certData);
                 break;
             case 'view':
                 const commonName = certData.id;
@@ -1084,16 +1086,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <label class="form-label">SAN (Subject Alternative Name)</label>
                         <div id="sanContainer">
                             <div class="input-group mb-2">
-                                <input type="text" class="form-control" placeholder="IP" id="sanIP" value="${certData.ip && certData.ip.length > 0 
-                                    ? certData.ip.map(ip => `<span>${ip}</span>`).join(', ') 
-                                    : ''}">
+                                <input type="text" class="form-control" placeholder="IP" id="sanIP" value="">
                                 <button class="btn btn border" type="button" id="addIPButton">+</button>
                             </div>
                             <div id="addedIPAdresses" class="mt-2"></div>
                             <div class="input-group mb-2">
-                                <input type="text" class="form-control" placeholder="DNS" id="sanDNS" value="${certData.dns && certData.dns.length > 0 
-                                    ? certData.dns.map(dns => `<span>${dns}</span>`).join(', ') 
-                                    : ''}">
+                                <input type="text" class="form-control" placeholder="DNS" id="sanDNS" value="">
                                 <button class="btn btn border" type="button" id="addDNSButton">+</button>
                             </div>
                             <div id="addedDNSNames" class="mt-2"></div>
@@ -1156,6 +1154,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         }
                     } catch (error) { console.error('Renewal error:', error); }
                 };
+                loadModalData('renew', certData);
                 break;
             case 'revoke':
                 modalTitle.textContent = `${texts[lang].titles.revokeCert}`;
@@ -1249,55 +1248,62 @@ document.addEventListener('DOMContentLoaded', async () => {
                 break;
         }
         updateConfirm();
+        modal.show();
+    }
 
-        // Show modal & conditions for interactions
+    // Show modal & conditions for interactions
+    function loadModalData(action, certData) {
         const now = new Date(), offset = now.getTimezoneOffset() * 60000;
-        const modal = new bootstrap.Modal(document.getElementById('dynamicModal'));
-        const startDate = document.getElementById('startDate');
-        const endDate = document.getElementById('endDate');
         const sanIPInput = document.getElementById('sanIP');
         const sanDNSInput = document.getElementById('sanDNS');
         const addIPButton = document.getElementById('addIPButton');
         const addDNSButton = document.getElementById('addDNSButton');
+        const type = document.getElementById('type');
+        const startDate = document.getElementById('startDate');
+        const endDate = document.getElementById('endDate');
 
-        modal.show();
-
-        if (startDate && endDate && addIPButton && addDNSButton) {
+        if (action === 'create') {
             startDate.value = new Date(now - offset).toISOString().slice(0, 16);
             endDate.value = new Date(now.setFullYear(now.getFullYear() + 1, now.getMonth(), now.getDate() + 1) - offset).toISOString().slice(0, 16);
-
-            const handleInput = (inputId, listId, validFn, alertId) => {
-                const input = document.getElementById(inputId), list = document.getElementById(listId);
-                const value = input.value.trim(), exists = Array.from(list.children).some(e => e.textContent.trim() === value);
-
-                if (value && !exists) {
-                    if (validFn(value)) {
-                        const item = document.createElement('div');
-                        item.className = 'alert alert-secondary fade show p-2 d-flex justify-content-between align-items-center';
-                        item.innerHTML = `${value}<button class="btn btn-sm btn-close" aria-label="Close"></button>`;
-                        item.querySelector('.btn-close').onclick = () => list.removeChild(item);
-                        list.appendChild(item);
-                        input.value = '';
-                    } else showAlert('formatAlert');
-                } else if (exists) showAlert(alertId);
-            };
-
-            sanIPInput.addEventListener('keydown', e => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleInput('sanIP', 'addedIPAdresses', v => isValidIPv4(v) || isValidIPv6(v), 'IPAlert');
-                }
-            });
-            sanDNSInput.addEventListener('keydown', e => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleInput('sanDNS', 'addedDNSNames', isValidDNS, 'DNSAlert');
-                }
-            });
-
-            addIPButton.onclick = () => handleInput('sanIP', 'addedIPAdresses', v => isValidIPv4(v) || isValidIPv6(v), 'IPAlert');
-            addDNSButton.onclick = () => handleInput('sanDNS', 'addedDNSNames', isValidDNS, 'DNSAlert');
         }
+        else if (action === 'renew') {
+            const certEndDate = new Date(certData.endDate);
+            startDate.value = new Date(now - offset).toISOString().slice(0, 16);
+            endDate.value = new Date(certEndDate.setFullYear(certEndDate.getFullYear() + 1, certEndDate.getMonth(), certEndDate.getDate() + 1) - offset).toISOString().slice(0, 16);
+            type.value = certData.type || 'server_ext';
+        }
+
+        const handleInput = (inputId, listId, validFn, alertId) => {
+            const input = document.getElementById(inputId), list = document.getElementById(listId);
+            const value = input.value.trim(), exists = Array.from(list.children).some(e => e.textContent.trim() === value);
+
+            if (value && !exists) {
+                if (validFn(value)) {
+                    const item = document.createElement('div');
+                    item.className = 'alert alert-secondary fade show p-2 d-flex justify-content-between align-items-center';
+                    item.innerHTML = `${value}<button class="btn btn-sm btn-close" aria-label="Close"></button>`;
+                    item.querySelector('.btn-close').onclick = () => list.removeChild(item);
+                    list.appendChild(item);
+                    input.value = '';
+                } else showAlert('formatAlert');
+            } else if (exists) showAlert(alertId);
+        };
+
+        sanIPInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleInput('sanIP', 'addedIPAdresses', v => isValidIPv4(v) || isValidIPv6(v), 'IPAlert');
+            }
+        });
+        sanDNSInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleInput('sanDNS', 'addedDNSNames', isValidDNS, 'DNSAlert');
+            }
+        });
+
+        addIPButton.onclick = () => handleInput('sanIP', 'addedIPAdresses', v => isValidIPv4(v) || isValidIPv6(v), 'IPAlert');
+        addDNSButton.onclick = () => handleInput('sanDNS', 'addedDNSNames', isValidDNS, 'DNSAlert');
     }
 
     // Check if current interface has to be locked
