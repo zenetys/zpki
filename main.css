@@ -110,6 +110,9 @@
     pointer-events: none;
     transition: 0.5s ease;
 }
+.arrow {
+    opacity: 0.2;
+}
 
 /* Buttons */
 .button-container .btn-status {
@@ -232,6 +235,7 @@ th, td {
     overflow: hidden;
     text-align: left;
     text-wrap: nowrap;
+    padding-right: 30px;
 }
 
 th.resizable {
@@ -241,6 +245,14 @@ th.resizable {
 th.resizable:hover {
     background: #fafafa;
     border-radius: 10px;
+}
+th.resizable:active {
+    opacity: 0.5;
+}
+th.resizable .icon.arrow {
+    position: absolute;
+    top: 12.5px;
+    right: 12.5px;
 }
 
 /* Highlight search */
