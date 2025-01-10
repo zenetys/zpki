@@ -919,8 +919,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div class="mb-3">
                         <label for="type" class="form-label">${texts[lang].modals.type}</label>
                         <select class="form-select" id="type" name="type">
-                            <option value="server">${texts[lang].modals.selector.select1}</option>
-                            <option value="user">${texts[lang].modals.selector.select2}</option>
+                            <option value="server_ext">${texts[lang].modals.selector.select1}</option>
+                            <option value="user_ext">${texts[lang].modals.selector.select2}</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -944,7 +944,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     // const orgUnit = document.getElementById('orgunit').value.trim();
                     const sanIP = Array.from(document.getElementById('addedIPAdresses').children).map(el => el.innerText);
                     const sanDNS = Array.from(document.getElementById('addedDNSNames').children).map(el => el.innerText);
-                    const type = document.getElementById('type').value + '_ext';
+                    const type = document.getElementById('type').value;
                     const startDate = formatDateOpenSSL(document.getElementById('startDate').value);
                     const endDate = formatDateOpenSSL(document.getElementById('endDate').value);
                     const confirmAction = document.getElementById('confirmAction');
@@ -1096,8 +1096,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div class="mb-3">
                         <label for="type" class="form-label">${texts[lang].modals.type}</label>
                         <select class="form-select" id="type" name="type">
-                            <option value="server">${texts[lang].modals.selector.select1}</option>
-                            <option value="user">${texts[lang].modals.selector.select2}</option>
+                            <option value="server_ext">${texts[lang].modals.selector.select1}</option>
+                            <option value="user_ext">${texts[lang].modals.selector.select2}</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -1121,7 +1121,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     // const orgUnit = document.getElementById('orgunit').value.trim();
                     const sanIP = Array.from(document.getElementById('addedIPAdresses').children).map(el => el.innerText);
                     const sanDNS = Array.from(document.getElementById('addedDNSNames').children).map(el => el.innerText);
-                    const type = document.getElementById('type').value + '_ext';
+                    const type = document.getElementById('type').value;
                     const startDate = formatDateOpenSSL(document.getElementById('startDate').value);
                     const endDate = formatDateOpenSSL(document.getElementById('endDate').value);
                     const confirmAction = document.getElementById('confirmAction');
