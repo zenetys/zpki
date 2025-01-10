@@ -114,6 +114,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 disableCert: "Disable Certificate",
             },
             undefined: "Undefined",
+            development: "Under development"
         },
         fr: {
             actions: {
@@ -213,6 +214,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 disableCert: "Désactiver le certificat",
             },
             undefined: "Indéfini",
+            development: "En développement"
         },
         es: {
             actions: {
@@ -312,6 +314,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 disableCert: "Deshabilitar Certificado",
             },
             undefined: "Indefinido",
+            development: "En desarrollo"
         },
         de: {
             actions: {
@@ -411,6 +414,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 disableCert: "Zertifikat deaktivieren",
             },
             undefined: "Undefiniert",
+            development: "In Entwicklung"
         },
     };
 
