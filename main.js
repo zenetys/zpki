@@ -683,7 +683,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Function to manage all modals
-    function showModal(action, certData) {
+    function showModal(action, cert) {
         const modal = new bootstrap.Modal(document.getElementById('dynamicModal'));
         const modalTitle = document.getElementById('dynamicModalLabel');
         const formContent = document.getElementById('formContent');
@@ -694,9 +694,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         footerContent.style.display = '';
 
         try {
-            if (certData.issuer !== '') var caValue = certData.issuer.split('CN = ')[1] || certData.issuer;
-            if (certData.subject !== '') {
-                var subjectArray = (certData.subject || '')
+            if (cert.issuer !== '') var caValue = cert.issuer.split('CN = ')[1] || cert.issuer;
+            if (cert.subject !== '') {
+                var subjectArray = (cert.subject || '')
                     .replace(/^Subject\s*\(.*?\):\s*/, '')
                     .split(/(?:\/|\n)/)
                     .filter(Boolean);
@@ -812,10 +812,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                         }
                     } catch (error) { console.error('Creation error:', error); }
                 };
-                loadModalData('create', certData);
+                loadModalData('create', cert);
                 break;
             case 'view':
-                const commonName = certData.id;
+                const commonName = cert.id;
                 fetch(`${API_BASE_URL}/subject-alt?cert=${commonName}`)
                     .then(response => {
                         if (!response.ok) {
@@ -828,7 +828,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         const dnsList = subjAlt.dns || [];
                         const ipList = subjAlt.ip || [];
 
-                        let subjectArray = (certData.subject || '')
+                        let subjectArray = (cert.subject || '')
                             .replace(/^Subject\s*\(.*?\):\s*/, '')
                             .split(/(?:\/|\n)/)
                             .filter(Boolean);
@@ -847,15 +847,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 <p><strong>${texts[lang].modals.CN}:</strong> ${commonName ? commonName : `${texts[lang].undefined}`}</p>
                                 <p><strong>${texts[lang].modals.SUBJ}:</strong> ${splitSubject}</p>
 
-                                <p><strong>${texts[lang].headers.serial}:</strong> ${certData.serial ? certData.serial : `${texts[lang].undefined}`}</p>
-                                <p><strong>${texts[lang].headers.signature}:</strong> ${certData.hash ? certData.hash : `${texts[lang].undefined}`}</p>
+                                <p><strong>${texts[lang].headers.serial}:</strong> ${cert.serial ? cert.serial : `${texts[lang].undefined}`}</p>
+                                <p><strong>${texts[lang].headers.signature}:</strong> ${cert.hash ? cert.hash : `${texts[lang].undefined}`}</p>
 
                                 <p><strong>IP:</strong> ${ipList.length > 0 ? ipList.map(ip => `<span>${ip}</span>`).join(', ') : `${texts[lang].modals.missing.IP}`}</p>
                                 <p><strong>DNS:</strong> ${dnsList.length > 0 ? dnsList.map(dns => `<span>${dns}</span>`).join(', ') : `${texts[lang].modals.missing.DNS}`}</p>
 
-                                <p><strong>${texts[lang].modals.type}:</strong> ${certData.type === 'server_ext' ? texts[lang].modals.selector.select1 : certData.type === 'user_ext' ? texts[lang].modals.selector.select2 : certData.type || texts[lang].modals.missing.type}</p>
-                                <p><strong>${texts[lang].headers.startDate}:</strong> ${certData.startDate ? certData.startDate : `${texts[lang].undefined}`}</p>
-                                <p><strong>${texts[lang].headers.endDate}:</strong> ${certData.endDate ? certData.endDate : `${texts[lang].undefined}`}</p>
+                                <p><strong>${texts[lang].modals.type}:</strong> ${cert.type === 'server_ext' ? texts[lang].modals.selector.select1 : cert.type === 'user_ext' ? texts[lang].modals.selector.select2 : cert.type || texts[lang].modals.missing.type}</p>
+                                <p><strong>${texts[lang].headers.startDate}:</strong> ${cert.startDate ? cert.startDate : `${texts[lang].undefined}`}</p>
+                                <p><strong>${texts[lang].headers.endDate}:</strong> ${cert.endDate ? cert.endDate : `${texts[lang].undefined}`}</p>
 
                                 <p class="text-wrap">
                                     <strong class="me-2">${texts[lang].headers.downloads}:</strong>
@@ -981,7 +981,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         }
                     } catch (error) { console.error('Renewal error:', error); }
                 };
-                loadModalData('renew', certData);
+                loadModalData('renew', cert);
                 break;
             case 'revoke':
                 modalTitle.textContent = `${texts[lang].titles.revokeCert}`;
@@ -1079,7 +1079,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Show modal & conditions for interactions
-    function loadModalData(action, certData) {
+    function loadModalData(action, cert) {
         const now = new Date(), offset = now.getTimezoneOffset() * 60000;
         const sanIPInput = document.getElementById('sanIP');
         const sanDNSInput = document.getElementById('sanDNS');
@@ -1094,10 +1094,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             endDate.value = new Date(now.setFullYear(now.getFullYear() + 1, now.getMonth(), now.getDate() + 1) - offset).toISOString().slice(0, 16);
         }
         else if (action === 'renew') {
-            const certEndDate = new Date(certData.endDate);
+            const certEndDate = new Date(cert.endDate);
             startDate.value = new Date(now - offset).toISOString().slice(0, 16);
             endDate.value = new Date(certEndDate.setFullYear(certEndDate.getFullYear() + 1, certEndDate.getMonth(), certEndDate.getDate() + 1) - offset).toISOString().slice(0, 16);
-            type.value = certData.type || 'server_ext';
+            type.value = cert.type || 'server_ext';
         }
 
         const handleInput = (inputId, listId, validFn, alertId) => {
