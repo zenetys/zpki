@@ -1299,12 +1299,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Toggle eye on password modal
     document.querySelectorAll('.toggle-password').forEach(button => {
-        button.addEventListener('click', function (event) {
+        button.addEventListener('click', event => {
             event.preventDefault();
-            const toggleIcon = document.querySelector('.toggle-icon');
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            toggleIcon.src = toggleIcon.src.includes('icons/eye-solid.svg') ? 'icons/eye-slash-solid.svg' : 'icons/eye-solid.svg';
+            const input = button.previousElementSibling;
+            const icon = button.querySelector('.toggle-icon');
+            const type = input.type === 'password' ? 'text' : 'password';
+            input.type = type;
+            icon.src = icon.src.includes('eye-solid.svg') ? 'icons/eye-slash-solid.svg' : 'icons/eye-solid.svg';
         });
     });
 
