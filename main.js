@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
+    const modal = new bootstrap.Modal(document.getElementById('dynamicModal'));
     const passwordForm = document.getElementById('passwordForm');
     const passwordInput = document.getElementById('passwordInput');
     const wrongPassword = document.getElementById('wrongPassword');
@@ -687,7 +688,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Function to manage all modals
     function showModal(action, cert) {
-        const modal = new bootstrap.Modal(document.getElementById('dynamicModal'));
         const modalTitle = document.getElementById('dynamicModalLabel');
         const formContent = document.getElementById('formContent');
         const footerContent = document.getElementById('footerContent');
