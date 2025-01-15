@@ -1,18 +1,28 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    // Modals
     const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
     const modal = new bootstrap.Modal(document.getElementById('dynamicModal'));
+
+    // Password modal content
     const passwordForm = document.getElementById('passwordForm');
     const passwordInput = document.getElementById('passwordInput');
-    const wrongPassword = document.getElementById('wrongPassword');
-    const tableContent = document.getElementById('tableContent');
-    const searchInput = document.getElementById('searchInput');
+    const passwordSubmit = document.getElementById('passwordSubmit');
+
+    // Buttons
     const switchMenu = document.getElementById('switchMenu');
     const switchBtn = document.getElementById('switchBtn');
     const createBtn = document.getElementById('createBtn');
     const lockBtn = document.getElementById('lockBtn');
+
+    // Search
     const urlParams = new URLSearchParams(window.location.search);
     const searchTerm = urlParams.get('s') ? urlParams.get('s') : '';
     const tagsParam = urlParams.get('tags');
+
+    // Other
+    const searchInput = document.getElementById('searchInput');
+    const tableContent = document.getElementById('tableContent');
+    const wrongPassword = document.getElementById('wrongPassword');
     // const selectBoxHeader = document.querySelector('[data-sort="selectBox"]');
     const texts = {
         en: {
@@ -257,8 +267,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         $('#searchInput').attr('placeholder', texts[lang].titles.searchBar);
 
         // Password modal
-        $('#passwordInput').attr('placeholder', texts[lang].modals.enterPass);
         $('#passwordModalTitle').html(texts[lang].titles.enterPass);
+        $('#passwordInput').attr('placeholder', texts[lang].modals.enterPass);
         $('#passwordSubmit').html(texts[lang].actions.confirm);
 
         // Alerts
