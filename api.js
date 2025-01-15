@@ -131,8 +131,8 @@ app.get('/profiles', async (req, res) => {
         if (!req.session.currentProfile)
             await switchProfile(req, profiles[0]);
         res.json({ profiles, currentProfile: req.session.currentProfile });
-    } catch (error) {
-        console.error('Error retrieving profiles and current profile:', error);
+    } catch (err) {
+        console.error('Error retrieving profiles and current profile:', err);
         res.status(500).json({ error: 'Unable to retrieve profiles and current profile.' });
     }
 });
@@ -143,8 +143,8 @@ app.get('/list', async (req, res) => {
     try {
         const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-list', '--json']);
         res.json(JSON.parse(output.stdout));
-    } catch (error) {
-        console.log(error);
+    } catch (err) {
+        console.log(err);
         res.status(500).json({ error: 'Error while listing certificates.' });
     }
 });
@@ -163,8 +163,8 @@ app.get('/download-ca', async (req, res) => {
         res.setHeader('Content-Disposition', `attachment; filename=${commonName}`);
         res.setHeader('Content-Type', 'application/x-x509-ca-cert');
         res.end(output.stdout);
-    } catch (error) {
-        console.error('Error executing command:', error);
+    } catch (err) {
+        console.error('Error executing command:', err);
         res.status(500).json({ error: 'Certificate not found.' });
     }
 });
@@ -183,8 +183,8 @@ app.get('/download-crl', async (req, res) => {
         res.setHeader('Content-Disposition', `attachment; filename=${commonName}`);
         res.setHeader('Content-Type', 'application/x-x509-ca-cert');
         res.end(output.stdout);
-    } catch (error) {
-        console.error('Error executing command:', error);
+    } catch (err) {
+        console.error('Error executing command:', err);
         res.status(500).json({ error: 'Certificate not found.' });
     }
 });
@@ -203,8 +203,8 @@ app.get('/download-crt', async (req, res) => {
         res.setHeader('Content-Disposition', `attachment; filename=${commonName}.crt`);
         res.setHeader('Content-Type', 'application/x-x509-ca-cert');
         res.end(output.stdout);
-    } catch (error) {
-        console.error('Error executing command:', error);
+    } catch (err) {
+        console.error('Error executing command:', err);
         res.status(500).json({ error: 'Certificate not found.' });
     }
 });
@@ -223,8 +223,8 @@ app.get('/download-csr', async (req, res) => {
         res.setHeader('Content-Disposition', `attachment; filename=${commonName}.csr`);
         res.setHeader('Content-Type', 'application/x-x509-ca-cert');
         res.end(output.stdout);
-    } catch (error) {
-        console.error('Error executing command:', error);
+    } catch (err) {
+        console.error('Error executing command:', err);
         res.status(500).json({ error: 'Certificate not found.' });
     }
 });
@@ -243,8 +243,8 @@ app.get('/download-key', async (req, res) => {
         res.setHeader('Content-Disposition', `attachment; filename=${commonName}.key`);
         res.setHeader('Content-Type', 'application/x-x509-ca-cert');
         res.end(output.stdout);
-    } catch (error) {
-        console.error('Error executing command:', error);
+    } catch (err) {
+        console.error('Error executing command:', err);
         res.status(500).json({ error: 'Certificate not found.' });
     }
 });
@@ -277,8 +277,8 @@ app.get('/subject-alt', async (req, res) => {
         });
 
         res.json({ dns, ip });
-    } catch (error) {
-        console.log(error);
+    } catch (err) {
+        console.log(err);
         res.status(500).json({ error: 'Certificate not found.' });
     }
 });
@@ -292,8 +292,8 @@ app.get('/is-locked', async (req, res) => {
         await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-test-password'],
             { env: { ...process.env, ZPKI_CA_PASSWORD: req.session.caPassword } });
         return res.json({ response: false });
-    } catch (error) {
-        console.log(error);
+    } catch (err) {
+        console.log(err);
         res.json({ response: true });
     }
 });
@@ -339,8 +339,8 @@ app.post('/create', async (req, res) => {
             ZPKI_END_DATE: endDate,
         }});
         res.json({ response: 'Certificate created successfully!' });
-    } catch (error) {
-        console.log(error);
+    } catch (err) {
+        console.log(err);
         res.status(400).json({ error: 'Certificate creation error.' });
     }
 });
@@ -371,8 +371,8 @@ app.post('/renew', async (req, res) => {
             ZPKI_END_DATE: endDate,
         }});
         res.json({ response: 'Certificate renewed successfully!' });
-    } catch (error) {
-        console.log(error);
+    } catch (err) {
+        console.log(err);
         res.status(400).json({ error: 'Certificate renewal error.' });
     }
 });
@@ -394,8 +394,8 @@ app.post('/revoke', async (req, res) => {
         }});
 
         res.json({ response: 'Certificate revoked successfully!' });
-    } catch (error) {
-        console.log(error);
+    } catch (err) {
+        console.log(err);
         res.status(400).json({ error: 'Certificate revocation error.' });
     }
 });
@@ -417,8 +417,8 @@ app.post('/disable', async (req, res) => {
         }});
 
         res.json({ response: 'Certificate disabled successfully!' });
-    } catch (error) {
-        console.log(error);
+    } catch (err) {
+        console.log(err);
         res.status(400).json({ error: 'Certificate deactivation error.' });
     }
 });
@@ -455,8 +455,8 @@ app.post('/set-password', async (req, res) => {
         }, passwordExpireMs);
 
         return res.json({ response: 'Passphrase saved!' });
-    } catch (error) {
-        console.log(error);
+    } catch (err) {
+        console.log(err);
         res.status(400).json({ error: 'Incorrect passphrase.' });
     }
 });
