@@ -657,7 +657,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 var popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 
                 // Set popovers for downloads
-                popoverTriggerList.forEach((triggerEl) => {
+                popoverTriggerList.forEach(triggerEl => {
                     triggerEl.addEventListener('click', function(event) {
                         popoverList.forEach(popover => { if (popover._element !== this) popover.hide(); });
                         const popoverInstance = bootstrap.Popover.getInstance(this);
@@ -676,10 +676,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 initializeTooltips();
                 updateInterface();
             })
-            .catch(() => {
-                showAlert('profileAlert');
-                return Promise.reject();
-            });
+            .catch(() => { return Promise.reject(); });
     }
 
     // Function to manage all modals
