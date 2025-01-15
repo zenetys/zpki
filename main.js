@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 disable: "Disable",
                 cancel: "Cancel",
                 confirm: "Confirm",
+                download: "Download"
             },
             alerts: {
                 errors: {
@@ -123,6 +124,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 disable: "Désactiver",
                 cancel: "Annuler",
                 confirm: "Confirmer",
+                download: "Télécharger"
             },
             alerts: {
                 errors: {
@@ -483,6 +485,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         $('#tagExpired').closest('span').attr('data-bs-title', `${texts[lang].tags.expired}`);
         $('#tagRevoked').closest('span').attr('data-bs-title', `${texts[lang].tags.revoked}`);
         $('#tagDisabled').closest('span').attr('data-bs-title', `${texts[lang].tags.disabled}`);
+
+        // Downloads tooltips
+        $('#downloadCA').closest('span').attr('data-bs-title', `${texts[lang].actions.download} ca.crt`);
+        $('#downloadCRL').closest('span').attr('data-bs-title', `${texts[lang].actions.download} ca.crl`);
 
         // Languages dropdown
         $('#english').html(`${texts[lang].lang.english} <span class="checkmark"><img src="icons/check-solid.svg" class="icon ms-3"/></span>`);
