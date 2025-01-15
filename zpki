@@ -790,8 +790,9 @@ function ca-dump-pkcs12() {
   args=(
     -export
     -in "$CRTFILE"
-    -inkey "$KEYFILE" ${KEYPASS:+-passin "env:$ZPKI_PASSWORD"}
-    -CAfile "$CAFILE"
+    -inkey "$KEYFILE"
+    ${KEYPASS:+-passin "env:ZPKI_PASSWORD"}
+    -CAfile "$CA_CRTFILE"
     -passout "env:EXPORT_PASSWORD"
   )
   openssl pkcs12 "${args[@]}"
