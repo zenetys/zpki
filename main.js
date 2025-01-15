@@ -1164,7 +1164,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             ).join('');
 
             switchMenu.querySelectorAll('.dropdown-item').forEach(item => item.addEventListener('click', () => switchProfile(item.id, currentProfile)));
-        } catch (error) { console.error(error); }
+        } catch (error) {
+            switchBtn.innerHTML = texts[lang].modals.missing.CA;
+            console.error(error);
+        }
     }
 
     // Switch profile, update password, interface and search
