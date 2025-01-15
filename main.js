@@ -1292,12 +1292,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     passwordForm.addEventListener('input', handlePasswordInput);
 
     // Toggle eye on password modal
-    document.getElementById('togglePassword').addEventListener('click', function (event) {
-        event.preventDefault();
-        const toggleIcon = document.getElementById('togglePasswordIcon');
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInput.setAttribute('type', type);
-        toggleIcon.src = toggleIcon.src.includes('icons/eye-solid.svg') ? 'icons/eye-slash-solid.svg' : 'icons/eye-solid.svg';
+    document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
+            const toggleIcon = document.querySelector('.toggle-icon');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            toggleIcon.src = toggleIcon.src.includes('icons/eye-solid.svg') ? 'icons/eye-slash-solid.svg' : 'icons/eye-solid.svg';
+        });
     });
 
     // Sorting columns
