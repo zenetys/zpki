@@ -111,7 +111,7 @@
     transition: 0.5s ease;
 }
 .arrow {
-    opacity: 0.2;
+    display: none;
 }
 
 /* Buttons */
@@ -248,6 +248,9 @@ th.resizable:hover {
 }
 th.resizable:active {
     opacity: 0.5;
+}
+th.resizable:hover .arrow {
+    opacity: 0.8;
 }
 th.resizable .icon.arrow {
     position: absolute;
