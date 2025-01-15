@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
-    // const selectBoxHeader = document.querySelector('[data-sort="selectBox"]');
     const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
     const passwordForm = document.getElementById('passwordForm');
     const passwordInput = document.getElementById('passwordInput');
@@ -14,6 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const searchTerm = urlParams.get('s') ? urlParams.get('s') : '';
     const tagsParam = urlParams.get('tags');
+    // const selectBoxHeader = document.querySelector('[data-sort="selectBox"]');
     const texts = {
         en: {
             actions: {
@@ -408,6 +407,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         const date = new Date(isoDateString);
         return date.toISOString().replace(/[-:T]/g, '').slice(0, 14) + 'Z';
     }
+
+    // Capitalize the first letter of a string
+    function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }    
 
     // Sorting columns
     function sortTable(sortKey, order) {
