@@ -565,7 +565,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-crt?cert=${cert.id}' download><img src='icons/certificate-solid.svg' class='icon me-1'/>.crt</a>
                                 <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-csr?cert=${cert.id}' download><img src='icons/lock-solid.svg' class='icon me-1'/>.csr</a>
                                 <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-key?cert=${cert.id}' download><img src='icons/key-solid.svg' class='icon me-1'/>.key</a>
-                                <a class='btn btn-light btn-sm d-block text-start exportP12 ${cert.keyStatus === 'encrypted' ? '' : 'disabled'}'><img src='icons/file-export-solid.svg' class='icon me-1'/>.p12</a>
+                                <a class='btn btn-light btn-sm d-block text-start pkcs12Btn'><img src='icons/file-export-solid.svg' class='icon me-1'/>.p12</a>
                             ">
                                 <img src="icons/file-arrow-down-solid.svg" class="icon"/>
                             </button>
@@ -866,7 +866,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                         <a class="btn btn-light btn-sm mb-1 me-1" href='download-key?cert=${commonName}' download>
                                             <img src="icons/key-solid.svg" class="icon me-1"/>.key
                                         </a>
-                                        <a class="btn btn-light btn-sm mb-1 exportP12 ${certData.keyStatus === 'encrypted' ? '' : 'disabled'}">
+                                        <a class="btn btn-light btn-sm mb-1 pkcs12Btn">
                                             <img src="icons/file-export-solid.svg" class="icon me-1"/>.p12
                                         </a>
                                     </span>
