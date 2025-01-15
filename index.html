@@ -58,10 +58,26 @@
                     <!-- Dropdown content (dynamic) -->
                 </div>
 
-                <!-- Import CA file button -->
-                <!-- <button type="button" class="btn btn-primary rounded-3 float-end me-2" id="importCA">
-                    <img src="icons/upload-solid.svg" class="icon"/>
-                </button> -->
+                <!-- Import CA certificate file button -->
+                <!-- <span class="tooltip-container" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" data-bs-title='Upload ca.crt'>
+                    <button type="button" class="btn btn-primary rounded-3 me-2" id="importCA" style="min-width: 90px;">
+                        <img src="icons/upload-solid.svg" class="icon me-1"/> CA
+                    </button>
+                </span> -->
+
+                <!-- Export CA certificate file button -->
+                <span class="tooltip-container" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" data-bs-title='Download ca.crt'>
+                    <a type="button" href="download-ca?cert=ca.crt" class="btn btn-primary rounded-3 me-2" id="downloadCA" style="min-width: 90px;">
+                        <img src="icons/download-solid.svg" class="icon me-1"/> CA
+                    </a>
+                </span>
+
+                <!-- Export CA CRL file button -->
+                <span class="tooltip-container" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" data-bs-title='Download ca.crl'>
+                    <a type="button" href="download-crl?cert=ca.crl" class="btn btn-primary rounded-3 me-2" id="downloadCRL" style="min-width: 100px;">
+                        <img src="icons/download-solid.svg" class="icon me-1"/> CRL
+                    </a>
+                </span>
 
                 <!-- Language dropdown -->
                 <button class="btn btn-secondary rounded-3" id="settingsDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
