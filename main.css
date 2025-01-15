@@ -139,17 +139,13 @@
     font-size: 16px;
     padding: 2px;
 }
-.btn-primary {
-    border: 1px solid #5264ff;
-    background: #5264ff;
+.btn-primary, .btn-action:focus {
+    border: 1px solid #5264ff !important;
+    background: #5264ff !important;
 }
-.btn-primary:hover {
-    border: 1px solid #4755da;
-    background: #4755da;
-}
-.btn-primary:not(:disabled):not(.disabled) {
-    border: 1px solid #5264ff;
-    background: #5264ff;
+.btn-primary:hover, .btn-primary:active, .btn-primary:focus:hover {
+    border: 1px solid #4755da !important;
+    background: #4755da !important;
 }
 .btn-expiration {
     color: #fff;
