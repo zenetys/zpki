@@ -83,7 +83,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 },
                 enterPass: "CA passphrase (can be empty)",
                 enterPkcs12: "Certificate password (can be empty)",
-                enterExport: "Export password (can be empty)",
+                enterExport: "Export password (required)",
+                fileP12: ".p12 file",
                 missing: {
                     CA: "No CA found",
                     IP: "No IP defined",
@@ -184,7 +185,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 },
                 enterPass: "Passphrase de la CA (peut être vide)",
                 enterPkcs12: "Mot de passe du certificat (peut être vide)",
-                enterExport: "Mot de passe d'export (peut être vide)",
+                enterExport: "Mot de passe d'export (requis)",
+                fileP12: "le fichier .p12",
                 missing: {
                     CA: "Aucune CA trouvée",
                     IP: "Aucune IP définie",
