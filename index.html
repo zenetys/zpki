@@ -20,7 +20,7 @@
         <form id="certForm">
             <div class="form-group">
                 <!-- Lock interface button -->
-                <button type="button" class="btn btn-danger rounded-3 float-end me-2" id="lockBtn">
+                <button type="button" class="btn btn-danger rounded-3 me-2" id="lockBtn">
                     <img src="icons/lock-white-solid.svg" class="icon"/>
                 </button>
 
@@ -232,9 +232,9 @@
                 <div class="modal-body">
                     <form id="passwordForm" method="POST" action="/set-password">
                         <div class="input-group has-validation mb-3">
-                            <input type="password" class="form-control shadow-sm" id="passwordInput" name="password" placeholder="CA Passphrase (can be empty)">
-                            <button type="button" class="btn border rounded-end" id="togglePassword">
-                                <img src="icons/eye-solid.svg" id="togglePasswordIcon" width="20" height="20"/>
+                            <input type="password" class="form-control shadow-sm" id="passwordInput" name="password" placeholder="CA passphrase (can be empty)">
+                            <button type="button" class="btn border rounded-end toggle-password">
+                                <img src="icons/eye-solid.svg" class="toggle-icon" width="20" height="20"/>
                             </button>
                             <div class="valid-feedback" id="rightPassword"></div>
                             <div class="invalid-feedback" id="wrongPassword"></div>
