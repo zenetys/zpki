@@ -4,8 +4,6 @@ const cors = require('cors');
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
-const helmet = require('helmet');
-const bodyParser = require('body-parser');
 const app = express();
 
 const listenAddress = process.env.LISTEN_ADDRESS || '0.0.0.0';
@@ -18,18 +16,6 @@ const caFoldersCmd = process.env.CA_FOLDERS_CMD || __dirname + '/ca-folders';
 const caFoldersCacheMs = process.env.CA_FOLDERS_CACHE_MS || 300000;
 const zpkiCmd = process.env.ZPKI_CMD || __dirname + '/zpki';
 app.set('trust proxy', process.env.TRUST_PROXY || false);
-
-// Centralized error handling middleware
-const handleError = (err, req, res, next) => {
-    console.error(err);
-    res.status(500).json({ error: err.message });
-};
-
-// Validate certificate name
-const checkCommonName = (name) => {
-    const regex = /^[^=,\/\?!|~"'`><]+$/;
-    return regex.test(name) && name.length > 0 && name.length < 64;
-};
 
 // Get available CA folders, with cache
 var caFoldersCache;
@@ -96,15 +82,16 @@ function rfc3339LocalDate(d) {
     return out;
 };
 
+// Validate certificate name
+function checkCommonName(name) {
+    return /^[^=,\/\?!|~"'`><]+$/.test(name) && name.length > 0 && name.length < 64;
+}
+
 // ----------- ----------- APP SETUP ----------- ----------- //
 
 app.use(cors({ methods: ['GET', 'POST'] }));
 app.use(express.static(__dirname));
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(handleError);
-app.use(helmet());
 app.use(session({
     secret: crypto.randomBytes(16).toString('hex'),
     resave: false,
@@ -113,6 +100,7 @@ app.use(session({
         maxAge: cookieMaxAgeMs,
     }
 }));
+
 logHttpRequests && app.use((req, res, next) => {
     let reqDate = new Date();
     res.on('finish', () => {
