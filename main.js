@@ -1273,6 +1273,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         showAlert('passphraseAlert');
     }
 
+    // Lock interface button
+    lockBtn.addEventListener('click', handleLock);
+    lockBtn.addEventListener('keydown', (event) => { if (event.key === 'Enter') event.preventDefault(); });
+
     // Create button modal opening
     createBtn.addEventListener('click', (event) => {
         if (createBtn.disabled) return;
@@ -1288,10 +1292,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             updateUrl(searchInput.value, getSelectedTags());
         }
     });
-
-    // Lock interface button
-    lockBtn.addEventListener('click', handleLock);
-    lockBtn.addEventListener('keydown', (event) => { if (event.key === 'Enter') event.preventDefault(); });
 
     // Password form events
     passwordForm.addEventListener('submit', handlePasswordSubmit);
