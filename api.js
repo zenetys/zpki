@@ -236,7 +236,7 @@ app.get('/download-key', async (req, res) => {
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
-
+  
     try {
         const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-dump-key', commonName]);
 
@@ -303,6 +303,7 @@ app.get('/is-locked', async (req, res) => {
 // Route to switch profile
 app.post('/switch-profile', async (req, res) => {
     const { profile } = req.body;
+
     try {
         await switchProfile(req, profile);
         return res.json({ response: `Profile switched to ${profile}.` });
@@ -324,6 +325,7 @@ app.post('/create', async (req, res) => {
 
     try {
         let args = ['-C', req.session.srcFolder, '-y', ];
+
         if (password === '') args.push('-c', 'none');
         args.push('ca-create-crt', subject === '' ? commonName : subject);
         if (sanIP && sanIP.length > 0) args.push(...sanIP.map(ip => `IP:${ip}`));
@@ -355,6 +357,7 @@ app.post('/renew', async (req, res) => {
 
     try {
         let args = ['-C', req.session.srcFolder, '-y', ];
+
         if (password === '') args.push('-c', 'none');
         args.push('ca-update-crt', subject === '' ? commonName : subject);
         if (sanIP && sanIP.length > 0) args.push(...sanIP.map(ip => `IP:${ip}`));
@@ -385,9 +388,11 @@ app.post('/revoke', async (req, res) => {
 
     try {
         let args = ['-C', req.session.srcFolder, '-y', '-c', 'none', 'ca-revoke-crt', commonName];
+
         await safeExec(zpkiCmd, args, { env: { ...process.env,
             ZPKI_CA_PASSWORD: req.session.caPassword
         }});
+
         res.json({ response: 'Certificate revoked successfully!' });
     } catch (error) {
         console.log(error);
@@ -406,9 +411,11 @@ app.post('/disable', async (req, res) => {
 
     try {
         let args = ['-C', req.session.srcFolder, '-y', '-c', 'none', 'ca-disable-crt', commonName];
+
         await safeExec(zpkiCmd, args, { env: { ...process.env,
             ZPKI_CA_PASSWORD: req.session.caPassword
         }});
+
         res.json({ response: 'Certificate disabled successfully!' });
     } catch (error) {
         console.log(error);
@@ -428,6 +435,7 @@ app.post('/set-password', async (req, res) => {
 
     try {
         let args = ['-C', req.session.srcFolder, 'ca-test-password' ];
+
         await safeExec(zpkiCmd, args, { env: { ...process.env,
             ZPKI_CA_PASSWORD: ca_password
         }});
