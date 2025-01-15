@@ -149,6 +149,46 @@ app.get('/list', async (req, res) => {
     }
 });
 
+// Route to download the ca file (ca.crt)
+app.get('/download-ca', async (req, res) => {
+    const commonName = req.query.cert;
+
+    if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
+    if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
+  
+    try {
+        const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-dump-crt', commonName]);
+
+        res.setHeader('Content-Disposition', `attachment; filename=${commonName}`);
+        res.setHeader('Content-Type', 'application/x-x509-ca-cert');
+        res.end(output.stdout);
+    } catch (error) {
+        console.error('Error executing command:', error);
+        res.status(500).json({ error: 'Certificate not found.' });
+    }
+});
+
+// Route to download the crl file (ca.crl)
+app.get('/download-crl', async (req, res) => {
+    const commonName = req.query.cert;
+
+    if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
+    if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
+  
+    try {
+        const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-dump-crt', commonName]);
+
+        res.setHeader('Content-Disposition', `attachment; filename=${commonName}`);
+        res.setHeader('Content-Type', 'application/x-x509-ca-cert');
+        res.end(output.stdout);
+    } catch (error) {
+        console.error('Error executing command:', error);
+        res.status(500).json({ error: 'Certificate not found.' });
+    }
+});
+
 // Route to download a certificate file (.crt)
 app.get('/download-crt', async (req, res) => {
     const commonName = req.query.cert;
