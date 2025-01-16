@@ -858,21 +858,51 @@ document.addEventListener('DOMContentLoaded', async () => {
                         modalTitle.textContent = `${texts[lang].titles.viewCert}`;
                         formContent.innerHTML = `
                             <div id="certDetails">
-                                <p><strong>${texts[lang].modals.CA}:</strong> ${caValue}</p>
-                                <p><strong>${texts[lang].modals.CN}:</strong> ${commonName ? commonName : `${texts[lang].undefined}`}</p>
-                                <p><strong>${texts[lang].modals.SUBJ}:</strong> ${splitSubject}</p>
+                                <p class="text-wrap text-break">
+                                    <strong class="me-2">${texts[lang].modals.CA}:</strong>
+                                    ${caValue}
+                                </p>
+                                <p class="text-wrap text-break">
+                                    <strong class="me-2">${texts[lang].modals.CN}:</strong>
+                                    ${commonName ? commonName : `${texts[lang].undefined}`}
+                                </p>
+                                <p class="text-wrap text-break">
+                                    <strong class="me-2">${texts[lang].modals.SUBJ}:</strong>
+                                    ${splitSubject}
+                                </p>
 
-                                <p><strong>${texts[lang].headers.serial}:</strong> ${cert.serial ? cert.serial : `${texts[lang].undefined}`}</p>
-                                <p><strong>${texts[lang].headers.signature}:</strong> ${cert.hash ? cert.hash : `${texts[lang].undefined}`}</p>
+                                <p class="text-wrap text-break">
+                                    <strong class="me-2">${texts[lang].headers.serial}:</strong>
+                                    ${cert.serial ? cert.serial : `${texts[lang].undefined}`}
+                                </p>
+                                <p class="text-wrap text-break">
+                                    <strong class="me-2">${texts[lang].headers.signature}:</strong>
+                                    ${cert.hash ? cert.hash : `${texts[lang].undefined}`}
+                                </p>
 
-                                <p><strong>IP:</strong> ${ipList.length > 0 ? ipList.map(ip => `<span>${ip}</span>`).join(', ') : `${texts[lang].modals.missing.IP}`}</p>
-                                <p><strong>DNS:</strong> ${dnsList.length > 0 ? dnsList.map(dns => `<span>${dns}</span>`).join(', ') : `${texts[lang].modals.missing.DNS}`}</p>
+                                <p class="text-wrap text-break">
+                                    <strong class="me-2">IP:</strong>
+                                    ${ipList.length > 0 ? ipList.map(ip => `<span>${ip}</span>`).join(', ') : `${texts[lang].modals.missing.IP}`}
+                                </p>
+                                <p class="text-wrap text-break">
+                                    <strong class="me-2">DNS:</strong>
+                                    ${dnsList.length > 0 ? dnsList.map(dns => `<span>${dns}</span>`).join(', ') : `${texts[lang].modals.missing.DNS}`}
+                                </p>
 
-                                <p><strong>${texts[lang].modals.type}:</strong> ${cert.type === 'server_ext' ? texts[lang].modals.selector.select1 : cert.type === 'user_ext' ? texts[lang].modals.selector.select2 : cert.type || texts[lang].modals.missing.type}</p>
-                                <p><strong>${texts[lang].headers.startDate}:</strong> ${cert.startDate ? cert.startDate : `${texts[lang].undefined}`}</p>
-                                <p><strong>${texts[lang].headers.endDate}:</strong> ${cert.endDate ? cert.endDate : `${texts[lang].undefined}`}</p>
+                                <p class="text-wrap text-break">
+                                    <strong class="me-2">${texts[lang].modals.type}:</strong>
+                                    ${cert.type === 'server_ext' ? texts[lang].modals.selector.select1 : cert.type === 'user_ext' ? texts[lang].modals.selector.select2 : cert.type || texts[lang].modals.missing.type}
+                                </p>
+                                <p class="text-wrap text-break">
+                                    <strong class="me-2">${texts[lang].headers.startDate}:</strong>
+                                    ${cert.startDate ? cert.startDate : `${texts[lang].undefined}`}
+                                </p>
+                                <p class="text-wrap text-break">
+                                    <strong class="me-2">${texts[lang].headers.endDate}:</strong>
+                                    ${cert.endDate ? cert.endDate : `${texts[lang].undefined}`}
+                                </p>
 
-                                <p class="text-wrap">
+                                <p class="text-wrap text-break">
                                     <strong class="me-2">${texts[lang].headers.downloads}:</strong>
                                     <span class="d-inline-block mt-1">
                                         <a class="btn btn-light btn-sm mb-1 me-1" href='download-crt?cert=${commonName}' download>
@@ -1218,7 +1248,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             elements.forEach(el => el.classList.remove('disabled'));
             switchBtn.innerHTML = capitalize(currentProfile);
             switchMenu.innerHTML = profiles.map(profile => 
-                `<a id="${profile}" class="dropdown-item text-truncate ${profile === currentProfile ? 'active' : ''}">${capitalize(profile)}</a>`
+                `<a id="${profile}" class="dropdown-item text-wrap text-break ${profile === currentProfile ? 'active' : ''}">${capitalize(profile)}</a>`
             ).join('');
 
             switchMenu.querySelectorAll('.dropdown-item').forEach(item => item.addEventListener('click', () => switchProfile(item.id, currentProfile)));
