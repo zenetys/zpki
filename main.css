@@ -139,7 +139,7 @@
     font-size: 16px;
     padding: 2px;
 }
-.btn-primary, .btn-action:focus {
+.btn-primary {
     border: 1px solid #5264ff !important;
     background: #5264ff !important;
 }
