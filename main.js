@@ -1146,6 +1146,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         addDNSButton.onclick = () => handleInput('sanDNS', 'addedDNSNames', isValidDNS, 'DNSAlert');
     }
 
+    // Styling password input on typing
+    function passwordInputCheck() {
+        passwordSubmit.disabled = passwordInput.value.length < 4;
+        passwordSubmit.className = passwordSubmit.disabled ? 'btn btn-danger float-end mt-3' : 'btn btn-primary float-end mt-3';
+        if (passwordInput.value.length < 4 && passwordInput.value.length > 0) {
+            wrongPassword.textContent = `${texts[lang].inputs.wrongPassLength}`;
+            wrongPassword.style.display = 'block';
+            passwordInput.classList.add('is-invalid');
+        } else {
+            wrongPassword.style.display = 'none';
+            passwordInput.classList.remove('is-invalid');
+        }
+    }
+
+    // Show password error
+    function passwordError() {
+        passwordSubmit.className = `btn ${locked ? 'btn-danger' : ''} float-end mt-3`;
+        passwordInput.classList.toggle('is-invalid', locked);
+        wrongPassword.textContent = `${texts[lang].inputs.wrongPass}`;
+        wrongPassword.style.display = 'block';
+        showAlert('passphraseAlert');
+    }
+
     // Check if current interface has to be locked
     async function isLocked() {
         try {
@@ -1239,7 +1262,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Password submit form
-    async function handlePasswordSubmit(event) {
+    async function passwordSubmitCheck(event) {
         event.preventDefault();
         passwordSubmit.disabled = true;
         try {
@@ -1255,32 +1278,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     passwordModal.hide();
                     passwordInput.value = '';
                     updateInterface();
-                } else showPasswordError();
+                } else passwordError();
             }
         } catch (error) { showAlert('basicAlert'); }
-    }
-
-    // Styling password input on typing
-    function handlePasswordInput() {
-        passwordSubmit.disabled = passwordInput.value.length < 4;
-        passwordSubmit.className = passwordSubmit.disabled ? 'btn btn-danger float-end mt-3' : 'btn btn-primary float-end mt-3';
-        if (passwordInput.value.length < 4 && passwordInput.value.length > 0) {
-            wrongPassword.textContent = `${texts[lang].inputs.wrongPassLength}`;
-            wrongPassword.style.display = 'block';
-            passwordInput.classList.add('is-invalid');
-        } else {
-            wrongPassword.style.display = 'none';
-            passwordInput.classList.remove('is-invalid');
-        }
-    }
-
-    // Show password error
-    function showPasswordError() {
-        passwordSubmit.className = `btn ${locked ? 'btn-danger' : ''} float-end mt-3`;
-        passwordInput.classList.toggle('is-invalid', locked);
-        wrongPassword.textContent = `${texts[lang].inputs.wrongPass}`;
-        wrongPassword.style.display = 'block';
-        showAlert('passphraseAlert');
     }
 
     // Lock interface button
@@ -1304,8 +1304,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Password form events
-    passwordForm.addEventListener('submit', handlePasswordSubmit);
-    passwordForm.addEventListener('input', handlePasswordInput);
+    passwordForm.addEventListener('submit', passwordSubmitCheck);
+    passwordForm.addEventListener('input', passwordInputCheck);
 
     // Toggle eye on password modal
     document.querySelectorAll('.toggle-password').forEach(button => {
