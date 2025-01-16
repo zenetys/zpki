@@ -531,24 +531,27 @@ function ca-list() {
     currentTime = strftime("%Y-%m-%dT%H:%M:%SZ");
     return (expirationDate < currentTime);
   }
+  function escapeQB(el) {
+    return gensub(/["\\]/, "\\\\\\0", "g", el);
+  }
 
   function entry_json() {
     printf("%s\n {",((NR==1)?"":","));
-    printf("\"status\":\"%s\"", status);
-    printf(",\"expiration\":\"%s\"", rfc3339($2));
-    if ($3) printf(",\"revocation\":\"%s\"", rfc3339($3));
-    printf(",\"serial\":\"%s\"", $4);
-    printf(",\"id\":\"%s\"", cn($6));
-    if (hash[$4]) printf(",\"hash\":\"%s\"", hash[$4]);
-    if (issuer[$4]) printf(",\"issuer\":\"%s\"", issuer[$4]);
-    if (email[$4]) printf(",\"email\":\"%s\"", email[$4]);
-    printf(",\"cn\":\"%s\"", cn($6));
-    printf(",\"subject\":\"%s\"", $6);
-    if (notBefore[$4]) printf(",\"startDate\":\"%s\"", notBefore[$4]);
-    printf(",\"endDate\":\"%s\"", rfc3339($2));
-    printf(",\"keyStatus\":\"%s\"", keyStatus[$4]);
-    if (type[$4]) printf(",\"type\":\"%s\"", type[$4]);
-    # printf(",\"filename\":\"%s\"", $5);
+    printf("\"status\":\"%s\"", escapeQB(status));
+    printf(",\"expiration\":\"%s\"", escapeQB(rfc3339($2)));
+    if ($3) printf(",\"revocation\":\"%s\"", escapeQB(rfc3339($3)));
+    printf(",\"serial\":\"%s\"", escapeQB($4));
+    printf(",\"id\":\"%s\"", escapeQB(cn($6)));
+    if (hash[$4]) printf(",\"hash\":\"%s\"", escapeQB(hash[$4]));
+    if (issuer[$4]) printf(",\"issuer\":\"%s\"", escapeQB(issuer[$4]));
+    if (email[$4]) printf(",\"email\":\"%s\"", escapeQB(email[$4]));
+    printf(",\"cn\":\"%s\"", escapeQB(cn($6)));
+    printf(",\"subject\":\"%s\"", escapeQB($6));
+    if (notBefore[$4]) printf(",\"startDate\":\"%s\"", escapeQB(notBefore[$4]));
+    printf(",\"endDate\":\"%s\"", escapeQB(rfc3339($2)));
+    printf(",\"keyStatus\":\"%s\"", escapeQB(keyStatus[$4]));
+    if (type[$4]) printf(",\"type\":\"%s\"", escapeQB(type[$4]));
+    # printf(",\"filename\":\"%s\"", escapeQB($5));
     printf("}");
   }
   function entry_tsv() {
