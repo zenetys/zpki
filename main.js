@@ -920,20 +920,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <label class="form-label">SAN (Subject Alternative Name)</label>
                         <div id="sanContainer">
                             <div class="input-group mb-2">
-                                <input type="text" class="form-control" placeholder="IP" id="sanIP" value="">
-                                <button class="btn btn border" type="button" id="addIPButton">+</button>
+                                <input type="text" class="form-control" id="sanIP" value="" readonly>
                             </div>
-                            <div id="addedIPAdresses" class="mt-2"></div>
                             <div class="input-group mb-2">
-                                <input type="text" class="form-control" placeholder="DNS" id="sanDNS" value="">
-                                <button class="btn btn border" type="button" id="addDNSButton">+</button>
+                                <input type="text" class="form-control" id="sanDNS" value="" readonly>
                             </div>
-                            <div id="addedDNSNames" class="mt-2"></div>
                         </div>
                     </div>
                     <div class="mb-3">
                         <label for="type" class="form-label">${texts[lang].modals.type}</label>
-                        <select class="form-select" id="type" name="type">
+                        <select class="form-select" id="type" name="type" disabled>
                             <option value="server_ext">${texts[lang].modals.selector.select1}</option>
                             <option value="user_ext">${texts[lang].modals.selector.select2}</option>
                         </select>
@@ -1105,6 +1101,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             startDate.value = new Date(now - offset).toISOString().slice(0, 16);
             endDate.value = new Date(certEndDate.setFullYear(certEndDate.getFullYear() + 1, certEndDate.getMonth(), certEndDate.getDate() + 1) - offset).toISOString().slice(0, 16);
             type.value = cert.type || 'server_ext';
+
+            fetch(`${API_BASE_URL}/subject-alt?cert=${cert.id}`)
+                .then(response => {
+                    if (!response.ok) {
+                        showAlert('basicAlert');
+                        return Promise.reject();
+                    }
+                    return response.json();
+                })
+                .then(subjAlt => {
+                    const ipList = subjAlt.ip || [], dnsList = subjAlt.dns || [];
+                    sanIPInput.value = ipList.length ? ipList.join(', ') : texts[lang].modals.missing.IP;
+                    sanDNSInput.value = dnsList.length ? dnsList.join(', ') : texts[lang].modals.missing.DNS;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    showAlert('basicAlert');
+                });
         }
 
         const handleInput = (inputId, listId, validFn, alertId) => {
