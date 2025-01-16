@@ -320,7 +320,7 @@ app.post('/create', async (req, res) => {
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
 
     try {
-        let args = ['-C', req.session.srcFolder, '-y', ];
+        let args = ['-C', req.session.srcFolder, '-y'];
 
         if (password === '') args.push('-c', 'none');
         args.push('ca-create-crt', commonName);
@@ -352,7 +352,7 @@ app.post('/renew', async (req, res) => {
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
 
     try {
-        let args = ['-C', req.session.srcFolder, '-y', ];
+        let args = ['-C', req.session.srcFolder, '-y'];
 
         if (password === '') args.push('-c', 'none');
         args.push('ca-update-crt', commonName);
@@ -430,7 +430,7 @@ app.post('/set-password', async (req, res) => {
     }
 
     try {
-        let args = ['-C', req.session.srcFolder, 'ca-test-password' ];
+        let args = ['-C', req.session.srcFolder, 'ca-test-password'];
 
         await safeExec(zpkiCmd, args, { env: { ...process.env,
             ZPKI_CA_PASSWORD: ca_password
