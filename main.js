@@ -798,12 +798,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     confirmAction.disabled = true;
 
-                    if (await checkCommonName(commonName) === true) {
-                        showAlert('CNAlert');
-                        confirmAction.disabled = false;
-                        return;
-                    }
-
                     let subject = '';
                     // if (org) subject += `/O=${org}`;
                     // if (orgUnit) subject += `/OU=${orgUnit}`;
@@ -1177,15 +1171,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             locked = (await response.json()).response;
             return locked;
         } catch (error) { return true; }
-    }
-
-    // Check if common name exists
-    async function checkCommonName(commonName) {
-        try {
-            const response = await fetch(`${API_BASE_URL}/list`);
-            const cert = await response.json();
-            return cert.some(cert => cert.id === commonName);
-        } catch (error) { return false; }
     }
 
     // Load profiles in dropdown
