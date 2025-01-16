@@ -47,7 +47,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             alerts: {
                 errors: {
                     errorFound: "Error",
-                    incorrectCN: "Incorrect CN",
                     incorrectDNS: "Incorrect DNS",
                     incorrectFormat: "Incorrect format",
                     incorrectIP: "Incorrect IP",
@@ -58,7 +57,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 },
                 descriptions: {
                     errorFoundDescription: "An error has occurred, check the logs for details.",
-                    incorrectCNDescription: "This certificate name is already used, choose another name.",
                     incorrectDNSDescription: "This DNS is already selected, select another one.",
                     incorrectFormatDescription: "Use a correct format in the SAN input.",
                     incorrectIPDescription: "This IP adress is already selected, select another one.",
@@ -149,7 +147,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             alerts: {
                 errors: {
                     errorFound: "Erreur",
-                    incorrectCN: "CN incorrect",
                     incorrectDNS: "DNS incorrect",
                     incorrectFormat: "Format incorrect",
                     incorrectIP: "IP incorrecte",
@@ -160,7 +157,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 },
                 descriptions: {
                     errorFoundDescription: "Une erreur est survenue, consultez les logs pour plus de détails.",
-                    incorrectCNDescription: "Ce nom de certificat est déjà utilisé, choisissez un autre nom.",
                     incorrectDNSDescription: "Ce DNS est déjà sélectionné, choisissez-en un autre.",
                     incorrectFormatDescription: "Utilisez un format correct dans le champ SAN.",
                     incorrectIPDescription: "Cette adresse IP est déjà sélectionnée, choisissez-en une autre.",
@@ -208,7 +204,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 enterExport: "Mot de passe d'export (requis)",
                 fileP12: "le fichier .p12",
                 missing: {
-                    CA: "Aucune CA trouvée",
+                    CA: "CA introuvable",
                     IP: "Aucune IP définie",
                     DNS: "Aucun DNS défini",
                     type: "Aucun type défini"
@@ -284,8 +280,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Alerts
         $('#errorFound').html(`<img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.errorFound}</strong>`);
         $('#errorFoundDescription').html(texts[lang].alerts.descriptions.errorFoundDescription);
-        $('#incorrectCN').html(`<img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectCN}</strong>`);
-        $('#incorrectCNDescription').html(texts[lang].alerts.descriptions.incorrectCNDescription);
         $('#incorrectDNS').html(`<img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectDNS}</strong>`);
         $('#incorrectDNSDescription').html(texts[lang].alerts.descriptions.incorrectDNSDescription);
         $('#incorrectFormat').html(`<img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectFormat}</strong>`);
