@@ -960,12 +960,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const endDate = formatDateOpenSSL(document.getElementById('endDate').value);
                     const confirmAction = document.getElementById('confirmAction');
 
+                    const missingDNS = texts[lang].modals.missing.DNS;
+                    const missingIP = texts[lang].modals.missing.IP;
+
                     confirmAction.disabled = true;
 
                     let subject = '';
                     // if (org) subject += `/O=${org}`;
                     // if (orgUnit) subject += `/OU=${orgUnit}`;
                     // if ((org && orgUnit) || org || orgUnit) subject += `/CN=${commonName}`;
+
+                    if (sanIP.includes(missingIP)) sanIP.length = 0;
+                    if (sanDNS.includes(missingDNS)) sanDNS.length = 0;
 
                     try {
 
