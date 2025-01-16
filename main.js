@@ -557,17 +557,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <td data-sort="serial">
                             <span class="tooltip-container" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" title="
                                 <div>
-                                    ${texts[lang].headers.signature}: ${cert.hash ? cert.hash : `${texts[lang].undefined}`}<br>
-                                    ${texts[lang].modals.type}: ${
-                                        cert.type === 'server_ext' 
-                                        ? texts[lang].modals.selector.select1 
-                                        : cert.type === 'user_ext' 
-                                        ? texts[lang].modals.selector.select2 
-                                        : cert.type || texts[lang].modals.missing.type
-                                    }
+                                    ${texts[lang].headers.signature}: ${cert.hash ? cert.hash : `${texts[lang].undefined}`}
                                 </div>">
                                 ${cert.serial ? cert.serial : `${texts[lang].undefined}`}
                             </span>
+                        </td>
+                        <td data-sort="type">
+                            ${cert.type === 'server_ext' 
+                                ? texts[lang].modals.selector.select1 
+                                : cert.type === 'user_ext' 
+                                ? texts[lang].modals.selector.select2 
+                                : cert.type || texts[lang].modals.missing.type
+                            }
                         </td>
                         <td data-sort="startDate">
                             <span class="tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="
