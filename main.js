@@ -125,6 +125,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 disabled: "Disabled certificates"
             },
             titles: {
+                CA: "CA certificate",
+                CRL: "Revocation list",
                 searchBar: "Search for a certificate",
                 enterPass: "Enter your Passphrase",
                 createMultiSan: "Create Multi SAN Certificate",
@@ -226,6 +228,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 disabled: "Certificats désactivés"
             },
             titles: {
+                CA: "Certificat de la CA",
+                CRL: "Liste des révocations",
                 searchBar: "Rechercher un certificat",
                 enterPass: "Entrez votre Passphrase",
                 createMultiSan: "Créer un certificat Multi SAN",
@@ -304,8 +308,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         $('#tagDisabled').closest('span').attr('data-bs-title', `${texts[lang].tags.disabled}`);
 
         // Downloads tooltips
-        $('#downloadCA').closest('span').attr('data-bs-title', `${texts[lang].actions.download} ca.crt`);
-        $('#downloadCRL').closest('span').attr('data-bs-title', `${texts[lang].actions.download} ca.crl`);
+        $('#downloadCA').closest('span').attr('data-bs-title', `${texts[lang].titles.CA}`);
+        $('#downloadCRL').closest('span').attr('data-bs-title', `${texts[lang].titles.CRL}`);
 
         // Languages dropdown
         $('#english').html(`${texts[lang].lang.english} <span class="checkmark"><img src="icons/check-solid.svg" class="icon ms-3"/></span>`);
