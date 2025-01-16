@@ -8,6 +8,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const passwordInput = document.getElementById('passwordInput');
     const passwordSubmit = document.getElementById('passwordSubmit');
 
+    // Downloads 
+    const downloadCA = document.getElementById('downloadCA');
+    const downloadCRL = document.getElementById('downloadCRL');
+
     // Buttons
     const switchMenu = document.getElementById('switchMenu');
     const switchBtn = document.getElementById('switchBtn');
@@ -18,6 +22,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const searchTerm = urlParams.get('s') ? urlParams.get('s') : '';
     const tagsParam = urlParams.get('tags');
+
+    // Tags
+    const tagValid = document.getElementById('tagValid');
+    const tagExpired = document.getElementById('tagExpired');
+    const tagRevoked = document.getElementById('tagRevoked');
+    const tagDisabled = document.getElementById('tagDisabled');
 
     // Other
     const searchInput = document.getElementById('searchInput');
@@ -368,10 +378,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Get selected tags
     function getSelectedTags() {
         const tags = [];
-        if (!document.getElementById('tagValid').classList.contains('opacity-25')) tags.push('valid');
-        if (!document.getElementById('tagExpired').classList.contains('opacity-25')) tags.push('expired');
-        if (!document.getElementById('tagRevoked').classList.contains('opacity-25')) tags.push('revoked');
-        if (!document.getElementById('tagDisabled').classList.contains('opacity-25')) tags.push('disabled');
+        if (!tagValid.classList.contains('opacity-25')) tags.push('valid');
+        if (!tagExpired.classList.contains('opacity-25')) tags.push('expired');
+        if (!tagRevoked.classList.contains('opacity-25')) tags.push('revoked');
+        if (!tagDisabled.classList.contains('opacity-25')) tags.push('disabled');
         return tags;
     }
 
@@ -1348,7 +1358,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const searchTerm = searchInput.value;
             tags = getSelectedTags();
             updateUrl(searchTerm, tags);
-            if (!tags.includes('valid') && !tags.length > 0) document.getElementById('tagValid').classList.remove('opacity-25');
+            if (!tags.includes('valid') && !tags.length > 0) tagValid.classList.remove('opacity-25');
         });
     });
 
@@ -1361,10 +1371,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (searchTerm) searchInput.value = searchTerm;
     if (tagsParam) tags = tagsParam.split(',').map(tag => tag.trim());
-    if (!tags.includes('valid') && tags.length > 0) document.getElementById('tagValid').classList.add('opacity-25');
-    if (!tags.includes('expired')) document.getElementById('tagExpired').classList.add('opacity-25');
-    if (!tags.includes('revoked')) document.getElementById('tagRevoked').classList.add('opacity-25');
-    if (!tags.includes('disabled')) document.getElementById('tagDisabled').classList.add('opacity-25');
+    if (!tags.includes('valid') && tags.length > 0) tagValid.classList.add('opacity-25');
+    if (!tags.includes('expired')) tagExpired.classList.add('opacity-25');
+    if (!tags.includes('revoked')) tagRevoked.classList.add('opacity-25');
+    if (!tags.includes('disabled')) tagDisabled.classList.add('opacity-25');
 
     await isLocked();
     setInterval(async () => { await isLocked(), updateInterface(); }, 5000);
