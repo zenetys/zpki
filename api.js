@@ -311,7 +311,7 @@ app.post('/switch-profile', async (req, res) => {
 
 // Route to create certificates
 app.post('/create', async (req, res) => {
-    const { commonName, subject, sanIP, sanDNS, type, startDate, endDate } = req.body;
+    const { commonName, sanIP, sanDNS, type, startDate, endDate } = req.body;
     const password = '';
 
     if (req.session.caPassword === undefined) return res.status(400).json({ error: 'Password expired.' });
@@ -323,7 +323,7 @@ app.post('/create', async (req, res) => {
         let args = ['-C', req.session.srcFolder, '-y', ];
 
         if (password === '') args.push('-c', 'none');
-        args.push('ca-create-crt', subject === '' ? commonName : subject);
+        args.push('ca-create-crt', commonName);
         if (sanIP && sanIP.length > 0) args.push(...sanIP.map(ip => `IP:${ip}`));
         if (sanDNS && sanDNS.length > 0) args.push(...sanDNS.map(dns => `DNS:${dns}`));
 
@@ -343,7 +343,7 @@ app.post('/create', async (req, res) => {
 
 // Route to renew certificates
 app.post('/renew', async (req, res) => {
-    const { commonName, subject, sanIP, sanDNS, type, startDate, endDate } = req.body;
+    const { commonName, sanIP, sanDNS, type, startDate, endDate } = req.body;
     const password = '';
 
     if (req.session.caPassword === undefined) return res.status(400).json({ error: 'Password expired.' });
@@ -355,7 +355,7 @@ app.post('/renew', async (req, res) => {
         let args = ['-C', req.session.srcFolder, '-y', ];
 
         if (password === '') args.push('-c', 'none');
-        args.push('ca-update-crt', subject === '' ? commonName : subject);
+        args.push('ca-update-crt', commonName);
         if (sanIP && sanIP.length > 0) args.push(...sanIP.map(ip => `IP:${ip}`));
         if (sanDNS && sanDNS.length > 0) args.push(...sanDNS.map(dns => `DNS:${dns}`));
 
