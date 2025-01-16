@@ -429,7 +429,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Capitalize the first letter of a string
     function capitalize(str) {
         return str.charAt(0).toUpperCase() + str.slice(1);
-    }    
+    }
 
     // Sorting columns
     function sortTable(sortKey, order) {
@@ -1065,7 +1065,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ commonName })
                         });
-                
+
                         if (response.ok) {
                             loadCertData(searchTerm, tags);
                             modal.hide();
@@ -1168,7 +1168,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const handleInput = (inputId, listId, validFn, alertId) => {
             const input = document.getElementById(inputId), list = document.getElementById(listId);
             const value = input.value.trim(), exists = Array.from(list.children).some(e => e.textContent.trim() === value);
-    
+
             if (value && !exists && validFn(value)) {
                 const item = document.createElement('div');
                 item.className = 'alert alert-secondary fade show p-2 d-flex justify-content-between align-items-center';
@@ -1179,7 +1179,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             } else if (exists) showAlert(alertId);
             else showAlert('formatAlert');
         };
-    
+
         if (sanIPInput) {
             sanIPInput.addEventListener('keydown', e => {
                 if (e.key === 'Enter') {
@@ -1189,7 +1189,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
             if (addIPButton) addIPButton.onclick = () => handleInput('sanIP', 'addedIPAdresses', v => isValidIPv4(v) || isValidIPv6(v), 'IPAlert');
         }
-    
+
         if (sanDNSInput) {
             sanDNSInput.addEventListener('keydown', e => {
                 if (e.key === 'Enter') {
