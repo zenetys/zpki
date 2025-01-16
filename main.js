@@ -1194,6 +1194,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         showAlert('passphraseAlert');
     }
 
+    function download(file) {
+        window.location.href = `${API_BASE_URL}/${file === 'ca' ? 'download-ca' : 'download-crl'}`;
+    }
+
     // Check if current interface has to be locked
     async function isLocked() {
         try {
@@ -1325,6 +1329,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Password form events
     passwordForm.addEventListener('submit', passwordSubmitCheck);
     passwordForm.addEventListener('input', passwordInputCheck);
+
+    downloadCA.addEventListener('click', () => download('ca'));
+    downloadCRL.addEventListener('click', () => download('crl'));
 
     // Toggle eye on password modal
     document.querySelectorAll('.toggle-password').forEach(button => {
