@@ -872,8 +872,10 @@ while (( $# > 0 )); do
     -v|--verbose) ((VERBOSE++)) ;;
     ## -c, --cipher [CIPHER]: Define cipher for key (none for no encryption)
     -c|--cipher) CIPHER=$2 ; [[ $CIPHER == none ]] && unset CIPHER ; shift ;;
-    ## --force: Regenerate CSR even if it exists (e.g. change in SANs)
-    --force) FORCE_CREATE_CSR=1 ;;
+    ## --force-crt: Regenerate CRT even if it exists (e.g. change in SANs)
+    --force-crt) FORCE_CREATE_CRT=1 ;;
+    ## --force-csr: Regenerate CSR even if it exists (e.g. change in SANs)
+    --force-csr) FORCE_CREATE_CSR=1 ;;
     ## --json: Format using JSON
     --json) FORMAT=JSON ;;
     ## --no-utf8: Disable default UTF8 encoding
