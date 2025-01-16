@@ -151,16 +151,14 @@ app.get('/list', async (req, res) => {
 
 // Route to download the ca file (ca.crt)
 app.get('/download-ca', async (req, res) => {
-    const commonName = req.query.cert;
-
-    if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
-    if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
-    if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
-  
     try {
-        const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-dump-crt', commonName]);
+        let profiles = await getCaFolders();
+        if (profiles.length === 0)
+            return res.status(404).json({ error: 'No profiles available.' });
 
-        res.setHeader('Content-Disposition', `attachment; filename=${commonName}`);
+        const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-dump-crt', 'ca.crt']);
+
+        res.setHeader('Content-Disposition', `attachment; filename=${req.session.currentProfile}.crt`);
         res.setHeader('Content-Type', 'application/x-x509-ca-cert');
         res.end(output.stdout);
     } catch (err) {
@@ -171,16 +169,14 @@ app.get('/download-ca', async (req, res) => {
 
 // Route to download the crl file (ca.crl)
 app.get('/download-crl', async (req, res) => {
-    const commonName = req.query.cert;
-
-    if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
-    if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
-    if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
-  
     try {
-        const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-dump-crt', commonName]);
+        let profiles = await getCaFolders();
+        if (profiles.length === 0)
+            return res.status(404).json({ error: 'No profiles available.' });
 
-        res.setHeader('Content-Disposition', `attachment; filename=${commonName}`);
+        const output = await safeExec(zpkiCmd, ['-C', req.session.srcFolder, 'ca-dump-crt', 'ca.crl']);
+
+        res.setHeader('Content-Disposition', `attachment; filename=${req.session.currentProfile}.crl`);
         res.setHeader('Content-Type', 'application/x-x509-ca-cert');
         res.end(output.stdout);
     } catch (err) {
