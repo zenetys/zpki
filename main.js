@@ -1202,10 +1202,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Load profiles in dropdown
     async function loadCertificateAuthorities() {
+        const elements = [lockBtn, tagValid, tagExpired, tagRevoked, tagDisabled, switchBtn, downloadCA, downloadCRL];
         try {
             const { profiles, currentProfile } = await (await fetch(`${API_BASE_URL}/profiles`)).json();
             if (!Array.isArray(profiles)) throw new Error('Invalid profiles response');
 
+            elements.forEach(el => el.classList.remove('disabled'));
             switchBtn.innerHTML = capitalize(currentProfile);
             switchMenu.innerHTML = profiles.map(profile => 
                 `<a id="${profile}" class="dropdown-item text-truncate ${profile === currentProfile ? 'active' : ''}">${capitalize(profile)}</a>`
@@ -1214,6 +1216,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             switchMenu.querySelectorAll('.dropdown-item').forEach(item => item.addEventListener('click', () => switchProfile(item.id, currentProfile)));
         } catch (error) {
             switchBtn.innerHTML = texts[lang].modals.missing.CA;
+            elements.forEach(el => el.classList.add('disabled'));
             console.error(error);
         }
     }
