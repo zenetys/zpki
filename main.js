@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 commonName: "Common Name (CN)",
                 serial: "Serial",
                 signature: "Signature",
+                type: "Type",
                 startDate: "Start Date",
                 endDate: "End Date",
                 downloads: "Downloads"
@@ -175,6 +176,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 commonName: "Nom Commun (CN)",
                 serial: "Numéro de série",
                 signature: "Signature",
+                type: "Type",
                 startDate: "Date de début",
                 endDate: "Date de fin",
                 downloads: "Téléchargements"
@@ -313,6 +315,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         $('th[data-sort="status"]').html(`<img src="icons/chart-simple-solid.svg" class="icon me-1"/> ${texts[lang].headers.status}`);
         $('th[data-sort="commonName"]').html(`<img src="icons/file-lines-solid.svg" class="icon me-1"/> ${texts[lang].headers.commonName} <img src="icons/arrow-down-solid.svg" class="icon arrow"/>`);
         $('th[data-sort="serial"]').html(`<img src="icons/hashtag-solid.svg" class="icon me-1"/> ${texts[lang].headers.serial} <img src="icons/arrow-down-solid.svg" class="icon arrow"/>`);
+        $('th[data-sort="type"]').html(`<img src="icons/file-invoice-solid.svg" class="icon me-1"/> ${texts[lang].headers.type} <img src="icons/arrow-down-solid.svg" class="icon arrow"/>`);
         $('th[data-sort="startDate"]').html(`<img src="icons/calendar-day-solid.svg" class="icon me-1"/> ${texts[lang].headers.startDate} <img src="icons/arrow-down-solid.svg" class="icon arrow"/>`);
         $('th[data-sort="endDate"]').html(`<img src="icons/calendar-days-solid.svg" class="icon me-1"/> ${texts[lang].headers.endDate} <img src="icons/arrow-down-solid.svg" class="icon arrow"/>`);
     }
