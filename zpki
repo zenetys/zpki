@@ -238,6 +238,10 @@ function echo_quoted() {
   echo
 }
 
+function openssl() {
+    command "${ZPKI_OPENSSL_CMD:-openssl}" "$@";
+}
+
 function openssl_debug() {
   local IFS=$'\n'
   (( VERBOSE >= 1 )) && PREFIX=": openssl" echo_quoted "$@" >&2
