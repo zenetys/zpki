@@ -953,8 +953,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const commonName = document.getElementById('commonName').value;
                     // const org = document.getElementById('org').value.trim();
                     // const orgUnit = document.getElementById('orgunit').value.trim();
-                    const sanIP = Array.from(document.getElementById('addedIPAdresses').children).map(el => el.innerText);
-                    const sanDNS = Array.from(document.getElementById('addedDNSNames').children).map(el => el.innerText);
+                    const sanIP = document.getElementById('sanIP').value.split(',').map(el => el.trim());
+                    const sanDNS = document.getElementById('sanDNS').value.split(',').map(el => el.trim());
                     const type = document.getElementById('type').value;
                     const startDate = formatDateOpenSSL(document.getElementById('startDate').value);
                     const endDate = formatDateOpenSSL(document.getElementById('endDate').value);
