@@ -396,7 +396,7 @@ function ca-create-crt() {
   local CRTFILE=${1:-$CRTFILE}
   [[ $SUBJECT ]] || fatal "Cannot create certificate with empty subject"
   [[ $FORCE ]] && FORCE_CREATE_CRT=1 && unset FORCE
-  is-exists -$FORCE_CREATE_CRT "$CRTFILE" && return 0
+  is-exists -$FORCE_CREATE_CRT "$CRTFILE" && return 1
   yesno "Create certificate '$SUBJECT' ($CRTFILE) ?" || return
   create-csr "$CSRFILE" || return
 
