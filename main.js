@@ -1124,34 +1124,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         const handleInput = (inputId, listId, validFn, alertId) => {
             const input = document.getElementById(inputId), list = document.getElementById(listId);
             const value = input.value.trim(), exists = Array.from(list.children).some(e => e.textContent.trim() === value);
-
-            if (value && !exists) {
-                if (validFn(value)) {
-                    const item = document.createElement('div');
-                    item.className = 'alert alert-secondary fade show p-2 d-flex justify-content-between align-items-center';
-                    item.innerHTML = `${value}<button class="btn btn-sm btn-close" aria-label="Close"></button>`;
-                    item.querySelector('.btn-close').onclick = () => list.removeChild(item);
-                    list.appendChild(item);
-                    input.value = '';
-                } else showAlert('formatAlert');
+    
+            if (value && !exists && validFn(value)) {
+                const item = document.createElement('div');
+                item.className = 'alert alert-secondary fade show p-2 d-flex justify-content-between align-items-center';
+                item.innerHTML = `${value}<button class="btn btn-sm btn-close" aria-label="Close"></button>`;
+                item.querySelector('.btn-close').onclick = () => list.removeChild(item);
+                list.appendChild(item);
+                input.value = '';
             } else if (exists) showAlert(alertId);
+            else showAlert('formatAlert');
         };
-
-        sanIPInput.addEventListener('keydown', e => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                handleInput('sanIP', 'addedIPAdresses', v => isValidIPv4(v) || isValidIPv6(v), 'IPAlert');
-            }
-        });
-        sanDNSInput.addEventListener('keydown', e => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                handleInput('sanDNS', 'addedDNSNames', isValidDNS, 'DNSAlert');
-            }
-        });
-
-        addIPButton.onclick = () => handleInput('sanIP', 'addedIPAdresses', v => isValidIPv4(v) || isValidIPv6(v), 'IPAlert');
-        addDNSButton.onclick = () => handleInput('sanDNS', 'addedDNSNames', isValidDNS, 'DNSAlert');
+    
+        if (sanIPInput) {
+            sanIPInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleInput('sanIP', 'addedIPAdresses', v => isValidIPv4(v) || isValidIPv6(v), 'IPAlert');
+                }
+            });
+            if (addIPButton) addIPButton.onclick = () => handleInput('sanIP', 'addedIPAdresses', v => isValidIPv4(v) || isValidIPv6(v), 'IPAlert');
+        }
+    
+        if (sanDNSInput) {
+            sanDNSInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleInput('sanDNS', 'addedDNSNames', isValidDNS, 'DNSAlert');
+                }
+            });
+            if (addDNSButton) addDNSButton.onclick = () => handleInput('sanDNS', 'addedDNSNames', isValidDNS, 'DNSAlert');
+        }
     }
 
     // Styling password input on typing
