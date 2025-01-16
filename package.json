@@ -2,7 +2,7 @@
   "name": "zpki",
   "version": "1.0.0",
   "description": "Command-line utility for managing a Public Key Infrastructure (PKI).",
-  "main": "index.js",
+  "main": "api.js",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.2",
