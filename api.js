@@ -326,6 +326,7 @@ app.post('/create', async (req, res) => {
         args.push('ca-create-crt', commonName);
         if (sanIP && sanIP.length > 0) args.push(...sanIP.map(ip => `IP:${ip}`));
         if (sanDNS && sanDNS.length > 0) args.push(...sanDNS.map(dns => `DNS:${dns}`));
+        args.push('--force-crt', '--force-csr');
 
         await safeExec(zpkiCmd, args, { env: { ...process.env,
             ZPKI_CA_PASSWORD: req.session.caPassword,
@@ -358,6 +359,7 @@ app.post('/renew', async (req, res) => {
         args.push('ca-update-crt', commonName);
         if (sanIP && sanIP.length > 0) args.push(...sanIP.map(ip => `IP:${ip}`));
         if (sanDNS && sanDNS.length > 0) args.push(...sanDNS.map(dns => `DNS:${dns}`));
+        args.push('--force-crt', '--force-csr');
 
         await safeExec(zpkiCmd, args, { env: { ...process.env,
             ZPKI_CA_PASSWORD: req.session.caPassword,
