@@ -70,6 +70,7 @@ default_days           = ${NUMDAYS}
 default_crl_days       = 30
 default_md             = ${DIGEST}
 preserve               = no
+unique_subject         = no
 
 policy                 = policy_match
 
