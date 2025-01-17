@@ -230,6 +230,7 @@ app.get('/download-key', async (req, res) => {
     const commonName = req.query.cert;
 
     if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!req.session.caPassword) return res.status(400).json({ error: 'Certificate authority password is not set.' });
     if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
     if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
   
