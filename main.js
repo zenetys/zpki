@@ -428,8 +428,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Verify if is a valid domain format
     function isValidDNS(dns) {
         const dnsPattern = /^(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.[A-Za-z]{2,})+$/;
-        return dnsPattern.test(dns);
-    }
+        const wildcardPattern = /^[\*\w-]+\.[A-Za-z0-9-]{1,63}(\.[A-Za-z]{2,})+$/;
+        return dnsPattern.test(dns) || wildcardPattern.test(dns);
+    }    
 
     // Format date to YYYY-MM-DD from ISO format
     function formatDate(isoDateString) {
