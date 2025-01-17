@@ -1,12 +1,19 @@
 document.addEventListener('DOMContentLoaded', async () => {
     // Modals
     const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
+    const pkcs12Modal = new bootstrap.Modal(document.getElementById('pkcs12Modal'));
     const modal = new bootstrap.Modal(document.getElementById('dynamicModal'));
 
     // Password modal content
     const passwordForm = document.getElementById('passwordForm');
     const passwordInput = document.getElementById('passwordInput');
     const passwordSubmit = document.getElementById('passwordSubmit');
+
+    // Pkcs12 modal content
+    const pkcs12Form = document.getElementById('pkcs12Form');
+    const pkcs12Password = document.getElementById('pkcs12Password');
+    const pkcs12Export = document.getElementById('pkcs12Export');
+    const pkcs12Submit = document.getElementById('pkcs12Submit');
 
     // Downloads 
     const downloadCA = document.getElementById('downloadCA');
@@ -282,6 +289,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         $('#passwordModalTitle').html(texts[lang].titles.enterPass);
         $('#passwordInput').attr('placeholder', texts[lang].modals.enterPass);
         $('#passwordSubmit').html(texts[lang].actions.confirm);
+
+        // PKCS12 modal
+        $('#pkcs12ModalTitle').html(texts[lang].actions.download + ' ' + texts[lang].modals.fileP12);
+        $('#pkcs12Password').attr('placeholder', texts[lang].modals.enterPkcs12);
+        $('#pkcs12Export').attr('placeholder', texts[lang].modals.enterExport);
+        $('#pkcs12Submit').html(texts[lang].actions.confirm);
 
         // Alerts
         $('#errorFound').html(`<img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.errorFound}</strong>`);
@@ -594,9 +607,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-crt?cert=${cert.id}' download><img src='icons/certificate-solid.svg' class='icon me-1'/>.crt</a>
                                 <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-csr?cert=${cert.id}' download><img src='icons/lock-solid.svg' class='icon me-1'/>.csr</a>
                                 <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-key?cert=${cert.id}' download><img src='icons/key-solid.svg' class='icon me-1'/>.key</a>
-                                <a class='btn btn-light btn-sm d-block text-start pkcs12Btn'><img src='icons/file-export-solid.svg' class='icon me-1'/>.p12</a>
                             ">
                                 <img src="icons/file-arrow-down-solid.svg" class="icon"/>
+                                <a class='btn btn-light btn-sm d-block text-start pkcs12Btn ${locked === true ? 'disabled' : ''}' id='data-id-${cert.id}'><img src='icons/file-export-solid.svg' class='icon me-1'/>.p12</a>
                             </button>
                         </td>
                     `;
@@ -918,8 +931,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                                         <a class="btn btn-light btn-sm mb-1 me-1" href='download-key?cert=${commonName}' download>
                                             <img src="icons/key-solid.svg" class="icon me-1"/>.key
                                         </a>
-                                        <a class="btn btn-light btn-sm mb-1 pkcs12Btn">
                                             <img src="icons/file-export-solid.svg" class="icon me-1"/>.p12
+                                        <a class="btn btn-light btn-sm mb-1 pkcs12Btn ${locked === true ? 'disabled' : ''}' id='data-id-${cert.id}">
                                         </a>
                                     </span>
                                 </p>
@@ -1340,6 +1353,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (error) { showAlert('basicAlert'); }
     }
 
+    // Password submit form
+    async function pkcs12SubmitCheck(event, commonName) {
+        event.preventDefault();
+        pkcs12Submit.disabled = true;
+        try {
+            const response = await fetch(`${API_BASE_URL}/download-pkcs12`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    commonName,
+                    password: pkcs12Password.value || '',
+                    export_password: pkcs12Export.value || ''
+                }),
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `${commonName}.p12`;
+                link.click();
+                pkcs12Modal.hide();
+                pkcs12Password.value = '';
+                pkcs12Export.value = '';
+                updateInterface();
+            } else console.error('Download failed');
+
+            pkcs12Submit.disabled = false;
+        } catch (error) { showAlert('basicAlert'); }
+    }
+
     // Lock interface button
     lockBtn.addEventListener('click', handleLock);
     lockBtn.addEventListener('keydown', (event) => { if (event.key === 'Enter') event.preventDefault(); });
@@ -1363,6 +1407,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Password form events
     passwordForm.addEventListener('submit', passwordSubmitCheck);
     passwordForm.addEventListener('input', passwordInputCheck);
+
+    // Pkcs12 form events
+    pkcs12Form.addEventListener('submit', (e) => pkcs12SubmitCheck(e, commonName));
 
     downloadCA.addEventListener('click', () => download('ca'));
     downloadCRL.addEventListener('click', () => download('crl'));
@@ -1409,6 +1456,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         button.addEventListener('mouseover', (event) => {
             event.preventDefault();
         });
+    });
+
+    // Check click on .p12 download
+    document.addEventListener('click', ({ target }) => {
+        if (target.id?.startsWith('data-id-')) commonName = target.id.split('data-id-')[1];
+    });
+
+    // Open pkcs12 download modal
+    document.body.addEventListener('click', (event) => {
+        if (event.target.closest('.pkcs12Btn')) {
+            if (modal) modal.hide();
+            pkcs12Modal.show();
+        }
     });
 
     if (searchTerm) searchInput.value = searchTerm;
