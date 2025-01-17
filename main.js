@@ -606,10 +606,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <button type="button" class="btn btn-light btn-sm" data-bs-toggle="popover" data-bs-html="true" data-bs-content="
                                 <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-crt?cert=${cert.id}' download><img src='icons/certificate-solid.svg' class='icon me-1'/>.crt</a>
                                 <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-csr?cert=${cert.id}' download><img src='icons/lock-solid.svg' class='icon me-1'/>.csr</a>
-                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-key?cert=${cert.id}' download><img src='icons/key-solid.svg' class='icon me-1'/>.key</a>
                             ">
                                 <img src="icons/file-arrow-down-solid.svg" class="icon"/>
                                 <a class='btn btn-light btn-sm d-block text-start pkcs12Btn ${locked === true ? 'disabled' : ''}' id='data-id-${cert.id}'><img src='icons/file-export-solid.svg' class='icon me-1'/>.p12</a>
+                                <a class='btn btn-light btn-sm d-block text-start mb-1 ${locked === true ? 'disabled' : ''}' href='download-key?cert=${cert.id}' download><img src='icons/key-solid.svg' class='icon me-1'/>.key</a>
                             </button>
                         </td>
                     `;
@@ -928,8 +928,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                                         <a class="btn btn-light btn-sm mb-1 me-1" href='download-csr?cert=${commonName}' download>
                                             <img src="icons/lock-solid.svg" class="icon me-1"/>.csr
                                         </a>
-                                        <a class="btn btn-light btn-sm mb-1 me-1" href='download-key?cert=${commonName}' download>
                                             <img src="icons/key-solid.svg" class="icon me-1"/>.key
+                                        <a class="btn btn-light btn-sm mb-1 me-1 ${locked === true ? 'disabled' : ''}' href='download-key?cert=${commonName}" download>
                                         </a>
                                             <img src="icons/file-export-solid.svg" class="icon me-1"/>.p12
                                         <a class="btn btn-light btn-sm mb-1 pkcs12Btn ${locked === true ? 'disabled' : ''}' id='data-id-${cert.id}">
