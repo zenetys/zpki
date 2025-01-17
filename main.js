@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const pkcs12Submit = document.getElementById('pkcs12Submit');
 
     // Downloads 
+    const keyBtn = document.querySelectorAll('.keyBtn');
+    const pkcs12Btn = document.querySelectorAll('.pkcs12Btn');
     const downloadCA = document.getElementById('downloadCA');
     const downloadCRL = document.getElementById('downloadCRL');
 
@@ -329,6 +331,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         // const checkboxes = document.querySelectorAll('.cert-checkbox');
         if (!locked) {
             // checkboxes.forEach(checkbox => { checkbox.disabled = false; });
+            keyBtn.forEach(btn => { btn.classList.remove('disabled'); });
+            pkcs12Btn.forEach(btn => { btn.classList.remove('disabled'); });
+
             if (createBtn.disabled) {
                 createBtn.disabled = false;
                 createBtn.classList.replace('btn-secondary', 'btn-primary');
@@ -339,6 +344,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         } else {
             // checkboxes.forEach(checkbox => { checkbox.disabled = true; });
+            keyBtn.forEach(btn => { btn.classList.add('disabled'); });
+            pkcs12Btn.forEach(btn => { btn.classList.add('disabled'); });
+
             if (!createBtn.disabled) {
                 createBtn.disabled = true;
                 createBtn.classList.replace('btn-primary', 'btn-secondary');
@@ -594,7 +602,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <button type='button' class='btn btn-light btn-sm' data-bs-toggle='popover' data-bs-html='true' data-bs-content='
                                 <a class="btn btn-light btn-sm d-block text-start mb-1" href="download-crt?cert=${cert.id}" download><img src="icons/certificate-solid.svg" class="icon me-1"/>.crt</a>
                                 <a class="btn btn-light btn-sm d-block text-start mb-1" href="download-csr?cert=${cert.id}" download><img src="icons/lock-solid.svg" class="icon me-1"/>.csr</a>
-                                <a class="btn btn-light btn-sm d-block text-start mb-1 ${locked === true ? 'disabled' : ''}" href="download-key?cert=${cert.id}" download><img src="icons/key-solid.svg" class="icon me-1"/>.key</a>
+                                <a class="btn btn-light btn-sm d-block text-start mb-1 keyBtn ${locked === true ? 'disabled' : ''}" href="download-key?cert=${cert.id}" download><img src="icons/key-solid.svg" class="icon me-1"/>.key</a>
                                 <a class="btn btn-light btn-sm d-block text-start pkcs12Btn ${locked === true ? 'disabled' : ''}" id="data-id-${cert.id}"><img src="icons/file-export-solid.svg" class="icon me-1"/>.p12</a>
                             '>
                                 <img src='icons/file-arrow-down-solid.svg' class='icon'/>
@@ -916,7 +924,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                         <a class='btn btn-light btn-sm mb-1 me-1' href='download-csr?cert=${commonName}' download>
                                             <img src='icons/lock-solid.svg' class='icon me-1'/>.csr
                                         </a>
-                                        <a class='btn btn-light btn-sm mb-1 me-1 ${locked === true ? 'disabled' : ''}' href='download-key?cert=${commonName}' download>
+                                        <a class='btn btn-light btn-sm mb-1 me-1 keyBtn ${locked === true ? 'disabled' : ''}' href='download-key?cert=${commonName}' download>
                                             <img src='icons/key-solid.svg' class='icon me-1'/>.key
                                         </a>
                                         <a class='btn btn-light btn-sm mb-1 pkcs12Btn ${locked === true ? 'disabled' : ''}' id='data-id-${cert.id}'>
