@@ -48,9 +48,10 @@
     white-space: nowrap; 
 }
 .dropdown-menu {
-    margin-top: 7px;
     border: 2px solid #000000aa;
     border-radius: 20px;
+    min-width: 150px;
+    max-width: 450px;
     cursor: pointer;
     z-index: 999;
 }
@@ -61,8 +62,9 @@
     border-top-right-radius: 5px;
 }
 .dropdown-item {
-    width: 90%;
-    margin-left: 5%;
+    width: fit-content;
+    max-width: 450px;
+    margin: 0 5px;
     border-radius: 10px;
 }
 .dropdown-item.active {
