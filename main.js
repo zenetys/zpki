@@ -267,19 +267,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadCertData(searchTerm, tags);
     });
 
-    // Focus first non-readonly input on modal opening
-    document.querySelectorAll('[id$="Modal"]').forEach(modal => {
-        modal.addEventListener('shown.bs.modal', () => {
-            modal.querySelector('input[type="text"]:not(:read-only), input[type="password"]:not(:read-only)')?.focus();
-        });
-        modal.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                modal.querySelector('#confirmAction')?.click() || modal.querySelector('#passwordSubmit')?.click() || modal.querySelector('#pkcs12Submit')?.click();;
-            }
-        });
-    });
-
     // Update the language
     function updateLanguage(lang) {
         // Search Bar
@@ -430,7 +417,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const dnsPattern = /^(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.[A-Za-z]{2,})+$/;
         const wildcardPattern = /^[\*\w-]+\.[A-Za-z0-9-]{1,63}(\.[A-Za-z]{2,})+$/;
         return dnsPattern.test(dns) || wildcardPattern.test(dns);
-    }    
+    }
 
     // Format date to YYYY-MM-DD from ISO format
     function formatDate(isoDateString) {
@@ -1456,6 +1443,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelectorAll('.btn-action').forEach(button => {
         button.addEventListener('mouseover', (event) => {
             event.preventDefault();
+        });
+    });
+
+    // Focus first non-readonly input on modal opening
+    document.querySelectorAll('[id$="Modal"]').forEach(modal => {
+        modal.addEventListener('shown.bs.modal', () => {
+            modal.querySelector('input[type="text"]:not(:read-only), input[type="password"]:not(:read-only)')?.focus();
+        });
+        modal.addEventListener('keydown', (event) => {
+            const focused = document.activeElement;
+            if (event.key === 'Enter') {
+                if (focused.id !== 'sanIP' && focused.id !== 'sanDNS') {
+                    event.preventDefault();
+                    modal.querySelector('#confirmAction')?.click() || modal.querySelector('#passwordSubmit')?.click() || modal.querySelector('#pkcs12Submit')?.click();;
+                }
+            }
         });
     });
 
