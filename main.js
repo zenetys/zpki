@@ -741,7 +741,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             case 'create':
                 modalTitle.textContent = texts[lang].titles.createMultiSan;
                 formContent.innerHTML = `
-                    <div class='mb-3'>
+                    <div class='mb-3'> <!-- mb-3 on last input -->
                         <div class='input-group'>
                             <span class='input-group-text'>CN</span>
                             <input type='text' class='form-control' id='commonName' placeholder='${texts[lang].modals.CN}' required>
@@ -762,7 +762,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                     -->
                     <div class='mb-3'>
-                        <label class='form-label'>${texts[lang].modals.subject}</label>
+                        <label class='form-label mb-0'>${texts[lang].modals.subject}</label>
                         <div id='sanContainer'>
                             <div class='input-group mb-2'>
                                 <input type='text' class='form-control' placeholder='IP' id='sanIP'>
@@ -777,18 +777,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                         </div>
                     </div>
                     <div class='mb-3'>
-                        <label for='type' class='form-label'>${texts[lang].modals.type}</label>
+                        <label for='type' class='form-label mb-0'>${texts[lang].modals.type}</label>
                         <select class='form-select' id='type' name='type'>
                             <option value='server_ext'>${texts[lang].modals.selector.select1}</option>
                             <option value='user_ext'>${texts[lang].modals.selector.select2}</option>
                         </select>
                     </div>
                     <div class='mb-3'>
-                        <label for='startDate' class='form-label'>${texts[lang].headers.startDate}</label>
+                        <label for='startDate' class='form-label mb-0'>${texts[lang].headers.startDate}</label>
                         <input type='datetime-local' class='form-control' id='startDate' value=''>
                     </div>
-                    <div class='mb-3'>
-                        <label for='endDate' class='form-label'>${texts[lang].headers.endDate}</label>
+                    <div>
+                        <label for='endDate' class='form-label mb-0'>${texts[lang].headers.endDate}</label>
                         <input type='datetime-local' class='form-control' id='endDate' value=''>
                     </div>
                 `;
@@ -863,51 +863,51 @@ document.addEventListener('DOMContentLoaded', async () => {
                         modalTitle.textContent = `${texts[lang].titles.viewCert}`;
                         formContent.innerHTML = `
                             <div id='certDetails'>
-                                <p class='text-wrap text-break'>
+                                <p class='text-wrap text-break mb-2'>
                                     <strong class='me-2'>${texts[lang].modals.CA}:</strong>
                                     ${caValue}
                                 </p>
-                                <p class='text-wrap text-break'>
+                                <p class='text-wrap text-break mb-2'>
                                     <strong class='me-2'>${texts[lang].modals.CN}:</strong>
                                     ${commonName ? commonName : `${texts[lang].undefined}`}
                                 </p>
-                                <p class='text-wrap text-break'>
+                                <p class='text-wrap text-break mb-2'>
                                     <strong class='me-2'>${texts[lang].modals.SUBJ}:</strong>
                                     ${splitSubject}
                                 </p>
 
-                                <p class='text-wrap text-break'>
+                                <p class='text-wrap text-break mb-2'>
                                     <strong class='me-2'>${texts[lang].headers.serial}:</strong>
                                     ${cert.serial ? cert.serial : `${texts[lang].undefined}`}
                                 </p>
-                                <p class='text-wrap text-break'>
+                                <p class='text-wrap text-break mb-2'>
                                     <strong class='me-2'>${texts[lang].headers.signature}:</strong>
                                     ${cert.hash ? cert.hash : `${texts[lang].undefined}`}
                                 </p>
 
-                                <p class='text-wrap text-break'>
+                                <p class='text-wrap text-break mb-2'>
                                     <strong class='me-2'>IP:</strong>
                                     ${ipList.length > 0 ? ipList.map(ip => `<span>${ip}</span>`).join(', ') : `${texts[lang].modals.missing.IP}`}
                                 </p>
-                                <p class='text-wrap text-break'>
+                                <p class='text-wrap text-break mb-2'>
                                     <strong class='me-2'>DNS:</strong>
                                     ${dnsList.length > 0 ? dnsList.map(dns => `<span>${dns}</span>`).join(', ') : `${texts[lang].modals.missing.DNS}`}
                                 </p>
 
-                                <p class='text-wrap text-break'>
+                                <p class='text-wrap text-break mb-2'>
                                     <strong class='me-2'>${texts[lang].modals.type}:</strong>
                                     ${cert.type === 'server_ext' ? texts[lang].modals.selector.select1 : cert.type === 'user_ext' ? texts[lang].modals.selector.select2 : cert.type || texts[lang].modals.missing.type}
                                 </p>
-                                <p class='text-wrap text-break'>
+                                <p class='text-wrap text-break mb-2'>
                                     <strong class='me-2'>${texts[lang].headers.startDate}:</strong>
                                     ${cert.startDate ? cert.startDate : `${texts[lang].undefined}`}
                                 </p>
-                                <p class='text-wrap text-break'>
+                                <p class='text-wrap text-break mb-2'>
                                     <strong class='me-2'>${texts[lang].headers.endDate}:</strong>
                                     ${cert.endDate ? cert.endDate : `${texts[lang].undefined}`}
                                 </p>
 
-                                <p class='text-wrap text-break'>
+                                <p class='text-wrap text-break mb-2'>
                                     <strong class='me-2'>${texts[lang].headers.downloads}:</strong>
                                     <span class='d-inline-block mt-1'>
                                         <a class='btn btn-light btn-sm mb-1 me-1' href='download-crt?cert=${commonName}' download>
@@ -933,26 +933,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             case 'renew':
                 modalTitle.textContent = `${texts[lang].titles.renewCert}`;
                 formContent.innerHTML = `
-                    <div class='mb-3'>
+                    <div class='mb-2'>
                         <div class='input-group'>
                             <span class='input-group-text'>CA</span>
                             <input type='text' class='form-control' id='certificateAuthority' placeholder='${texts[lang].modals.CA}' value='${caValue}' readonly>
                         </div>
                     </div>
-                    <div class='mb-3'>
+                    <div class='mb-3'> <!-- mb-3 on last input -->
                         <div class='input-group'>
                             <span class='input-group-text'>CN</span>
                             <input type='text' class='form-control' id='commonName' placeholder='${texts[lang].modals.CN}' value='${cnValue}' readonly>
                         </div>
                     </div>
                     <!--
-                    <div class='mb-3'>
+                    <div class='mb-2'>
                         <div class='input-group'>
                             <span class='input-group-text'>/O=</span>
                             <input type='text' class='form-control' id='org' aria-label='Organisation' placeholder='${texts[lang].modals.ORG}' value='${oValue}'>
                         </div>
                     </div>
-                    <div class='mb-3'>
+                    <div class='mb-2'>
                         <div class='input-group'>
                             <span class='input-group-text'>/OU=</span>
                             <input type='text' class='form-control' id='orgunit' aria-label='Organisation Unit' placeholder='${texts[lang].modals.ORGUNIT}' value='${ouValue}'>
@@ -960,29 +960,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                     -->
                     <div class='mb-3'>
-                        <label class='form-label'>SAN (Subject Alternative Name)</label>
+                        <label class='form-label mb-0'>SAN (Subject Alternative Name)</label>
                         <div id='sanContainer'>
-                            <div class='input-group mb-2'>
+                            <div class='input-group mt-2'>
                                 <input type='text' class='form-control' id='sanIP' value='' readonly>
                             </div>
-                            <div class='input-group mb-2'>
+                            <div class='input-group mt-2'>
                                 <input type='text' class='form-control' id='sanDNS' value='' readonly>
                             </div>
                         </div>
                     </div>
                     <div class='mb-3'>
-                        <label for='type' class='form-label'>${texts[lang].modals.type}</label>
+                        <label for='type' class='form-label mb-0'>${texts[lang].modals.type}</label>
                         <select class='form-select' id='type' name='type' disabled>
                             <option value='server_ext'>${texts[lang].modals.selector.select1}</option>
                             <option value='user_ext'>${texts[lang].modals.selector.select2}</option>
                         </select>
                     </div>
                     <div class='mb-3'>
-                        <label for='startDate' class='form-label'>${texts[lang].headers.startDate}</label>
+                        <label for='startDate' class='form-label mb-0'>${texts[lang].headers.startDate}</label>
                         <input type='datetime-local' class='form-control' id='startDate' value=''>
                     </div>
-                    <div class='mb-3'>
-                        <label for='endDate' class='form-label'>${texts[lang].headers.endDate}</label>
+                    <div>
+                        <label for='endDate' class='form-label mb-0'>${texts[lang].headers.endDate}</label>
                         <input type='datetime-local' class='form-control' id='endDate' value=''>
                     </div>
                 `;
@@ -1039,13 +1039,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 modalTitle.textContent = `${texts[lang].titles.revokeCert}`;
                 formContent.innerHTML = `
                     <p>${texts[lang].confirmations.confirmRevoke}</p>
-                    <div class='mb-3'>
+                    <div class='mb-2'>
                         <div class='input-group'>
                             <span class='input-group-text'>CA</span>
                             <input type='text' class='form-control' id='certificateAuthority' placeholder='${texts[lang].modals.CA}' value='${caValue}' readonly>
                         </div>
                     </div>
-                    <div class='mb-3'>
+                    <div>
                         <div class='input-group'>
                             <span class='input-group-text'>CN</span>
                             <input type='text' class='form-control' id='commonName' placeholder='${texts[lang].modals.CN}' value='${cnValue}' readonly>
@@ -1085,13 +1085,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 modalTitle.textContent = `${texts[lang].titles.disableCert}`;
                 formContent.innerHTML = `
                     <p>${texts[lang].confirmations.confirmDisable}</p>
-                    <div class='mb-3'>
+                    <div class='mb-2'>
                         <div class='input-group'>
                             <span class='input-group-text'>CA</span>
                             <input type='text' class='form-control' id='certificateAuthority' placeholder='${texts[lang].modals.CA}' value='${caValue}' readonly>
                         </div>
                     </div>
-                    <div class='mb-3'>
+                    <div>
                         <div class='input-group'>
                             <span class='input-group-text'>CN</span>
                             <input type='text' class='form-control' id='commonName' placeholder='${texts[lang].modals.CN}' value='${cnValue}' readonly>
