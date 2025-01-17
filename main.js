@@ -275,7 +275,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         modal.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
                 event.preventDefault();
-                modal.querySelector('#confirmAction')?.click() || modal.querySelector('#passwordSubmit')?.click();
+                modal.querySelector('#confirmAction')?.click() || modal.querySelector('#passwordSubmit')?.click() || modal.querySelector('#pkcs12Submit')?.click();;
             }
         });
     });
