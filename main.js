@@ -297,21 +297,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         $('#pkcs12Submit').html(texts[lang].actions.confirm);
 
         // Alerts
-        $('#errorFound').html(`<img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.errorFound}</strong>`);
+        $('#errorFound').html(`<img src='icons/triangle-exclamation-solid.svg' class='icon mt-0 me-2'/> <strong class='me-auto'>${texts[lang].alerts.errors.errorFound}</strong>`);
         $('#errorFoundDescription').html(texts[lang].alerts.descriptions.errorFoundDescription);
-        $('#incorrectDNS').html(`<img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectDNS}</strong>`);
+        $('#incorrectDNS').html(`<img src='icons/triangle-exclamation-solid.svg' class='icon mt-0 me-2'/> <strong class='me-auto'>${texts[lang].alerts.errors.incorrectDNS}</strong>`);
         $('#incorrectDNSDescription').html(texts[lang].alerts.descriptions.incorrectDNSDescription);
-        $('#incorrectFormat').html(`<img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectFormat}</strong>`);
+        $('#incorrectFormat').html(`<img src='icons/triangle-exclamation-solid.svg' class='icon mt-0 me-2'/> <strong class='me-auto'>${texts[lang].alerts.errors.incorrectFormat}</strong>`);
         $('#incorrectFormatDescription').html(texts[lang].alerts.descriptions.incorrectFormatDescription);
-        $('#incorrectIP').html(`<img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectIP}</strong>`);
+        $('#incorrectIP').html(`<img src='icons/triangle-exclamation-solid.svg' class='icon mt-0 me-2'/> <strong class='me-auto'>${texts[lang].alerts.errors.incorrectIP}</strong>`);
         $('#incorrectIPDescription').html(texts[lang].alerts.descriptions.incorrectIPDescription);
-        $('#incorrectPassphrase').html(`<img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.incorrectPassphrase}</strong>`);
+        $('#incorrectPassphrase').html(`<img src='icons/triangle-exclamation-solid.svg' class='icon mt-0 me-2'/> <strong class='me-auto'>${texts[lang].alerts.errors.incorrectPassphrase}</strong>`);
         $('#incorrectPassphraseDescription').html(texts[lang].alerts.descriptions.incorrectPassphraseDescription);
-        $('#missingCertificate').html(`<img src="icons/triangle-exclamation-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.missingCertificate}</strong>`);
+        $('#missingCertificate').html(`<img src='icons/triangle-exclamation-solid.svg' class='icon mt-0 me-2'/> <strong class='me-auto'>${texts[lang].alerts.errors.missingCertificate}</strong>`);
         $('#missingCertificateDescription').html(texts[lang].alerts.descriptions.missingCertificateDescription);
-        $('#searchFailed').html(`<img src="icons/circle-info-solid.svg" class="icon mt-0"/> <strong class="m-auto">${texts[lang].alerts.errors.searchFailed}</strong> <img src="icons/circle-info-solid.svg" class="icon mt-0"/>`);
+        $('#searchFailed').html(`<img src='icons/circle-info-solid.svg' class='icon mt-0'/> <strong class='m-auto'>${texts[lang].alerts.errors.searchFailed}</strong> <img src='icons/circle-info-solid.svg' class='icon mt-0'/>`);
         $('#searchFailedDescription').html(texts[lang].alerts.descriptions.searchFailedDescription);
-        $('#sessionExpired').html(`<img src="icons/circle-info-solid.svg" class="icon mt-0 me-2"/> <strong class="me-auto">${texts[lang].alerts.errors.sessionExpired}</strong>`);
+        $('#sessionExpired').html(`<img src='icons/circle-info-solid.svg' class='icon mt-0 me-2'/> <strong class='me-auto'>${texts[lang].alerts.errors.sessionExpired}</strong>`);
         $('#sessionExpiredDescription').html(texts[lang].alerts.descriptions.sessionExpiredDescription);        
 
         // Tags tooltips
@@ -325,16 +325,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         $('#downloadCRL').closest('span').attr('data-bs-title', `${texts[lang].titles.CRL}`);
 
         // Languages dropdown
-        $('#english').html(`${texts[lang].lang.english} <span class="checkmark"><img src="icons/check-solid.svg" class="icon ms-3"/></span>`);
-        $('#french').html(`${texts[lang].lang.french} <span class="checkmark"><img src="icons/check-solid.svg" class="icon ms-3"/></span>`);
+        $('#english').html(`${texts[lang].lang.english} <span class='checkmark'><img src='icons/check-solid.svg' class='icon ms-3'/></span>`);
+        $('#french').html(`${texts[lang].lang.french} <span class='checkmark'><img src='icons/check-solid.svg' class='icon ms-3'/></span>`);
 
         // Table headers
-        $('th[data-sort="status"]').html(`<img src="icons/chart-simple-solid.svg" class="icon me-1"/> ${texts[lang].headers.status}`);
-        $('th[data-sort="commonName"]').html(`<img src="icons/file-lines-solid.svg" class="icon me-1"/> ${texts[lang].headers.commonName} <img src="icons/arrow-down-solid.svg" class="icon arrow"/>`);
-        $('th[data-sort="serial"]').html(`<img src="icons/hashtag-solid.svg" class="icon me-1"/> ${texts[lang].headers.serial} <img src="icons/arrow-down-solid.svg" class="icon arrow"/>`);
-        $('th[data-sort="type"]').html(`<img src="icons/file-invoice-solid.svg" class="icon me-1"/> ${texts[lang].headers.type} <img src="icons/arrow-down-solid.svg" class="icon arrow"/>`);
-        $('th[data-sort="startDate"]').html(`<img src="icons/calendar-day-solid.svg" class="icon me-1"/> ${texts[lang].headers.startDate} <img src="icons/arrow-down-solid.svg" class="icon arrow"/>`);
-        $('th[data-sort="endDate"]').html(`<img src="icons/calendar-days-solid.svg" class="icon me-1"/> ${texts[lang].headers.endDate} <img src="icons/arrow-down-solid.svg" class="icon arrow"/>`);
+        $('th[data-sort="status"]').html(`<img src='icons/chart-simple-solid.svg' class='icon me-1'/> ${texts[lang].headers.status}`);
+        $('th[data-sort="commonName"]').html(`<img src='icons/file-lines-solid.svg' class='icon me-1'/> ${texts[lang].headers.commonName} <img src='icons/arrow-down-solid.svg' class='icon arrow'/>`);
+        $('th[data-sort="serial"]').html(`<img src='icons/hashtag-solid.svg' class='icon me-1'/> ${texts[lang].headers.serial} <img src='icons/arrow-down-solid.svg' class='icon arrow'/>`);
+        $('th[data-sort="type"]').html(`<img src='icons/file-invoice-solid.svg' class='icon me-1'/> ${texts[lang].headers.type} <img src='icons/arrow-down-solid.svg' class='icon arrow'/>`);
+        $('th[data-sort="startDate"]').html(`<img src='icons/calendar-day-solid.svg' class='icon me-1'/> ${texts[lang].headers.startDate} <img src='icons/arrow-down-solid.svg' class='icon arrow'/>`);
+        $('th[data-sort="endDate"]').html(`<img src='icons/calendar-days-solid.svg' class='icon me-1'/> ${texts[lang].headers.endDate} <img src='icons/arrow-down-solid.svg' class='icon arrow'/>`);
     }
 
     // Update lock / unlock buttons
@@ -348,7 +348,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             if (!lockBtn.classList.contains('btn-success')) {
                 lockBtn.classList.replace('btn-danger', 'btn-success');
-                lockBtn.innerHTML = `<img src="icons/unlock-solid.svg" class="icon"/>`;
+                lockBtn.innerHTML = `<img src='icons/unlock-solid.svg' class='icon'/>`;
             }
         } else {
             // checkboxes.forEach(checkbox => { checkbox.disabled = true; });
@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             if (!lockBtn.classList.contains('btn-danger')) {
                 lockBtn.classList.replace('btn-success', 'btn-danger');
-                lockBtn.innerHTML = `<img src="icons/lock-white-solid.svg" class="icon"/>`;
+                lockBtn.innerHTML = `<img src='icons/lock-white-solid.svg' class='icon'/>`;
             }
         }
     }
@@ -547,42 +547,42 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     const { color, icon, textKey } = statusMap[status] || statusMap.default;
                     const statusText = texts[lang].status[textKey];
-                    const statusBtn = `<img src="icons/${icon}" class="icon me-1"/> ${statusText}`;
+                    const statusBtn = `<img src='icons/${icon}' class='icon me-1'/> ${statusText}`;
                     const statusColor = certEnd <= expSoon && certEnd > new Date() && status === 'V' ? 'expiration' : color;
 
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <!--
-                        <td class="text-center check-container"><input type="checkbox" class="cert-checkbox" data-id="${cert.id}" ${status === 'D' ? 'disabled' : ''}></td>
+                        <td class='text-center check-container'><input type='checkbox' class='cert-checkbox' data-id='${cert.id}' ${status === 'D' ? 'disabled' : ''}></td>
                         -->
-                        <td class="status-container" data-sort="status">
-                            <div class="button-container">
-                                <button class="btn btn-ssm btn-status btn-${statusColor} rounded-pill" data-id="${cert.id}">${statusBtn}</button>
-                                <div class="action-buttons" style="display: none;">
-                                    <button class="btn btn-action renew">
-                                        <img src="icons/rotate-right-solid.svg" class="icon rotate-icon" data-id="${cert.id}"/>
+                        <td class='status-container' data-sort='status'>
+                            <div class='button-container'>
+                                <button class='btn btn-ssm btn-status btn-${statusColor} rounded-pill' data-id='${cert.id}'>${statusBtn}</button>
+                                <div class='action-buttons' style='display: none;'>
+                                    <button class='btn btn-action renew'>
+                                        <img src='icons/rotate-right-solid.svg' class='icon rotate-icon' data-id='${cert.id}'/>
                                     </button>
-                                    <button class="btn btn-action revoke" ${status === 'R' ? 'disabled' : ''}>
-                                        <img src="icons/ban-solid.svg" class="icon cross-icon" data-id="${cert.id}"/>
+                                    <button class='btn btn-action revoke' ${status === 'R' ? 'disabled' : ''}>
+                                        <img src='icons/ban-solid.svg' class='icon cross-icon' data-id='${cert.id}'/>
                                     </button>
-                                    <span class="tooltip-container" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right" title="<div>${texts[lang].development}</div>">
-                                        <button class="btn btn-action disable disabled">
-                                            <img src="icons/circle-minus-regular.svg" class="icon wobble-icon" data-id="${cert.id}"/>
+                                    <span class='tooltip-container' data-bs-toggle='tooltip' data-bs-html='true' data-bs-placement='right' title='<div>${texts[lang].development}</div>'>
+                                        <button class='btn btn-action disable disabled'>
+                                            <img src='icons/circle-minus-regular.svg' class='icon wobble-icon' data-id='${cert.id}'/>
                                         </button>
                                     </span>
                                 </div>
                             </div>
                         </td>
-                        <td data-sort="commonName">${cert.id ? cert.id : `${texts[lang].undefined}`}</td>
-                        <td data-sort="serial">
-                            <span class="tooltip-container" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" title="
+                        <td data-sort='commonName'>${cert.id ? cert.id : `${texts[lang].undefined}`}</td>
+                        <td data-sort='serial'>
+                            <span class='tooltip-container' data-bs-toggle='tooltip' data-bs-html='true' data-bs-placement='bottom' title='
                                 <div>
                                     ${texts[lang].headers.signature}: ${cert.hash ? cert.hash : `${texts[lang].undefined}`}
-                                </div>">
+                                </div>'>
                                 ${cert.serial ? cert.serial : `${texts[lang].undefined}`}
                             </span>
                         </td>
-                        <td data-sort="type">
+                        <td data-sort='type'>
                             ${cert.type === 'server_ext' 
                                 ? texts[lang].modals.selector.select1 
                                 : cert.type === 'user_ext' 
@@ -590,26 +590,26 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 : cert.type || texts[lang].modals.missing.type
                             }
                         </td>
-                        <td data-sort="startDate">
-                            <span class="tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="
-                                ${cert.startDate ? cert.startDate : `${texts[lang].undefined}`}">
+                        <td data-sort='startDate'>
+                            <span class='tooltip-container' data-bs-toggle='tooltip' data-bs-placement='bottom' title='
+                                ${cert.startDate ? cert.startDate : `${texts[lang].undefined}`}'>
                                 ${formatDate(cert.startDate)}
                             </span>
                         </td>
-                        <td data-sort="endDate">
-                            <span class="tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="
-                                ${cert.endDate ? cert.endDate : `${texts[lang].undefined}`}">
+                        <td data-sort='endDate'>
+                            <span class='tooltip-container' data-bs-toggle='tooltip' data-bs-placement='bottom' title='
+                                ${cert.endDate ? cert.endDate : `${texts[lang].undefined}`}'>
                                 ${formatDate(cert.endDate)}
                             </span>
                         </td>
-                        <td class="download-container">
-                            <button type="button" class="btn btn-light btn-sm" data-bs-toggle="popover" data-bs-html="true" data-bs-content="
-                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-crt?cert=${cert.id}' download><img src='icons/certificate-solid.svg' class='icon me-1'/>.crt</a>
-                                <a class='btn btn-light btn-sm d-block text-start mb-1' href='download-csr?cert=${cert.id}' download><img src='icons/lock-solid.svg' class='icon me-1'/>.csr</a>
-                            ">
-                                <img src="icons/file-arrow-down-solid.svg" class="icon"/>
-                                <a class='btn btn-light btn-sm d-block text-start pkcs12Btn ${locked === true ? 'disabled' : ''}' id='data-id-${cert.id}'><img src='icons/file-export-solid.svg' class='icon me-1'/>.p12</a>
-                                <a class='btn btn-light btn-sm d-block text-start mb-1 ${locked === true ? 'disabled' : ''}' href='download-key?cert=${cert.id}' download><img src='icons/key-solid.svg' class='icon me-1'/>.key</a>
+                        <td class='download-container'>
+                            <button type='button' class='btn btn-light btn-sm' data-bs-toggle='popover' data-bs-html='true' data-bs-content='
+                                <a class="btn btn-light btn-sm d-block text-start mb-1" href="download-crt?cert=${cert.id}" download><img src="icons/certificate-solid.svg" class="icon me-1"/>.crt</a>
+                                <a class="btn btn-light btn-sm d-block text-start mb-1" href="download-csr?cert=${cert.id}" download><img src="icons/lock-solid.svg" class="icon me-1"/>.csr</a>
+                                <a class="btn btn-light btn-sm d-block text-start mb-1 ${locked === true ? 'disabled' : ''}" href="download-key?cert=${cert.id}" download><img src="icons/key-solid.svg" class="icon me-1"/>.key</a>
+                                <a class="btn btn-light btn-sm d-block text-start pkcs12Btn ${locked === true ? 'disabled' : ''}" id="data-id-${cert.id}"><img src="icons/file-export-solid.svg" class="icon me-1"/>.p12</a>
+                            '>
+                                <img src='icons/file-arrow-down-solid.svg' class='icon'/>
                             </button>
                         </td>
                     `;
@@ -753,60 +753,60 @@ document.addEventListener('DOMContentLoaded', async () => {
             case 'create':
                 modalTitle.textContent = texts[lang].titles.createMultiSan;
                 formContent.innerHTML = `
-                    <div class="mb-3">
-                        <div class="input-group">
-                            <span class="input-group-text">CN</span>
-                            <input type="text" class="form-control" id="commonName" placeholder="${texts[lang].modals.CN}" required>
+                    <div class='mb-3'>
+                        <div class='input-group'>
+                            <span class='input-group-text'>CN</span>
+                            <input type='text' class='form-control' id='commonName' placeholder='${texts[lang].modals.CN}' required>
                         </div>
                     </div>
                     <!--
-                    <div class="mb-3">
-                        <div class="input-group">
-                            <span class="input-group-text">/O=</span>
-                            <input type="text" class="form-control" id="org" placeholder="${texts[lang].modals.ORG}" aria-label="Organisation">
+                    <div class='mb-3'>
+                        <div class='input-group'>
+                            <span class='input-group-text'>/O=</span>
+                            <input type='text' class='form-control' id='org' placeholder='${texts[lang].modals.ORG}' aria-label='Organisation'>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <div class="input-group">
-                            <span class="input-group-text">/OU=</span>
-                            <input type="text" class="form-control" id="orgunit" placeholder="${texts[lang].modals.ORGUNIT}" aria-label="Organisation Unit">
+                    <div class='mb-3'>
+                        <div class='input-group'>
+                            <span class='input-group-text'>/OU=</span>
+                            <input type='text' class='form-control' id='orgunit' placeholder='${texts[lang].modals.ORGUNIT}' aria-label='Organisation Unit'>
                         </div>
                     </div>
                     -->
-                    <div class="mb-3">
-                        <label class="form-label">${texts[lang].modals.subject}</label>
-                        <div id="sanContainer">
-                            <div class="input-group mb-2">
-                                <input type="text" class="form-control" placeholder="IP" id="sanIP">
-                                <button class="btn btn border" type="button" id="addIPButton">+</button>
+                    <div class='mb-3'>
+                        <label class='form-label'>${texts[lang].modals.subject}</label>
+                        <div id='sanContainer'>
+                            <div class='input-group mb-2'>
+                                <input type='text' class='form-control' placeholder='IP' id='sanIP'>
+                                <button class='btn btn border' type='button' id='addIPButton'>+</button>
                             </div>
-                            <div id="addedIPAdresses" class="mt-2"></div>
-                            <div class="input-group mb-2">
-                                <input type="text" class="form-control" placeholder="DNS" id="sanDNS">
-                                <button class="btn btn border" type="button" id="addDNSButton">+</button>
+                            <div id='addedIPAdresses' class='mt-2'></div>
+                            <div class='input-group mb-2'>
+                                <input type='text' class='form-control' placeholder='DNS' id='sanDNS'>
+                                <button class='btn btn border' type='button' id='addDNSButton'>+</button>
                             </div>
-                            <div id="addedDNSNames" class="mt-2"></div>
+                            <div id='addedDNSNames' class='mt-2'></div>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="type" class="form-label">${texts[lang].modals.type}</label>
-                        <select class="form-select" id="type" name="type">
-                            <option value="server_ext">${texts[lang].modals.selector.select1}</option>
-                            <option value="user_ext">${texts[lang].modals.selector.select2}</option>
+                    <div class='mb-3'>
+                        <label for='type' class='form-label'>${texts[lang].modals.type}</label>
+                        <select class='form-select' id='type' name='type'>
+                            <option value='server_ext'>${texts[lang].modals.selector.select1}</option>
+                            <option value='user_ext'>${texts[lang].modals.selector.select2}</option>
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="startDate" class="form-label">${texts[lang].headers.startDate}</label>
-                        <input type="datetime-local" class="form-control" id="startDate" value="">
+                    <div class='mb-3'>
+                        <label for='startDate' class='form-label'>${texts[lang].headers.startDate}</label>
+                        <input type='datetime-local' class='form-control' id='startDate' value=''>
                     </div>
-                    <div class="mb-3">
-                        <label for="endDate" class="form-label">${texts[lang].headers.endDate}</label>
-                        <input type="datetime-local" class="form-control" id="endDate" value="">
+                    <div class='mb-3'>
+                        <label for='endDate' class='form-label'>${texts[lang].headers.endDate}</label>
+                        <input type='datetime-local' class='form-control' id='endDate' value=''>
                     </div>
                 `;
                 footerContent.innerHTML = `
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].actions.cancel}</button>
-                    <button type="button" class="btn btn-danger" id="confirmAction" disabled>${texts[lang].actions.confirm}</button>
+                    <button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>${texts[lang].actions.cancel}</button>
+                    <button type='button' class='btn btn-danger' id='confirmAction' disabled>${texts[lang].actions.confirm}</button>
                 `;
 
                 // Confirm certificate creation
@@ -874,65 +874,65 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                         modalTitle.textContent = `${texts[lang].titles.viewCert}`;
                         formContent.innerHTML = `
-                            <div id="certDetails">
-                                <p class="text-wrap text-break">
-                                    <strong class="me-2">${texts[lang].modals.CA}:</strong>
+                            <div id='certDetails'>
+                                <p class='text-wrap text-break'>
+                                    <strong class='me-2'>${texts[lang].modals.CA}:</strong>
                                     ${caValue}
                                 </p>
-                                <p class="text-wrap text-break">
-                                    <strong class="me-2">${texts[lang].modals.CN}:</strong>
+                                <p class='text-wrap text-break'>
+                                    <strong class='me-2'>${texts[lang].modals.CN}:</strong>
                                     ${commonName ? commonName : `${texts[lang].undefined}`}
                                 </p>
-                                <p class="text-wrap text-break">
-                                    <strong class="me-2">${texts[lang].modals.SUBJ}:</strong>
+                                <p class='text-wrap text-break'>
+                                    <strong class='me-2'>${texts[lang].modals.SUBJ}:</strong>
                                     ${splitSubject}
                                 </p>
 
-                                <p class="text-wrap text-break">
-                                    <strong class="me-2">${texts[lang].headers.serial}:</strong>
+                                <p class='text-wrap text-break'>
+                                    <strong class='me-2'>${texts[lang].headers.serial}:</strong>
                                     ${cert.serial ? cert.serial : `${texts[lang].undefined}`}
                                 </p>
-                                <p class="text-wrap text-break">
-                                    <strong class="me-2">${texts[lang].headers.signature}:</strong>
+                                <p class='text-wrap text-break'>
+                                    <strong class='me-2'>${texts[lang].headers.signature}:</strong>
                                     ${cert.hash ? cert.hash : `${texts[lang].undefined}`}
                                 </p>
 
-                                <p class="text-wrap text-break">
-                                    <strong class="me-2">IP:</strong>
+                                <p class='text-wrap text-break'>
+                                    <strong class='me-2'>IP:</strong>
                                     ${ipList.length > 0 ? ipList.map(ip => `<span>${ip}</span>`).join(', ') : `${texts[lang].modals.missing.IP}`}
                                 </p>
-                                <p class="text-wrap text-break">
-                                    <strong class="me-2">DNS:</strong>
+                                <p class='text-wrap text-break'>
+                                    <strong class='me-2'>DNS:</strong>
                                     ${dnsList.length > 0 ? dnsList.map(dns => `<span>${dns}</span>`).join(', ') : `${texts[lang].modals.missing.DNS}`}
                                 </p>
 
-                                <p class="text-wrap text-break">
-                                    <strong class="me-2">${texts[lang].modals.type}:</strong>
+                                <p class='text-wrap text-break'>
+                                    <strong class='me-2'>${texts[lang].modals.type}:</strong>
                                     ${cert.type === 'server_ext' ? texts[lang].modals.selector.select1 : cert.type === 'user_ext' ? texts[lang].modals.selector.select2 : cert.type || texts[lang].modals.missing.type}
                                 </p>
-                                <p class="text-wrap text-break">
-                                    <strong class="me-2">${texts[lang].headers.startDate}:</strong>
+                                <p class='text-wrap text-break'>
+                                    <strong class='me-2'>${texts[lang].headers.startDate}:</strong>
                                     ${cert.startDate ? cert.startDate : `${texts[lang].undefined}`}
                                 </p>
-                                <p class="text-wrap text-break">
-                                    <strong class="me-2">${texts[lang].headers.endDate}:</strong>
+                                <p class='text-wrap text-break'>
+                                    <strong class='me-2'>${texts[lang].headers.endDate}:</strong>
                                     ${cert.endDate ? cert.endDate : `${texts[lang].undefined}`}
                                 </p>
 
-                                <p class="text-wrap text-break">
-                                    <strong class="me-2">${texts[lang].headers.downloads}:</strong>
-                                    <span class="d-inline-block mt-1">
-                                        <a class="btn btn-light btn-sm mb-1 me-1" href='download-crt?cert=${commonName}' download>
-                                            <img src="icons/certificate-solid.svg" class="icon me-1"/>.crt
+                                <p class='text-wrap text-break'>
+                                    <strong class='me-2'>${texts[lang].headers.downloads}:</strong>
+                                    <span class='d-inline-block mt-1'>
+                                        <a class='btn btn-light btn-sm mb-1 me-1' href='download-crt?cert=${commonName}' download>
+                                            <img src='icons/certificate-solid.svg' class='icon me-1'/>.crt
                                         </a>
-                                        <a class="btn btn-light btn-sm mb-1 me-1" href='download-csr?cert=${commonName}' download>
-                                            <img src="icons/lock-solid.svg" class="icon me-1"/>.csr
+                                        <a class='btn btn-light btn-sm mb-1 me-1' href='download-csr?cert=${commonName}' download>
+                                            <img src='icons/lock-solid.svg' class='icon me-1'/>.csr
                                         </a>
-                                            <img src="icons/key-solid.svg" class="icon me-1"/>.key
-                                        <a class="btn btn-light btn-sm mb-1 me-1 ${locked === true ? 'disabled' : ''}' href='download-key?cert=${commonName}" download>
+                                        <a class='btn btn-light btn-sm mb-1 me-1 ${locked === true ? 'disabled' : ''}' href='download-key?cert=${commonName}' download>
+                                            <img src='icons/key-solid.svg' class='icon me-1'/>.key
                                         </a>
-                                            <img src="icons/file-export-solid.svg" class="icon me-1"/>.p12
-                                        <a class="btn btn-light btn-sm mb-1 pkcs12Btn ${locked === true ? 'disabled' : ''}' id='data-id-${cert.id}">
+                                        <a class='btn btn-light btn-sm mb-1 pkcs12Btn ${locked === true ? 'disabled' : ''}' id='data-id-${cert.id}'>
+                                            <img src='icons/file-export-solid.svg' class='icon me-1'/>.p12
                                         </a>
                                     </span>
                                 </p>
@@ -945,62 +945,62 @@ document.addEventListener('DOMContentLoaded', async () => {
             case 'renew':
                 modalTitle.textContent = `${texts[lang].titles.renewCert}`;
                 formContent.innerHTML = `
-                    <div class="mb-3">
-                        <div class="input-group">
-                            <span class="input-group-text">CA</span>
-                            <input type="text" class="form-control" id="certificateAuthority" placeholder="${texts[lang].modals.CA}" value="${caValue}" readonly>
+                    <div class='mb-3'>
+                        <div class='input-group'>
+                            <span class='input-group-text'>CA</span>
+                            <input type='text' class='form-control' id='certificateAuthority' placeholder='${texts[lang].modals.CA}' value='${caValue}' readonly>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <div class="input-group">
-                            <span class="input-group-text">CN</span>
-                            <input type="text" class="form-control" id="commonName" placeholder="${texts[lang].modals.CN}" value="${cnValue}" readonly>
+                    <div class='mb-3'>
+                        <div class='input-group'>
+                            <span class='input-group-text'>CN</span>
+                            <input type='text' class='form-control' id='commonName' placeholder='${texts[lang].modals.CN}' value='${cnValue}' readonly>
                         </div>
                     </div>
                     <!--
-                    <div class="mb-3">
-                        <div class="input-group">
-                            <span class="input-group-text">/O=</span>
-                            <input type="text" class="form-control" id="org" aria-label="Organisation" placeholder="${texts[lang].modals.ORG}" value="${oValue}">
+                    <div class='mb-3'>
+                        <div class='input-group'>
+                            <span class='input-group-text'>/O=</span>
+                            <input type='text' class='form-control' id='org' aria-label='Organisation' placeholder='${texts[lang].modals.ORG}' value='${oValue}'>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <div class="input-group">
-                            <span class="input-group-text">/OU=</span>
-                            <input type="text" class="form-control" id="orgunit" aria-label="Organisation Unit" placeholder="${texts[lang].modals.ORGUNIT}" value="${ouValue}">
+                    <div class='mb-3'>
+                        <div class='input-group'>
+                            <span class='input-group-text'>/OU=</span>
+                            <input type='text' class='form-control' id='orgunit' aria-label='Organisation Unit' placeholder='${texts[lang].modals.ORGUNIT}' value='${ouValue}'>
                         </div>
                     </div>
                     -->
-                    <div class="mb-3">
-                        <label class="form-label">SAN (Subject Alternative Name)</label>
-                        <div id="sanContainer">
-                            <div class="input-group mb-2">
-                                <input type="text" class="form-control" id="sanIP" value="" readonly>
+                    <div class='mb-3'>
+                        <label class='form-label'>SAN (Subject Alternative Name)</label>
+                        <div id='sanContainer'>
+                            <div class='input-group mb-2'>
+                                <input type='text' class='form-control' id='sanIP' value='' readonly>
                             </div>
-                            <div class="input-group mb-2">
-                                <input type="text" class="form-control" id="sanDNS" value="" readonly>
+                            <div class='input-group mb-2'>
+                                <input type='text' class='form-control' id='sanDNS' value='' readonly>
                             </div>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="type" class="form-label">${texts[lang].modals.type}</label>
-                        <select class="form-select" id="type" name="type" disabled>
-                            <option value="server_ext">${texts[lang].modals.selector.select1}</option>
-                            <option value="user_ext">${texts[lang].modals.selector.select2}</option>
+                    <div class='mb-3'>
+                        <label for='type' class='form-label'>${texts[lang].modals.type}</label>
+                        <select class='form-select' id='type' name='type' disabled>
+                            <option value='server_ext'>${texts[lang].modals.selector.select1}</option>
+                            <option value='user_ext'>${texts[lang].modals.selector.select2}</option>
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="startDate" class="form-label">${texts[lang].headers.startDate}</label>
-                        <input type="datetime-local" class="form-control" id="startDate" value="">
+                    <div class='mb-3'>
+                        <label for='startDate' class='form-label'>${texts[lang].headers.startDate}</label>
+                        <input type='datetime-local' class='form-control' id='startDate' value=''>
                     </div>
-                    <div class="mb-3">
-                        <label for="endDate" class="form-label">${texts[lang].headers.endDate}</label>
-                        <input type="datetime-local" class="form-control" id="endDate" value="">
+                    <div class='mb-3'>
+                        <label for='endDate' class='form-label'>${texts[lang].headers.endDate}</label>
+                        <input type='datetime-local' class='form-control' id='endDate' value=''>
                     </div>
                 `;
                 footerContent.innerHTML = `
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].actions.cancel}</button>
-                    <button type="button" class="btn btn-primary" id="confirmAction">${texts[lang].actions.renew}</button>
+                    <button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>${texts[lang].actions.cancel}</button>
+                    <button type='button' class='btn btn-primary' id='confirmAction'>${texts[lang].actions.renew}</button>
                 `;
 
                 // Confirm certificate renewal
@@ -1051,22 +1051,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                 modalTitle.textContent = `${texts[lang].titles.revokeCert}`;
                 formContent.innerHTML = `
                     <p>${texts[lang].confirmations.confirmRevoke}</p>
-                    <div class="mb-3">
-                        <div class="input-group">
-                            <span class="input-group-text">CA</span>
-                            <input type="text" class="form-control" id="certificateAuthority" placeholder="${texts[lang].modals.CA}" value="${caValue}" readonly>
+                    <div class='mb-3'>
+                        <div class='input-group'>
+                            <span class='input-group-text'>CA</span>
+                            <input type='text' class='form-control' id='certificateAuthority' placeholder='${texts[lang].modals.CA}' value='${caValue}' readonly>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <div class="input-group">
-                            <span class="input-group-text">CN</span>
-                            <input type="text" class="form-control" id="commonName" placeholder="${texts[lang].modals.CN}" value="${cnValue}" readonly>
+                    <div class='mb-3'>
+                        <div class='input-group'>
+                            <span class='input-group-text'>CN</span>
+                            <input type='text' class='form-control' id='commonName' placeholder='${texts[lang].modals.CN}' value='${cnValue}' readonly>
                         </div>
                     </div>
                 `;
                 footerContent.innerHTML = `
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].actions.cancel}</button>
-                    <button type="button" class="btn btn-primary" id="confirmAction">${texts[lang].actions.revoke}</button>
+                    <button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>${texts[lang].actions.cancel}</button>
+                    <button type='button' class='btn btn-primary' id='confirmAction'>${texts[lang].actions.revoke}</button>
                 `;
 
                 // Confirm certificate revocation
@@ -1097,22 +1097,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                 modalTitle.textContent = `${texts[lang].titles.disableCert}`;
                 formContent.innerHTML = `
                     <p>${texts[lang].confirmations.confirmDisable}</p>
-                    <div class="mb-3">
-                        <div class="input-group">
-                            <span class="input-group-text">CA</span>
-                            <input type="text" class="form-control" id="certificateAuthority" placeholder="${texts[lang].modals.CA}" value="${caValue}" readonly>
+                    <div class='mb-3'>
+                        <div class='input-group'>
+                            <span class='input-group-text'>CA</span>
+                            <input type='text' class='form-control' id='certificateAuthority' placeholder='${texts[lang].modals.CA}' value='${caValue}' readonly>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <div class="input-group">
-                            <span class="input-group-text">CN</span>
-                            <input type="text" class="form-control" id="commonName" placeholder="${texts[lang].modals.CN}" value="${cnValue}" readonly>
+                    <div class='mb-3'>
+                        <div class='input-group'>
+                            <span class='input-group-text'>CN</span>
+                            <input type='text' class='form-control' id='commonName' placeholder='${texts[lang].modals.CN}' value='${cnValue}' readonly>
                         </div>
                     </div>
                 `;
                 footerContent.innerHTML = `
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${texts[lang].actions.cancel}</button>
-                    <button type="button" class="btn btn-primary" id="confirmAction">${texts[lang].actions.disable}</button>
+                    <button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>${texts[lang].actions.cancel}</button>
+                    <button type='button' class='btn btn-primary' id='confirmAction'>${texts[lang].actions.disable}</button>
                 `;
 
                 // Confirm certificate deactivation
@@ -1189,7 +1189,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (value && !exists && validFn(value)) {
                 const item = document.createElement('div');
                 item.className = 'alert alert-secondary fade show p-2 d-flex justify-content-between align-items-center';
-                item.innerHTML = `${value}<button class="btn btn-sm btn-close" aria-label="Close"></button>`;
+                item.innerHTML = `${value}<button class='btn btn-sm btn-close' aria-label='Close'></button>`;
                 item.querySelector('.btn-close').onclick = () => list.removeChild(item);
                 list.appendChild(item);
                 input.value = '';
@@ -1265,7 +1265,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             elements.forEach(el => el.classList.remove('disabled'));
             switchBtn.innerHTML = capitalize(currentProfile);
             switchMenu.innerHTML = profiles.map(profile => 
-                `<a id="${profile}" class="dropdown-item text-wrap text-break ${profile === currentProfile ? 'active' : ''}">${capitalize(profile)}</a>`
+                `<a id='${profile}' class='dropdown-item text-wrap text-break ${profile === currentProfile ? 'active' : ''}'>${capitalize(profile)}</a>`
             ).join('');
 
             switchMenu.querySelectorAll('.dropdown-item').forEach(item => item.addEventListener('click', () => switchProfile(item.id, currentProfile)));
@@ -1405,8 +1405,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Password form events
-    passwordForm.addEventListener('submit', passwordSubmitCheck);
     passwordForm.addEventListener('input', passwordInputCheck);
+    passwordForm.addEventListener('submit', passwordSubmitCheck);
 
     // Pkcs12 form events
     pkcs12Form.addEventListener('submit', (e) => pkcs12SubmitCheck(e, commonName));
