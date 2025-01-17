@@ -296,6 +296,36 @@ app.get('/is-locked', async (req, res) => {
 
 // ----------- ----------- POST REQUESTS ----------- ----------- //
 
+// Route to download a pkcs12 file (.p12)
+app.post('/download-pkcs12', async (req, res) => {
+    const { commonName, password, export_password } = req.body;
+
+    if (!req.session.srcFolder) return res.status(400).json({ error: 'Current profile directory is not set.' });
+    if (!req.session.caPassword) return res.status(400).json({ error: 'Certificate authority password is not set.' });
+    if (!commonName) return res.status(400).json({ error: 'Common Name argument is empty.' });
+    if (!export_password) return res.status(400).json({ error: 'Export Password argument is empty.' });
+    if (!checkCommonName(commonName)) return res.status(400).json({ error: `Invalid certificate name (${commonName}).` });
+
+    try {
+        let args = ['-C', req.session.srcFolder, 'ca-dump-pkcs12', commonName];
+
+        const output = await safeExec(zpkiCmd, args, { env: { ...process.env,
+                KEYPASS: 1,
+                ZPKI_PASSWORD: password || '',
+                EXPORT_PASSWORD: export_password
+            },
+            encoding: null
+        });
+
+        res.setHeader('Content-Disposition', `attachment; filename=${commonName}.p12`);
+        res.setHeader('Content-Type', 'application/pkcs12');
+        res.end(output.stdout, 'binary');
+    } catch (err) {
+        console.error('Error executing command:', err);
+        res.status(500).json({ error: 'Certificate not found.' });
+    }
+});
+
 // Route to switch profile
 app.post('/switch-profile', async (req, res) => {
     const { profile } = req.body;
