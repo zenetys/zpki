@@ -837,7 +837,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         });
 
                         if (response.ok) {
-                            loadCertData(searchTerm, tags);
+                            loadCertData(searchInput.value, getSelectedTags());
                             modal.hide();
                         } else {
                             showAlert('passphraseAlert');
@@ -1038,7 +1038,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         });
 
                         if (response.ok) {
-                            loadCertData(searchTerm, tags);
+                            loadCertData(searchInput.value, getSelectedTags());
                             modal.hide();
                         } else {
                             showAlert('passphraseAlert');
@@ -1085,7 +1085,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         });
 
                         if (response.ok) {
-                            loadCertData(searchTerm, tags);
+                            loadCertData(searchInput.value, getSelectedTags());
                             modal.hide();
                         } else {
                             showAlert('passphraseAlert');
@@ -1129,7 +1129,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         });
 
                         if (response.ok) {
-                            loadCertData(searchTerm, tags);
+                            loadCertData(searchInput.value, getSelectedTags());
                             modal.hide();
                         } else {
                             showAlert('passphraseAlert');
