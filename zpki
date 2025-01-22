@@ -791,7 +791,7 @@ function ca-dump-pkcs12() {
   local args
   [[ -z ${ARGS[0]} ]] && fatal "Function needs an argument : FILE" && return
 
-  ZPKI_PASSWORD=$EXPORT_PASSWORD password-ready || return
+  ZPKI_PASSWORD=$ZPKI_EXPORT_PASSWORD password-ready || return
 
   [[ -e $KEYFILE ]] || fatal "Cannot get $KEYFILE"
   [[ -e $CRTFILE ]] || fatal "Cannot get $CRTFILE"
@@ -801,7 +801,7 @@ function ca-dump-pkcs12() {
     -inkey "$KEYFILE"
     ${KEYPASS:+-passin "env:ZPKI_PASSWORD"}
     -CAfile "$CA_CRTFILE"
-    -passout "env:EXPORT_PASSWORD"
+    -passout "env:ZPKI_EXPORT_PASSWORD"
   )
   openssl pkcs12 "${args[@]}"
 }
