@@ -313,7 +313,7 @@ app.post('/download-pkcs12', async (req, res) => {
         const output = await safeExec(zpkiCmd, args, { env: { ...process.env,
                 KEYPASS: 1,
                 ZPKI_PASSWORD: password || '',
-                EXPORT_PASSWORD: export_password
+                ZPKI_EXPORT_PASSWORD: export_password
             },
             encoding: null
         });
