@@ -16,8 +16,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const pkcs12Submit = document.getElementById('pkcs12Submit');
 
     // Downloads 
-    const keyBtn = document.querySelectorAll('.keyBtn');
-    const pkcs12Btn = document.querySelectorAll('.pkcs12Btn');
     const downloadCA = document.getElementById('downloadCA');
     const downloadCRL = document.getElementById('downloadCRL');
 
@@ -329,6 +327,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Update lock / unlock buttons
     function updateInterface() {
         // const checkboxes = document.querySelectorAll('.cert-checkbox');
+        const keyBtn = document.querySelectorAll('.keyBtn');
+        const pkcs12Btn = document.querySelectorAll('.pkcs12Btn');
         if (!locked) {
             // checkboxes.forEach(checkbox => { checkbox.disabled = false; });
             keyBtn.forEach(btn => { btn.classList.remove('disabled'); });
