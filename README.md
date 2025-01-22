@@ -5,31 +5,26 @@
 ### 1. Install system dependencies
 
 Install `npm` using `apt`:
-```console
-$ sudo apt install npm
 ```
-
-Then, install `nodejs` via `npm`:
-```console
-$ npm install nodejs
+$ sudo apt install nodejs npm
 ```
 
 ### 2. Download the project from GitHub
-```console
+```
 $ git clone https://github.com/zenetys/zpki.git
 $ cd zpki
 ```
 
 ### 3. Start the project
 Once the dependencies are installed, **build** and **start** the project using the following command:
-```console
+```
 $ npm run build
 ```
 
 This will install **dependencies** and start the **API**.  
-If you want to simply **start** the project, you can use the following command:
-```console
-$ npm run start
+If you want to simply install all dependencies without building the project, you can use:
+```
+$ npm install
 ```
 
 ### 4. Verify the setup
@@ -44,7 +39,7 @@ Now, you can create the first **certificate authority** (CA), see next section t
 
 ### Usage
 
-```console
+```
 $ zpki [options] ACTION [parameters]
 ```
 
@@ -92,7 +87,7 @@ For Subject Alternative Names (SANs), add address types like: `DNS:<FQDN>`, `IP:
 
 ### Create a Certificate Authority (CA)
 
-```console
+```
 $ zpki -C ZPKI-Demo-CA -y create-ca "ZPKI Demo Certificate Authority"
 ```
 ```console
@@ -109,7 +104,8 @@ Enter pass phrase for ./ca.key: *********
 
 ### Create a Certificate
 
-```console
+In the following command, `DNS` and `IP` are used to specify the **Subject Alternative Names** (SANs).
+```
 $ zpki -C ZPKI-Demo-CA -y -c none ca-create-crt "zpki.acme.loc" DNS:zpki.acme.loc IP:10.109.42.104
 ```
 ```console
@@ -124,7 +120,8 @@ Updated ca.idz file
 
 #### Renew a Certificate
 
-```console
+In the following command, `ZPKI_EXT` and `ZPKI_CA_PASSWORD` are used to define the certificate extension and the CA password respectively.
+```
 $ ZPKI_EXT=server_ext ZPKI_CA_PASSWORD=x9ZAyX289 zpki -C ZPKI-Demo-CA -y -c none ca-update-crt "zpki.acme.loc" DNS:zpki.acme.loc IP:10.109.42.104
 ```
 ```console
@@ -138,7 +135,7 @@ Updated ca.idz file
 
 ### Revoke a Certificate
 
-```console
+```
 $ zpki -C ZPKI-Demo-CA -y -c none ca-revoke-crt "zpki.acme.loc"
 ```
 ```console
@@ -150,10 +147,10 @@ Enter pass phrase for ./ca.key: *********
 
 ### List certificates
 
-```console
+```
 $ zpki -C ZPKI-Demo-CA ca-list --json | jq
 ```
-```console
+```json
 [
   {
     "status": "R",
@@ -171,4 +168,125 @@ $ zpki -C ZPKI-Demo-CA ca-list --json | jq
     "type": "server_ext"
   }
 ]
+```
+
+# Server deployment example
+
+### Base tree structure
+```bash
+.
+├── data/
+│   └── zpki/
+│       └── CA.zpki/
+│           ├── CA-Example-1/     # First Certificate Authority
+│           └── CA-Example-2/     # Second Certificate Authority
+├── opt/
+│   └── zpki/
+│       ├── api.js                # Node.js API
+│       ├── ca-folders            # List CA folders script
+│       ├── icons/                # Icons folder
+│       ├── index.html            # Main page
+│       ├── main.css              # Main CSS
+│       ├── main.js               # Main Js
+│       ├── node_modules/         # Node.js modules
+│       ├── package.json          # Node.js package
+│       ├── package-lock.json     # Node.js package lock
+│       └── zpki                  # Main script
+└── etc/
+    ├── sudoers.d/
+    │   └── zpki                  # Sudoers configuration file
+    └── systemd/system/
+        └── zpki-core.service     # Systemd service configuration file
+```
+
+### Create new groups and add new users
+
+Add a user that will read and write to the `/data/zpki` directory:
+```
+$ groupadd -r zpki-data
+$ useradd -r -g zpki-data -d /data/CA.zpki -s /sbin/nologin zpki-data
+```
+
+Add a user that will execute the `zpki` script:
+```
+$ groupadd -r zpki-core
+$ useradd -r -g zpki-core -d /opt/zpki -s /sbin/nologin zpki-core
+```
+
+### Configure sudoers
+
+Edit the `/etc/sudoers.d/zpki` file :
+```
+Cmnd_Alias          ZPKI=/opt/zpki/zpki, /opt/zpki/ca-folders
+Defaults!ZPKI       env_reset, env_keep="ZPKI_*", !requiretty, !pam_session
+zpki-core           ALL=(zpki-data) NOPASSWD: ZPKI
+```
+
+### Systemd service file configuration
+
+```
+[Unit]
+Description=zpki-core
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/node /opt/zpki/api.js
+User=zpki-core
+UMask=0007
+Restart=always
+SyslogIdentifier=zpki-core
+
+Environment="LISTEN_ADDRESS=127.0.0.1"
+Environment="LISTEN_PORT=3000"
+Environment="PASSWORD_EXPIRE_MS=600000"
+Environment="COOKIE_MAX_AGE_MS=86400000"
+Environment="LOG_HTTP_REQUESTS=1"
+Environment="CA_BASEDIR=/data/CA.zpki"
+Environment="CA_FOLDERS_CMD=sudo -n -u zpki-data /opt/zpki/ca-folders"
+Environment="ZPKI_CMD=sudo -n -u zpki-data /opt/zpki/zpki"
+Environment="ZPKI_OPENSSL_CMD=/usr/bin/openssl11"
+# Environment="TRUST_PROXY=loopback,{IP Adresses}"
+
+[Install]
+WantedBy=multi-user.target
+```
+```
+$ systemctl daemon-reload
+```
+
+### Set up redirection and proxy
+
+```console
+Redirect /zpki /zpki/
+ProxyPass /zpki/ http://127.0.0.1:3000/ connectiontimeout=5 timeout=30
+ProxyPassReverse /zpki/ http://127.0.0.1:3000/
+```
+
+If apache configuration is updated, restart the service with:
+```
+$ systemctl reload httpd
+```
+
+### Starting service & check logs
+
+To enable and start the service, use the following commands:
+```
+$ systemctl enable zpki-core
+$ systemctl start zpki-core
+```
+
+To restart the service, use:
+```
+$ systemctl restart zpki-core
+```
+
+Check if the service is running:
+```
+$ systemctl status zpki-core
+```
+
+Check logs for errors or verify the service is running:
+```
+$ journalctl -u zpki-core -f
 ```
