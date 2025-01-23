@@ -108,8 +108,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     select2: "User"
                 },
                 enterPass: "CA passphrase (can be empty)",
-                enterPkcs12: "Certificate password (can be empty)",
-                enterExport: "Export password (required)",
+                enterPkcs12: "Private key passphrase (can be empty)",
+                enterExport: "Export passphrase (required)",
                 fileP12: ".p12 file",
                 missing: {
                     CA: "No CA found",
@@ -211,8 +211,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     select2: "Utilisateur"
                 },
                 enterPass: "Passphrase de la CA (peut être vide)",
-                enterPkcs12: "Mot de passe du certificat (peut être vide)",
-                enterExport: "Mot de passe d'export (requis)",
+                enterPkcs12: "Pasphrase de la clé privée (peut être vide)",
+                enterExport: "Passphrase d'export (requis)",
                 fileP12: "le fichier .p12",
                 missing: {
                     CA: "CA introuvable",
