@@ -105,6 +105,7 @@ Enter pass phrase for ./ca.key: *********
 ### Create a Certificate
 
 In the following command, `DNS` and `IP` are used to specify the **Subject Alternative Names** (SANs).
+
 ```
 $ zpki -C ZPKI-Demo-CA -y -c none ca-create-crt "zpki.acme.loc" DNS:zpki.acme.loc IP:10.109.42.104
 ```
@@ -121,6 +122,7 @@ Updated ca.idz file
 #### Renew a Certificate
 
 In the following command, `ZPKI_EXT` and `ZPKI_CA_PASSWORD` are used to define the certificate extension and the CA password respectively.
+
 ```
 $ ZPKI_EXT=server_ext ZPKI_CA_PASSWORD=x9ZAyX289 zpki -C ZPKI-Demo-CA -y -c none ca-update-crt "zpki.acme.loc" DNS:zpki.acme.loc IP:10.109.42.104
 ```
@@ -202,12 +204,14 @@ $ zpki -C ZPKI-Demo-CA ca-list --json | jq
 ### Create new groups and add new users
 
 Add a user that will read and write to the `/data/zpki` directory:
+
 ```
 $ groupadd -r zpki-data
 $ useradd -r -g zpki-data -d /data/CA.zpki -s /sbin/nologin zpki-data
 ```
 
-Add a user that will execute the `zpki` script:
+Add a user that will run the server:
+
 ```
 $ groupadd -r zpki-core
 $ useradd -r -g zpki-core -d /opt/zpki -s /sbin/nologin zpki-core
@@ -215,7 +219,8 @@ $ useradd -r -g zpki-core -d /opt/zpki -s /sbin/nologin zpki-core
 
 ### Configure sudoers
 
-Edit the `/etc/sudoers.d/zpki` file :
+Edit the `/etc/sudoers.d/zpki` file:
+
 ```
 Cmnd_Alias          ZPKI=/opt/zpki/zpki, /opt/zpki/ca-folders
 Defaults!ZPKI       env_reset, env_keep="ZPKI_*", !requiretty, !pam_session
@@ -223,6 +228,8 @@ zpki-core           ALL=(zpki-data) NOPASSWD: ZPKI
 ```
 
 ### Systemd service file configuration
+
+Edit the `/etc/systemd/system/zpki-core.service` file:
 
 ```
 [Unit]
@@ -257,6 +264,8 @@ $ systemctl daemon-reload
 
 ### Set up redirection and proxy
 
+Sample reverse proxy configuration for apache:
+
 ```console
 Redirect /zpki /zpki/
 ProxyPass /zpki/ http://127.0.0.1:3000/ connectiontimeout=5 timeout=30
@@ -264,6 +273,7 @@ ProxyPassReverse /zpki/ http://127.0.0.1:3000/
 ```
 
 If apache configuration is updated, restart the service with:
+
 ```
 $ systemctl reload httpd
 ```
@@ -271,22 +281,26 @@ $ systemctl reload httpd
 ### Starting service & check logs
 
 To enable and start the service, use the following commands:
+
 ```
 $ systemctl enable zpki-core
 $ systemctl start zpki-core
 ```
 
 To restart the service, use:
+
 ```
 $ systemctl restart zpki-core
 ```
 
 Check if the service is running:
+
 ```
 $ systemctl status zpki-core
 ```
 
 Check logs for errors or verify the service is running:
+
 ```
 $ journalctl -u zpki-core -f
 ```
