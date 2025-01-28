@@ -245,7 +245,11 @@ function openssl() {
 function openssl_debug() {
   local IFS=$'\n'
   (( VERBOSE >= 1 )) && PREFIX=": openssl" echo_quoted "$@" >&2
-  ERRMSG=( $(openssl "$@" 2>&1) )
+  if [[ -n $RAW ]]; then
+    openssl "$@"
+  else
+    ERRMSG=( $(openssl "$@" 2>&1) )
+  fi
   return $?
 }
 
@@ -803,7 +807,7 @@ function ca-dump-pkcs12() {
     -CAfile "$CA_CRTFILE"
     -passout "env:ZPKI_EXPORT_PASSWORD"
   )
-  openssl pkcs12 "${args[@]}"
+  RAW=1 $OPENSSL pkcs12 "${args[@]}"
 }
 
 #X-ACTION ca-test-password: Test if CA passphrase is correct
