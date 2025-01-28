@@ -850,7 +850,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     .then(response => {
                         if (!response.ok) {
                             showAlert('basicAlert');
-                            return Promise.reject();
+                            return Promise.reject(`HTTP response status ${response.status}`);
                         }
                         return response.json();
                     })
@@ -1165,7 +1165,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .then(response => {
                     if (!response.ok) {
                         showAlert('basicAlert');
-                        return Promise.reject();
+                        return Promise.reject(`HTTP response status ${response.status}`);
                     }
                     return response.json();
                 })
@@ -1247,7 +1247,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function isLocked() {
         try {
             const response = await fetch(`${API_BASE_URL}/is-locked`);
-            if (!response.ok) return Promise.reject();
+            if (!response.ok) {
+                console.error(`HTTP response status ${response.status}`);
+                return true;
+            }
             locked = (await response.json()).response;
             return locked;
         } catch (error) { return true; }
