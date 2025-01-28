@@ -804,7 +804,7 @@ function ca-dump-pkcs12() {
     -in "$CRTFILE"
     -inkey "$KEYFILE"
     ${KEYPASS:+-passin "env:ZPKI_PASSWORD"}
-    -CAfile "$CA_CRTFILE"
+    -certfile "$CA_CRTFILE"
     -passout "env:ZPKI_EXPORT_PASSWORD"
   )
   RAW=1 $OPENSSL pkcs12 "${args[@]}"
