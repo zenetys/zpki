@@ -589,13 +589,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <td data-sort='startDate'>
                             <span class='tooltip-container' data-bs-toggle='tooltip' data-bs-placement='bottom' title='
                                 ${cert.startDate ? cert.startDate : `${texts[lang].undefined}`}'>
-                                ${formatDate(cert.startDate)}
+                                ${cert.startDate ? formatDate(cert.startDate) : texts[lang].undefined}
                             </span>
                         </td>
                         <td data-sort='endDate'>
                             <span class='tooltip-container' data-bs-toggle='tooltip' data-bs-placement='bottom' title='
                                 ${cert.endDate ? cert.endDate : `${texts[lang].undefined}`}'>
-                                ${formatDate(cert.endDate)}
+                                ${cert.endDate ? formatDate(cert.endDate) : texts[lang].undefined}
                             </span>
                         </td>
                         <td class='download-container'>
