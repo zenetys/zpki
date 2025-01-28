@@ -516,7 +516,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (!response.ok) {
                     showAlert('listAlert');
                     tableContent.innerHTML = '';
-                    return Promise.reject();
+                    return Promise.reject(`HTTP response status ${response.status}`);
                 }
 
                 tableContent.innerHTML = '';
@@ -714,7 +714,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 initializeTooltips();
                 updateInterface();
             })
-            .catch(() => { return Promise.reject(); });
+            .catch((err) => {
+                console.error('Error in loadCertData:', err);
+            });
     }
 
     // Function to manage all modals
