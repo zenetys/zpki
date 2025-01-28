@@ -239,7 +239,7 @@ function echo_quoted() {
 }
 
 function openssl() {
-    command "${ZPKI_OPENSSL_CMD:-openssl}" "$@";
+  command "${ZPKI_OPENSSL_CMD:-openssl}" "$@";
 }
 
 function openssl_debug() {
