@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     select2: "Utilisateur"
                 },
                 enterPass: "Passphrase de la CA (peut être vide)",
-                enterPkcs12: "Pasphrase de la clé privée (peut être vide)",
+                enterPkcs12: "Passphrase de la clé privée (peut être vide)",
                 enterExport: "Passphrase d'export (requis)",
                 fileP12: "le fichier .p12",
                 missing: {
