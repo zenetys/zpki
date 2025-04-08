@@ -982,7 +982,7 @@ if [[ ! -e $CA_CRTFILE ]]; then
   SUBJECT=${SUBJECT:-"/CN=Certificate Authority"} create-ca || exit $?
 fi
 
-[[ -z $FILENAME && $COMMON_NAME ]] && FILENAME=${COMMON_NAME//[^A-Za-z0-9@_-]/_}
+[[ -z $FILENAME && $COMMON_NAME ]] && FILENAME=${COMMON_NAME//[^A-Za-z0-9@_.-]/_}
 
 if [[ -e $CA_CRTFILE ]]; then
   CNFFILE=${CNFFILE:-$CA_CNFFILE}
