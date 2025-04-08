@@ -422,9 +422,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Verify if is a valid domain format
     function isValidDNS(dns) {
-        const dnsPattern = /^(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.[A-Za-z]{2,})+$/;
-        const wildcardPattern = /^[\*\w-]+\.[A-Za-z0-9-]{1,63}(\.[A-Za-z]{2,})+$/;
-        return dnsPattern.test(dns) || wildcardPattern.test(dns);
+        const labels = dns.split('.');
+        let isWildcard = false;
+        if (labels[0] === '*') {
+            isWildcard = true;
+            labels.shift();
+        }
+        if (labels.length === 0)
+            return false;
+        const labelPattern = /^(?!-)[a-z0-9-]{1,63}(?<!-)$/i;
+        if (!labels.every((l) => labelPattern.test(l)))
+            return false;
+        // icann prohib numeric tld vs ipv4 with 4 numeric labels
+        return (labels.length === 1 && !isWildcard) || !/^\d+$/.test(labels[labels.length-1]);
     }
 
     // Format date to YYYY-MM-DD from ISO format
