@@ -803,7 +803,7 @@ function ca-dump-pkcs12() {
     -export
     -in "$CRTFILE"
     -inkey "$KEYFILE"
-    ${KEYPASS:+-passin "env:ZPKI_PASSWORD"}
+    ${ZPKI_PASSWORD:+-passin "env:ZPKI_PASSWORD"}
     -certfile "$CA_CRTFILE"
     -passout "env:ZPKI_EXPORT_PASSWORD"
   )
