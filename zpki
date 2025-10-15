@@ -755,7 +755,7 @@ function ca-update-dump-crt() {
     keyStatus="missing"
   elif [[ ! -s $KEYFILE ]]; then
     keyStatus="empty"
-  elif grep -q -- "-----BEGIN ENCRYPTED PRIVATE KEY-----" $KEYFILE; then
+  elif grep -qE -- "-----BEGIN ENCRYPTED PRIVATE KEY-----|Proc-Type: 4,ENCRYPTED" "$KEYFILE"; then
     keyStatus="encrypted"
   else
     keyStatus="plain"
