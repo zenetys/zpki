@@ -390,7 +390,14 @@ app.post('/renew', async (req, res) => {
         args.push('ca-update-crt', commonName);
         if (sanIP && sanIP.length > 0) args.push(...sanIP.map(ip => `IP:${ip}`));
         if (sanDNS && sanDNS.length > 0) args.push(...sanDNS.map(dns => `DNS:${dns}`));
-        args.push('--force-crt', '--force-csr');
+        // Certificate parameters (san, type) are currently not modifiable
+        // from the web ui for a renew. So we do not need to regenerate
+        // the CSR and thus do not need --force-csr. That way the private
+        // key is not needed. Using --force-csr is problematic when the
+        // private key is encrypted because the web ui does offer a way
+        // enter the passphrase for it in the renew modal.
+        //args.push('--force-crt', '--force-csr');
+        args.push('--force-crt');
 
         await safeExec(zpkiCmd, args, { env: { ...process.env,
             ZPKI_CA_PASSWORD: req.session.caPassword,
